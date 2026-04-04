@@ -11,42 +11,40 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 ### Quyết định kỹ thuật
 
 ```markdown
-### [ADR-N] Tiêu đề quyết định — DD/MM/YYYY
 
-**Bối cảnh:** Vấn đề cần giải quyết là gì?
+## Tuần 1 — 04/04/2026
+
+### [ADR-1] Topic: Gamification Học Tập — Quest-Based Learning Engine — 04/04/2026
+
+**Bối cảnh:** Nhóm cần chọn 1 topic cho project semester này. Cần có định hướng rõ ràng để không bị chồng chéo công việc giữa 3 thành viên.
 
 **Các lựa chọn đã xem xét:**
-- Option A: ...
-- Option B: ...
+- **AI Chatbot hỗ trợ học tập**: Có nhiều competitors (ChatGPT, Claude). Khó tạo differentiator riêng.
+- **Gamification Học Tập — Quest-Based Learning**: Kết hợp game mechanics với AI. Có thể auto-generate quest theo trình độ student.
+- **Adaptive Learning Platform**: Complex, cần nhiều data và ML background.
 
-**Quyết định:** Chọn option nào và tại sao.
+**Quyết định:** Chọn **Quest-Based Learning Engine** vì:
+- Có differentiator rõ ràng: tự động sinh quest theo trình độ bằng AI
+- Có thể chia công việc rõ ràng: Backend (DB, API), AI (Quest Generation), Frontend (UI/UX)
+- Phù hợp scope cho 1 semester
 
-**Hệ quả:** Những gì bị ảnh hưởng / trade-off.
-```
+**Hệ quả:** 
+- Backend: Thiết kế table cho Course, Quest, User Progress
+- AI/Prompt: Phải tối ưu prompt để sinh quest realistic và phù hợp trình độ
+- Frontend: Implement Quiz UI, Progress tracking, Leaderboard
 
-### Phân công
+---
 
-```markdown
-### Sprint N — DD/MM → DD/MM/YYYY
+### Sprint 1 — 04/04 → 13/04/2026
 
 | Task | Người làm | Deadline | Trạng thái |
 |---|---|---|---|
-| | | | |
-```
-
-### Brainstorming
-
-```markdown
-### Brainstorm: [Chủ đề] — DD/MM/YYYY
-
-**Câu hỏi:** ...
-
-**Các ý tưởng:**
-- Ý tưởng 1: ...
-- Ý tưởng 2: ...
-
-**Kết luận:** ...
-```
+| Clone repo, setup hook, viết PRD | Cả nhóm | 04/04 |  Xong |
+| Thiết kế DB Schema (PostgreSQL) | Nguyễn Minh Quân (BE) | 10/04 |  Chờ |
+| Setup API cơ bản + Anthropic API | Nguyễn Minh Quân (BE) | 11/04 |  Chờ |
+| Tối ưu Prompt Adaptive Quest Generation | Nguyễn Minh Trí (AI) | 12/04 |  Chờ |
+| Dataset mẫu: 20 quest đầu tiên | Cả nhóm | 13/04 | Chờ |
+| Learn Next.js + setup frontend | Nguyễn Minh Tuấn (FE) | 11/04 | Chờ |
 
 ---
 

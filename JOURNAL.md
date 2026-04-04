@@ -9,29 +9,38 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 ## Template
 
 ```markdown
-## Tuần N — DD/MM/YYYY
+## Tuần 1 — 04/04/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí, Nguyễn Minh Tuấn
 
 ### Đã làm
--
+- Đã clone đc git file 
+- Setup hook và team viết được PRD
+- Học cách fill in Journal và Worklog
+- Đã lựa chọn được topic cho project
+- Gamification Học Tập — Quest-Based Learning Engine.
+- Xác định xong 3 vai trò chính: Backend/Game Logic, AI/Quest Master và Frontend/UI-UX.
 
 ### Khó nhất tuần này
--
+- Định hướng và bắt đầu bước đầu làm project
 
 ### AI tool đã dùng
 | Tool | Dùng để làm gì | Kết quả |
-|---|---|---|
-| Claude Code | | |
+| Gemini | Hỏi đáp về cách làm project và PRD | Biết cách làm và nội dung của project |
 
 ### Học được
--
-
+- Hiểu rằng việc có một bản Brief và PRD tốt giúp team 3 người không bị chồng chéo công việc.
+- Hiểu cách dùng AI không chỉ để chat mà để đóng vai trò "Quest Master" tự động tạo nội dung dựa trên dữ liệu người dùng.
 ### Nếu làm lại, sẽ làm khác
--
+- Sẽ dành nhiều thời gian hơn để nghiên cứu kỹ các đối thủ như Duolingo hay Habitica ngay từ ngày đầu tiên để có cái nhìn trực quan hơn về UI/UX, thay vì mất thời gian tranh luận suông về các tính năng.
 
 ### Kế hoạch tuần tới
--
-```
+- Thành viên 1 (BE): Thiết kế chi tiết Database trên PostgreSQL và setup API cơ bản với Anthropic API.
 
+- Thành viên 2 (AI): Viết và tối ưu Prompt cho hệ thống "Adaptive Quest Generation" (sinh nhiệm vụ theo trình độ) sử dụng ngôn ngữ Python.
+
+- Thành viên 3 (FE): Học thiết kế UI bằng Next.js.
+
+Cả team: Hoàn thiện Bước 3 (Data Preparation) - tạo bộ dataset mẫu gồm 20 nhiệm vụ đầu tiên.
 ---
 
 ## Ví dụ
