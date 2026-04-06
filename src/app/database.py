@@ -4,12 +4,25 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 
-load_dotenv() # Đọc thông tin từ file .env
+# 1. Đảm bảo load biến môi trường từ file .env
+load_dotenv()
 
-# Lấy URL từ .env, nếu không có thì dùng mặc định để test
-SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost:5432/rpg_game"
+# 2. Lấy URL và xử lý lỗi định dạng tiềm ẩn từ Supabase
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# Một số thư viện yêu cầu postgresql:// thay vì postgres:// của Supabase
+if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# 3. Khởi tạo Engine với các tham số tối ưu cho Cloud
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    # pool_pre_ping giúp tự động kết nối lại nếu Supabase ngắt kết nối tạm thời
+    pool_pre_ping=True,
+    # Tránh lỗi liên quan đến SSL trên một số môi trường Windows
+    connect_args={"sslmode": "require"} if SQLALCHEMY_DATABASE_URL else {}
+)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
