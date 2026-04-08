@@ -16,12 +16,13 @@ if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://")
 
 # 3. Khởi tạo Engine với các tham số tối ưu cho Cloud
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    # pool_pre_ping giúp tự động kết nối lại nếu Supabase ngắt kết nối tạm thời
-    pool_pre_ping=True,
-    # Tránh lỗi liên quan đến SSL trên một số môi trường Windows
-    connect_args={"sslmode": "require"} if SQLALCHEMY_DATABASE_URL else {}
-)
+        SQLALCHEMY_DATABASE_URL,
+        pool_pre_ping=True,
+        pool_size=5,            # Giữ tối đa 5 kết nối mở sẵn
+        max_overflow=10,        # Cho phép mở thêm tối đa 10 kết nối nếu quá tải
+        pool_recycle=300,       # Reset kết nối sau mỗi 5 phút để tránh bị Firewall ngắt
+        connect_args={"sslmode": "require"} if SQLALCHEMY_DATABASE_URL else {}
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
