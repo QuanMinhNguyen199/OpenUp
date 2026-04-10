@@ -6,9 +6,35 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ---
 
-## Template
+## Tuần 2 — 10/04/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí, Nguyễn Minh Tuấn
 
-```markdown
+### Đã làm
+- setup project nextjs
+- refactor lại cấu trúc của dự án thành backend và frontend riêng
+- code homepage, UI login/register cơ bản
+- test prompt để xem tính khả thi của topic
+
+### Khó nhất tuần này
+- viết thử system prompt tạo tình huống
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Gemini | hỏi về luồng login/register | register được bằng email |
+
+### Học được
+- supabase hỗ trợ quản lý các phương thức đăng nhập cho dự án
+
+### Nếu làm lại, sẽ làm khác
+- đổi be sang dùng typescript để giảm các bước cấu hình
+
+### Kế hoạch tuần tới
+- hoàn thiện flow login/register, màn set userId, display name
+- code màn hình vào game ban đầu cho role user
+
+---
+
 ## Tuần 1 — 04/04/2026
 **Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí, Nguyễn Minh Tuấn
 
@@ -25,22 +51,49 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ### AI tool đã dùng
 | Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
 | Gemini | Hỏi đáp về cách làm project và PRD | Biết cách làm và nội dung của project |
 
 ### Học được
 - Hiểu rằng việc có một bản Brief và PRD tốt giúp team 3 người không bị chồng chéo công việc.
 - Hiểu cách dùng AI không chỉ để chat mà để đóng vai trò "Quest Master" tự động tạo nội dung dựa trên dữ liệu người dùng.
+
 ### Nếu làm lại, sẽ làm khác
 - Sẽ dành nhiều thời gian hơn để nghiên cứu kỹ các đối thủ như Duolingo hay Habitica ngay từ ngày đầu tiên để có cái nhìn trực quan hơn về UI/UX, thay vì mất thời gian tranh luận suông về các tính năng.
 
 ### Kế hoạch tuần tới
-- Thành viên 1 (BE): Thiết kế chi tiết Database trên PostgreSQL và setup API cơ bản với Anthropic API.
+- Thiết kế chi tiết Database trên PostgreSQL và setup API cơ bản với Anthropic API.
+- Viết và tối ưu Prompt cho hệ thống "Adaptive Quest Generation" (sinh nhiệm vụ theo trình độ) sử dụng ngôn ngữ Python.
+- Học thiết kế UI bằng Next.js.
 
-- Thành viên 2 (AI): Viết và tối ưu Prompt cho hệ thống "Adaptive Quest Generation" (sinh nhiệm vụ theo trình độ) sử dụng ngôn ngữ Python.
+---
 
-- Thành viên 3 (FE): Học thiết kế UI bằng Next.js.
+## Template
 
-Cả team: Hoàn thiện Bước 3 (Data Preparation) - tạo bộ dataset mẫu gồm 20 nhiệm vụ đầu tiên.
+```markdown
+## Tuần N — DD/MM/YYYY
+
+### Đã làm
+-
+
+### Khó nhất tuần này
+-
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Claude Code | | |
+
+### Học được
+-
+
+### Nếu làm lại, sẽ làm khác
+-
+
+### Kế hoạch tuần tới
+-
+```
+
 ---
 
 ## Ví dụ

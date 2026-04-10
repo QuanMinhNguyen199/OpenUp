@@ -6,13 +6,43 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 
 ---
 
-## Template
+### Sprint 2 — 11/04 → 17/04/2026
 
-### Quyết định kỹ thuật
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| hoàn thiện flow login/register | Minh Trí | 15/04 | Chờ |
+| code màn bắt đầu cho role user | Minh Trí | 17/04 | Chờ |
 
-```markdown
+---
 
-## Tuần 1 — 04/04/2026
+### [ADR-2] Dùng 2 ngôn ngữ khác nhau cho FE, BE — 08/04/2026
+
+**Bối cảnh:** Nhóm cần thống nhất ngôn ngữ lập trình cho project
+
+**Các lựa chọn đã xem xét:**
+- **Dùng Typescript cho cả 2**:k phải cấu hình nhiều cho BE
+- **Typescript cho FE, Python cho BE**: dễ cho nhóm debug
+
+**Quyết định:** Chọn **Typescript cho FE, Python cho BE** vì:
+- phần lớn thành viên nhóm chưa từng code Typescript
+
+**Hệ quả:** 
+- 2 folder riêng
+
+---
+
+### Sprint 1 — 04/04 → 10/04/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| Clone repo, setup hook, viết PRD | Cả nhóm | 04/04 |  Xong |
+| Thiết kế DB Schema (PostgreSQL) | Nguyễn Minh Quân (BE) | 10/04 |  Chờ |
+| Setup API cơ bản + Anthropic API | Nguyễn Minh Quân (BE) | 11/04 |  Chờ |
+| Tối ưu Prompt Adaptive Quest Generation | Nguyễn Minh Trí (AI) | 12/04 |  Chờ |
+| Dataset mẫu: 20 quest đầu tiên | Cả nhóm | 13/04 | Chờ |
+| Learn Next.js + setup frontend | Nguyễn Minh Tuấn (FE) | 11/04 | Chờ |
+
+---
 
 ### [ADR-1] Topic: Gamification Học Tập — Quest-Based Learning Engine — 04/04/2026
 
@@ -35,16 +65,47 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 
 ---
 
-### Sprint 1 — 04/04 → 13/04/2026
+## Template
+
+### Quyết định kỹ thuật
+
+```markdown
+### [ADR-N] Tiêu đề quyết định — DD/MM/YYYY
+
+**Bối cảnh:** Vấn đề cần giải quyết là gì?
+
+**Các lựa chọn đã xem xét:**
+- Option A: ...
+- Option B: ...
+
+**Quyết định:** Chọn option nào và tại sao.
+
+**Hệ quả:** Những gì bị ảnh hưởng / trade-off.
+```
+
+### Phân công
+
+```markdown
+### Sprint N — DD/MM → DD/MM/YYYY
 
 | Task | Người làm | Deadline | Trạng thái |
 |---|---|---|---|
-| Clone repo, setup hook, viết PRD | Cả nhóm | 04/04 |  Xong |
-| Thiết kế DB Schema (PostgreSQL) | Nguyễn Minh Quân (BE) | 10/04 |  Chờ |
-| Setup API cơ bản + Anthropic API | Nguyễn Minh Quân (BE) | 11/04 |  Chờ |
-| Tối ưu Prompt Adaptive Quest Generation | Nguyễn Minh Trí (AI) | 12/04 |  Chờ |
-| Dataset mẫu: 20 quest đầu tiên | Cả nhóm | 13/04 | Chờ |
-| Learn Next.js + setup frontend | Nguyễn Minh Tuấn (FE) | 11/04 | Chờ |
+| | | | |
+```
+
+### Brainstorming
+
+```markdown
+### Brainstorm: [Chủ đề] — DD/MM/YYYY
+
+**Câu hỏi:** ...
+
+**Các ý tưởng:**
+- Ý tưởng 1: ...
+- Ý tưởng 2: ...
+
+**Kết luận:** ...
+```
 
 ---
 
