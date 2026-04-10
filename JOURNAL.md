@@ -32,6 +32,7 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 ### Kế hoạch tuần tới
 - hoàn thiện flow login/register, màn set userId, display name
 - code màn hình vào game ban đầu cho role user
+- Tạo đc npcs with behaviors và collection
 
 ---
 
