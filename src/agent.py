@@ -11,7 +11,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from anthropic import Anthropic
-from .config import ANTHROPIC_API_KEY, DEFAULT_MODEL, LOG_LEVEL, is_valid_anthropic_key
+from google import genai  
+from google.genai import types
+from .config import ANTHROPIC_API_KEY, GEMINI_API_KEY, DEFAULT_MODEL, LOG_LEVEL, is_valid_anthropic_key
 from .tools import get_tool_schemas, execute_tool
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -31,11 +33,11 @@ def git(cmd: str) -> str:
         return ""
 
 
-def log_terminal_chat(prompt: str, response: str) -> None:
+def log_terminal_chat(prompt: str, response: str, event_type: str = "TerminalChat") -> None:
     entry = {
         "ts": datetime.now(VN_TZ).isoformat(),
         "tool": "terminal-agent",
-        "event": "TerminalChat",
+        "event": event_type,
         "session_id": "",
         "model": DEFAULT_MODEL,
         "repo": git("git remote get-url origin").split("/")[-1].replace(".git", ""),
@@ -52,100 +54,150 @@ def log_terminal_chat(prompt: str, response: str) -> None:
 
 
 def create_agent():
-    """Create an agent with the Anthropic client."""
-    if not ANTHROPIC_API_KEY:
-        raise ValueError("ANTHROPIC_API_KEY is not configured. Check your .env file.")
-    if not is_valid_anthropic_key(ANTHROPIC_API_KEY):
-        raise ValueError(
-            "ANTHROPIC_API_KEY looks invalid. Replace the placeholder key in .env with your real Anthropic API key."
-        )
-    return Anthropic(api_key=ANTHROPIC_API_KEY)
+    # 1. Thử Anthropic trước
+    if ANTHROPIC_API_KEY and ANTHROPIC_API_KEY.startswith("sk-ant"):
+        try:
+            return {"client": Anthropic(api_key=ANTHROPIC_API_KEY), "type": "anthropic"}
+        except: pass
+
+    # 2. Sử dụng google-genai (SDK v2)
+    if GEMINI_API_KEY:
+        # Trong bản mới, ta tạo Client thay vì dùng genai.configure
+        client = genai.Client(api_key=GEMINI_API_KEY, http_options={'api_version': 'v1beta'})
+        logger.info("Đã khởi tạo Google GenAI Client (v2) thành công.")
+        return {"client": client, "type": "gemini"}
+    
+    raise ValueError("Không tìm thấy API Key hợp lệ.")
 
 
-def run_agent_loop(client: Anthropic, user_input: str, max_turns: int = 10) -> str:
-    """
-    Run the agent loop: send message -> receive response -> call tool -> repeat.
+def run_agent_loop(agent_data: dict, user_input: str, max_turns: int = 10) -> str:
+    client = agent_data["client"]
+    is_gemini = agent_data["type"] == "gemini"
+    
+    # 1. Khởi tạo cấu trúc lịch sử cho từng loại Model
+    # Với Gemini v2, ta sẽ dùng list các object Content
+    gemini_history = [] 
+    # Với Anthropic, ta dùng list các dict đơn giản
+    anthropic_messages = [{"role": "user", "content": user_input}]
 
-    Args:
-        client: Anthropic client
-        user_input: User's question or request
-        max_turns: Maximum number of tool-calling turns
-
-    Returns:
-        The agent's final response
-    """
-    messages = [{"role": "user", "content": user_input}]
-    tools = get_tool_schemas()
+    # Biến để theo dõi input của từng lượt (đặc biệt quan trọng cho Gemini khi loop tool)
+    current_input = user_input
 
     for turn in range(max_turns):
-        logger.info(f"Turn {turn + 1}/{max_turns}")
-
-        response = client.messages.create(
-            model=DEFAULT_MODEL,
-            max_tokens=4096,
-            system=SYSTEM_PROMPT,
-            tools=tools,
-            messages=messages,
-        )
-
-        # If agent stops (no more tool calls)
-        if response.stop_reason == "end_turn":
-            final_text = ""
-            for block in response.content:
-                if hasattr(block, "text"):
-                    final_text += block.text
-            return final_text
-
-        # Handle tool calls
-        tool_results = []
-        has_tool_use = False
-
-        for block in response.content:
-            if block.type == "tool_use":
-                has_tool_use = True
-                logger.info(f"Calling tool: {block.name}({block.input})")
-                result = execute_tool(block.name, block.input)
-                logger.info(f"Result: {result[:200]}")
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": result,
-                })
-
-        if not has_tool_use:
-            # No tool calls, return text
-            final_text = ""
-            for block in response.content:
-                if hasattr(block, "text"):
-                    final_text += block.text
-            return final_text
-
-        # Add assistant response and tool results to messages
-        messages.append({"role": "assistant", "content": response.content})
-        messages.append({"role": "user", "content": tool_results})
-
-    return "Agent reached the maximum number of processing turns."
-
-
-def main():
-    """Interactive loop - enter a prompt and receive results."""
-    client = create_agent()
-    print("Agentic App (type 'quit' to exit)")
-    print("-" * 50)
-
-    while True:
-        user_input = input("\nYou: ").strip()
-        if not user_input or user_input.lower() in ("quit", "exit", "q"):
-            print("Bye!")
-            break
+        turn_info = f"Turn {turn + 1}/{max_turns}"
+        logger.info(f"[{agent_data['type'].upper()}] {turn_info}")
 
         try:
-            response = run_agent_loop(client, user_input)
-            print(f"\nAgent: {response}")
-            log_terminal_chat(user_input, response)
+            # --- BƯỚC 1: AI SUY NGHĨ ---
+            if is_gemini:
+                # Cú pháp SDK v2: dùng client.models.generate_content
+                response = client.models.generate_content(
+                    model='gemini-2.0-flash',
+                    contents=gemini_history + [types.Content(role="user", parts=[types.Part(text=current_input)])],
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_PROMPT,
+                        tools=[types.Tool(function_declarations=get_tool_schemas())]
+                    )
+                )
+                ai_content = response.candidates[0].content
+                # v2 dùng check function_call trực tiếp trên các parts
+                has_function = any(part.function_call for part in ai_content.parts)
+                stop_reason = "tool_use" if has_function else "end_turn"
+            else:
+                response = client.messages.create(
+                    model=DEFAULT_MODEL,
+                    max_tokens=4096,
+                    system=SYSTEM_PROMPT,
+                    tools=get_tool_schemas(),
+                    messages=anthropic_messages,
+                )
+                ai_content = response.content
+                stop_reason = response.stop_reason
+
+            # AUTO LOGGING cho trường track
+            log_terminal_chat(
+                prompt=f"[{turn_info}] {agent_data['type'].upper()} Thinking...",
+                response=f"Stop Reason: {stop_reason}",
+                event_type="AI_THOUGHT"
+            )
+
+            # --- BƯỚC 2: XỬ LÝ KẾT THÚC ---
+            if stop_reason == "end_turn":
+                final_text = response.text if is_gemini else "".join([b.text for b in ai_content if hasattr(b, "text")])
+                log_terminal_chat(user_input, final_text, event_type="FINAL_RESPONSE")
+                return final_text
+
+            # --- BƯỚC 3: XỬ LÝ TOOL CALLS ---
+            if is_gemini:
+                # Gemini v2 yêu cầu: Cất câu trả lời của Assistant vào history trước
+                gemini_history.append(types.Content(role="user", parts=[types.Part(text=current_input)]))
+                gemini_history.append(ai_content)
+                
+                tool_parts = []
+                for part in ai_content.parts:
+                    if part.function_call:
+                        name = part.function_call.name
+                        args = part.function_call.args
+                        logger.info(f"🚀 [AUTO-TRACK] Gemini v2 Calling: {name}")
+                        
+                        result = execute_tool(name, args)
+                        
+                        log_terminal_chat(f"Tool: {name}", f"Result: {str(result)[:200]}", "TOOL_LOG")
+                        
+                        # Tạo part phản hồi kết quả tool theo chuẩn v2
+                        tool_parts.append(types.Part.from_function_response(
+                            name=name,
+                            response={"result": result}
+                        ))
+                
+                # Turn sau của Gemini sẽ là danh sách các kết quả Tool
+                # Lưu ý: SDK v2 thường yêu cầu gửi lại toàn bộ history
+                gemini_history.append(types.Content(role="tool", parts=tool_parts))
+                # Reset current_input vì ta đã đẩy vào history rồi
+                current_input = "Hãy xử lý tiếp kết quả trên." 
+
+            else:
+                tool_results = []
+                for block in ai_content:
+                    if block.type == "tool_use":
+                        logger.info(f"🚀 [AUTO-TRACK] Anthropic Calling: {block.name}")
+                        result = execute_tool(block.name, block.input)
+                        log_terminal_chat(f"Tool: {block.name}", f"Result: {str(result)[:200]}", "TOOL_LOG")
+                        
+                        tool_results.append({
+                            "type": "tool_result",
+                            "tool_use_id": block.id,
+                            "content": str(result),
+                        })
+                
+                anthropic_messages.append({"role": "assistant", "content": ai_content})
+                anthropic_messages.append({"role": "user", "content": tool_results})
+
         except Exception as e:
-            logger.error(f"Error: {e}")
-            print(f"\nError: {e}")
+            error_msg = f"Lỗi tại {turn_info}: {str(e)}"
+            logger.error(error_msg)
+            return error_msg
+
+    return "Đã đạt giới hạn lượt xử lý (Max turns)."
+
+def main():
+    try:
+        # Nhận dict chứa client và type
+        agent_data = create_agent()
+        
+        print(f"Agentic App - Mode: {agent_data['type'].upper()}")
+        print("-" * 50)
+
+        while True:
+            user_input = input("\nYou: ").strip()
+            if not user_input or user_input.lower() in ("quit", "exit", "q"):
+                break
+
+            response = run_agent_loop(agent_data, user_input)
+            print(f"\nAgent: {response}")
+            
+    except Exception as e:
+        print(f"Không thể khởi động App: {e}")
 
 
 if __name__ == "__main__":

@@ -6,10 +6,14 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, default="PLAYER") # 'ADMIN' hoặc 'PLAYER'
     level = Column(Integer, default=1)
     total_xp = Column(Integer, default=0)
+    
     conversations = relationship("Conversation", back_populates="user")
+    collections = relationship("UserCollection", back_populates="user")
 
 class NPC(Base):
     __tablename__ = "npcs"
@@ -17,9 +21,10 @@ class NPC(Base):
     name = Column(String)
     role = Column(String)
     base_prompt = Column(Text)
+    
     conversations = relationship("Conversation", back_populates="npc")
-    # Thêm quan hệ với các tình huống hội thoại
     scenarios = relationship("DialogScenario", back_populates="npc")
+    heirloom = relationship("Collection", back_populates="npc", uselist=False)
 
 class DialogScenario(Base):
     __tablename__ = "dialog_scenarios"
@@ -41,6 +46,29 @@ class DialogOption(Base):
     feedback = Column(String)
 
     scenario = relationship("DialogScenario", back_populates="options")
+
+class Collection(Base):
+    __tablename__ = "collections"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text)
+    npc_id = Column(Integer, ForeignKey("npcs.id"))
+    required_affinity = Column(Float, default=80.0)
+    
+    # --- QUAN TRỌNG: Bổ sung cột này để khớp với SQL bạn vừa chạy ---
+    step_order = Column(Integer, nullable=True) 
+
+    npc = relationship("NPC", back_populates="heirloom")
+    owners = relationship("UserCollection", back_populates="collection")
+
+class UserCollection(Base):
+    __tablename__ = "user_collections"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    collection_id = Column(Integer, ForeignKey("collections.id"), primary_key=True)
+    unlocked_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="collections")
+    collection = relationship("Collection", back_populates="owners")
 
 class Conversation(Base):
     __tablename__ = "conversations"

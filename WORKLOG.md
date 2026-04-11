@@ -12,6 +12,8 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 |---|---|---|---|
 | hoàn thiện flow login/register | Minh Trí | 15/04 | Chờ |
 | code màn bắt đầu cho role user | Minh Trí | 17/04 | Chờ |
+| tạo đc npcs with behaviors và collection| Minh Quân | 17/04 | Chờ |
+| tạo đc database cho admin và users riêng | Minh Quân | 17/04 | Chờ |
 
 ---
 
@@ -36,8 +38,8 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 | Task | Người làm | Deadline | Trạng thái |
 |---|---|---|---|
 | Clone repo, setup hook, viết PRD | Cả nhóm | 04/04 |  Xong |
-| Thiết kế DB Schema (PostgreSQL) | Nguyễn Minh Quân (BE) | 10/04 |  Chờ |
-| Setup API cơ bản + Anthropic API | Nguyễn Minh Quân (BE) | 11/04 |  Chờ |
+| Thiết kế DB Schema (PostgreSQL) | Nguyễn Minh Quân (BE) | 10/04 |  xong |
+| Setup API cơ bản + Anthropic API | Nguyễn Minh Quân (BE) | 11/04 |  xong |
 | Tối ưu Prompt Adaptive Quest Generation | Nguyễn Minh Trí (AI) | 12/04 |  Chờ |
 | Dataset mẫu: 20 quest đầu tiên | Cả nhóm | 13/04 | Chờ |
 | Learn Next.js + setup frontend | Nguyễn Minh Tuấn (FE) | 11/04 | Chờ |
