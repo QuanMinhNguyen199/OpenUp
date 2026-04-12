@@ -9,6 +9,7 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(String, default="PLAYER") # 'ADMIN' hoặc 'PLAYER'
+    token = Column(String, nullable=True)
     level = Column(Integer, default=1)
     total_xp = Column(Integer, default=0)
     

@@ -1,5 +1,5 @@
 import hashlib
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from typing import List
 import re
 import models, schemas, database 
+import secrets
 
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
@@ -26,6 +27,12 @@ def get_password_hash(password: str):
 
 def verify_password(plain_password, hashed_password):
     return get_password_hash(plain_password) == hashed_password
+
+def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user or user.token != x_token or x_token is None:
+        raise HTTPException(status_code=401, detail="Phiên đăng nhập hết hạn hoặc không hợp lệ!")
+    return user
 
 def get_db():
     db = database.SessionLocal()
@@ -91,13 +98,16 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Sai tài khoản hoặc mật khẩu"
         )
+    random_token = secrets.token_hex(32) # Tạo chuỗi 64 ký tự ngẫu nhiên
+    user.token = random_token # Lưu token vào database
+    db.commit()
     
     return {
         "status": "success",
         "user_id": user.id,
         "username": user.username,
         "role": user.role,
-        "token": "fake-jwt-token"
+        "token": random_token
     }
 
 @app.post("/api/register")
@@ -231,9 +241,19 @@ def mix_recipe(data: MixRecipeRequest, db: Session = Depends(get_db)):
                 "message": f"Hương vị bị sai ở bước thứ {i+1}. Hãy kiểm tra lại Codex!",
                 "ending_unlocked": False
             }
+        
+@app.post("/api/logout/{user_id}")
+async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(user_id, db, x_token) # Kiểm tra đúng chủ nhân mới cho logout
+    user.token = None # Xóa token trong DB
+    db.commit()
+    return {"status": "success", "message": "Đã đăng xuất"}        
 
 @app.get("/api/user/codex/{user_id}")
-def get_user_codex(user_id: int, db: Session = Depends(get_db)):
+def get_user_codex(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    # Bước kiểm tra bảo mật
+    verify_token(user_id, db, x_token)
+    # Nếu vượt qua kiểm tra, mới thực hiện logic lấy đồ bên dưới
     unlocked_ids = [c.collection_id for c in db.query(models.UserCollection).filter_by(user_id=user_id).all()]
     all_ingredients = db.query(models.Collection).order_by(models.Collection.step_order).all()
     
