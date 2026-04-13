@@ -41,7 +41,9 @@ def detect_tool(data: dict) -> str:
     return "unknown"
 
 
-def normalize(data: dict, tool: str) -> dict | None:
+import typing
+
+def normalize(data: dict, tool: str) -> typing.Optional[dict]:
     """Normalize tool-specific payload to common log entry."""
     event = data.get("hook_event_name") or data.get("event", "")
     ts = datetime.now(VN_TZ).isoformat()
@@ -128,6 +130,8 @@ def normalize(data: dict, tool: str) -> dict | None:
 
 
 def main():
+    if hasattr(sys.stdin, 'reconfigure'):
+        sys.stdin.reconfigure(encoding='utf-8')
     raw = sys.stdin.read().strip()
     if not raw:
         sys.exit(0)
