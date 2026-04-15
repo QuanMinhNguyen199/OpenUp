@@ -21,30 +21,32 @@ export default function HomePage() {
           <Link
             href="/login"
             id="btn-login"
-            className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
+            className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
           >
             Đăng nhập
           </Link>
           <Link
             href="/register"
             id="btn-register"
-            className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
+            className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-6 py-2.5 text-lg font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
           >
             Đăng ký
           </Link>
         </nav>
 
         {/* Centered hero text */}
-        <div className="flex flex-1 flex-col items-center justify-center px-4 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center px-4 text-center gap-y-20 mt-[-4rem]">
           <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl">
             Game học giao tiếp với AI
           </h1>
-          <p className="mb-3 text-xl font-medium text-white/85 md:text-2xl">
-            Bạn muốn: làm hài lòng sếp?
-          </p>
-          <p className="text-2xl font-semibold text-amber-300 drop-shadow md:text-3xl">
-            👉🏻 Web này dành cho bạn
-          </p>
+          <div className="flex flex-col gap-y-6">
+            <p className="mb-3 text-3xl font-medium text-white md:text-4xl">
+              Bạn muốn:
+            </p>
+            <p className="text-3xl font-semibold text-yellow-300 drop-shadow md:text-4xl">
+              👉🏻 Web này dành cho bạn
+            </p>
+          </div>
         </div>
       </div>
     </main>
