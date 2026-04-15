@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Typewriter from "./components/Typewriter";
 
 export default function HomePage() {
   return (
@@ -40,8 +41,9 @@ export default function HomePage() {
             Game học giao tiếp với AI
           </h1>
           <div className="flex flex-col gap-y-6">
-            <p className="mb-3 text-3xl font-medium text-white md:text-4xl">
-              Bạn muốn:
+            <p className="mb-3 text-3xl font-medium text-white md:text-4xl flex items-center justify-center gap-2 flex-wrap">
+              <span>Bạn muốn:</span>
+              <Typewriter />
             </p>
             <p className="text-3xl font-semibold text-yellow-300 drop-shadow md:text-4xl">
               👉🏻 Web này dành cho bạn

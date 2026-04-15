@@ -25,3 +25,25 @@ body {
   color: var(--foreground);
   /* font-family: Arial, Helvetica, sans-serif; */
 }
+
+/* Neon glow effect for typewriter text */
+.neon-text {
+  color: #0ff;
+  text-shadow:
+    0 0 7px #0ff,
+    0 0 20px #0ff,
+    0 0 42px #0099ff,
+    0 0 82px #0099ff;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 0.7s step-end infinite;
+  color: #0ff;
+  text-shadow: 0 0 7px #0ff;
+}
