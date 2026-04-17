@@ -28,22 +28,29 @@ body {
 
 /* Neon glow effect for typewriter text */
 .neon-text {
-  color: #0ff;
+  color: #fff;
   text-shadow:
-    0 0 7px #0ff,
-    0 0 20px #0ff,
-    0 0 42px #0099ff,
-    0 0 82px #0099ff;
+    0 0 7px #39ff14,
+    0 0 20px #39ff14,
+    0 0 42px #39ff14,
+    0 0 82px #39ff14;
 }
 
 /* Blinking cursor */
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .animate-blink {
   animation: blink 0.7s step-end infinite;
-  color: #0ff;
-  text-shadow: 0 0 7px #0ff;
+  color: #39ff14;
+  text-shadow: 0 0 7px #39ff14;
 }
