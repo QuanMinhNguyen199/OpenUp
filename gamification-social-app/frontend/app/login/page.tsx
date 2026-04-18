@@ -81,11 +81,30 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
       {/* Mesh Gradient Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] h-[60%] w-[60%] animate-pulse rounded-full bg-[#39FF14]/20 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] h-[60%] w-[60%] animate-pulse rounded-full bg-[#00F0FF]/20 blur-[120px] [animation-delay:2s]" />
-        <div className="absolute top-[20%] right-[10%] h-[40%] w-[40%] animate-pulse rounded-full bg-[#1A0033]/40 blur-[100px] [animation-delay:1s]" />
+      <div className="absolute inset-0 z-0 h-full w-full bg-[#050505] overflow-hidden">
+        <div
+          className="absolute inset-[-100%] animate-strip-fast will-change-transform"
+          style={{
+            background: `linear-gradient(
+        45deg, 
+        #050505 5%, 
+        #39FF14 25%, 
+        #00F0FF 50%, 
+        #39FF14 75%, 
+        #050505 95%
+      )`,
+            backgroundSize: '200% 200%',
+            opacity: 0.5, // Tăng nhẹ độ sáng
+          }}
+        />
+
+        {/* Lớp phủ mờ giúp dải màu trông sâu hơn */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#050505]/60 via-transparent to-[#050505]/60 pointer-events-none" />
+
+        {/* Noise làm mịn dải màu */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
+
 
       <div className="relative z-10 flex min-h-screen items-center justify-center p-6">
         {/* Login Card */}
@@ -108,15 +127,14 @@ export default function LoginPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${
-                    usernameError
-                      ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                      : "border-white/10 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.2)]"
-                  }`}
+                  className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${usernameError
+                    ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
+                    : "border-white/10 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.2)]"
+                    }`}
                   placeholder="ENTER USERNAME..."
                 />
                 {usernameError && (
-                  <p className="mt-1 text-xs font-medium text-red-500 animate-pulse">
+                  <p className="mt-1 text-xs font-medium text-red-300 animate-pulse">
                     {usernameError}
                   </p>
                 )}
@@ -132,11 +150,10 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${
-                      passwordError
-                        ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                        : "border-white/10 focus:border-[#00F0FF] focus:shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-                    }`}
+                    className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${passwordError
+                      ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
+                      : "border-white/10 focus:border-[#00F0FF] focus:shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                      }`}
                     placeholder="••••••••"
                   />
                   <button
@@ -194,11 +211,10 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`relative w-full overflow-hidden rounded-lg py-4 font-black uppercase tracking-widest transition-all duration-300 ${
-                  isFormValid && !isLoading
-                    ? "bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black shadow-[0_0_20px_rgba(0,240,255,0.4)] active:scale-95"
-                    : "cursor-not-allowed border border-white/5 bg-white/5 text-gray-600"
-                }`}
+                className={`relative w-full overflow-hidden rounded-lg py-4 font-black uppercase tracking-widest transition-all duration-300 ${isFormValid && !isLoading
+                  ? "bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black shadow-[0_0_20px_rgba(0,240,255,0.4)] active:scale-95"
+                  : "cursor-not-allowed border border-white/5 bg-white/5 text-gray-600"
+                  }`}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -224,7 +240,7 @@ export default function LoginPage() {
                   "Vào game"
                 )}
               </button>
-              
+
               <p className="mt-4 text-center text-sm text-gray-500">
                 Chưa có tài khoản?{" "}
                 <Link
@@ -251,11 +267,27 @@ export default function LoginPage() {
 
       {/* Global CSS for some effects */}
       <style jsx global>{`
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.2; }
-          50% { transform: scale(1.1); opacity: 0.3; }
-        }
-      `}</style>
+  @keyframes strip-fast {
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(0deg);
+    }
+    50% {
+      /* Di chuyển dải màu cực nhanh qua điểm đối xứng */
+      background-position: 100% 50%;
+      transform: rotate(4deg) scale(1.1);
+    }
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(0deg);
+    }
+  }
+
+  .animate-strip-fast {
+    /* Tốc độ được đẩy lên 4 giây - Rất nhanh và sôi động */
+    animation: strip-fast 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+`}</style>
     </div>
   );
 }
