@@ -3,7 +3,7 @@ import json
 import asyncio
 from google import genai
 from dotenv import load_dotenv
-from prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
+from system_prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
 
 load_dotenv()
 
