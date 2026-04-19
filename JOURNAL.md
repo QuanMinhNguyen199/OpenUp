@@ -6,6 +6,36 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ---
 
+## Tuần 3 — 17/04/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
+
+### Đã làm
+- hoàn thiện ui home, fix luồng login
+- chốt lại flow login/register
+- Thiết kế và áp dụng cơ chế Token-based Authentication thủ công để duy trì phiên đăng nhập (Persistent Session) mà không cần bắt người dùng đăng nhập lại khi refresh trang
+
+### Khó nhất tuần này
+- Xây dựng cơ chế xác thực người dùng (Verify User) an toàn nhưng vẫn đảm bảo trải nghiệm người chơi không bị gián đoạn khi tắt/mở trình duyệt.
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Gemini | Tư vấn kiến trúc hệ thống xác thực và cách thức triển khai Token bảo mật tối ưu cho dự án quy mô nhỏ | Triển khai thành công cột token trong bảng users và logic verify qua Middleware, giải quyết triệt để vấn đề "mò ID" người dùng khác.
+ |
+
+### Học được
+- Hiểu rõ sự khác biệt và cách phối hợp giữa State (Frontend) và Persistence (Backend/Database).
+- Nắm vững quy trình trao đổi thông tin qua HTTP Headers để tăng tính bảo mật cho ứng dụng web
+
+### Nếu làm lại, sẽ làm khác
+- k có
+
+### Kế hoạch tuần tới
+- Hoàn thiện bộ UI đồng nhất cho cụm màn hình Login/Register
+- Chốt thiết kế và triển khai màn hình Dashboard/Lobby (màn hình đầu tiên sau khi đăng nhập thành công) để chuẩn bị cho các tính năng tương tác với NPC
+
+---
+
 ## Tuần 2 — 10/04/2026
 **Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí, Nguyễn Minh Tuấn
 

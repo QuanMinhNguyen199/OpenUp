@@ -18,7 +18,7 @@ export default function HomePage() {
       {/* Content layer */}
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Top bar with buttons */}
-        <nav className="flex w-full items-center justify-end gap-3 px-6 py-4">
+        <nav className="z-50 flex w-full items-center justify-end gap-3 px-6 py-4">
           <Link
             href="/login"
             id="btn-login"
@@ -29,7 +29,7 @@ export default function HomePage() {
           <Link
             href="/register"
             id="btn-register"
-            className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-6 py-2.5 text-lg font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
+            className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-8 py-2.5 text-lg font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
           >
             Đăng ký
           </Link>
