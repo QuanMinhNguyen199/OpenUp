@@ -125,7 +125,7 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 # --- ENDPOINTS GAMEPLAY (AI & NPC) ---
 
-@app.get("/game/scenario/{npc_id}")
+app.get("/game/scenario/{npc_id}")
 async def get_scenario(npc_id: int, user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
     verify_token(user_id, db, x_token)
     
@@ -133,41 +133,50 @@ async def get_scenario(npc_id: int, user_id: int, db: Session = Depends(get_db),
     if not npc:
         raise HTTPException(status_code=404, detail="NPC không tồn tại!")
 
-    # Member 2: Gọi AI để sinh nội dung mới
-    ai_content = await generate_npc_dialog(npc.name, npc.heirloom.name if npc.heirloom else "Bí kíp")
-    # Member 2 yêu cầu: Mix lẫn lộn các lựa chọn
+    # Member 2: Lấy nguyên liệu từ heirloom (nếu có)
+    ingredient_name = npc.heirloom[0].name if npc.heirloom else "bí mật pha chế"
+    
+    # Gọi AI sinh nội dung dựa trên tính cách và Map
+    ai_content = await generate_npc_dialog(npc.name, ingredient_name)
+    
+    # Mix lựa chọn để tăng độ khó
     options = ai_content["options"]
-    random.shuffle(options) # Trộn thứ tự ngẫu nhiên
+    random.shuffle(options) 
 
     return {
         "npc_name": npc.name,
+        "map_location": npc.map_location,
         "npc_question": ai_content["question"],
-        "options": ai_content["options"]
+        "options": options
     }
 
 @app.post("/game/choose-option")
-def choose_option(option_correct: bool, npc_id: int, user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+def choose_option(npc_id: int, option_type: str, user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    """
+    option_type: 'good', 'neutral', 'bad'
+    """
     verify_token(user_id, db, x_token)
     
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id).first()
     if not conv:
-        conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=50.0)
+        conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=0.0)
         db.add(conv)
 
-    bonus = 20.0 if option_correct else -10.0
+    # Logic điểm mới của Member 2
+    points = {"good": 10.0, "neutral": 0.0, "bad": -10.0}
+    bonus = points.get(option_type, 0.0)
+    
     conv.affinity_score = max(0, min(100, conv.affinity_score + bonus))
     
-    unlocked = False
-    if conv.affinity_score >= 80.0:
-        npc = db.query(models.NPC).get(npc_id)
-        if npc and npc.heirloom:
-            exists = db.query(models.UserCollection).filter_by(user_id=user_id, collection_id=npc.heirloom.id).first()
-            if not exists:
-                db.add(models.UserCollection(user_id=user_id, collection_id=npc.heirloom.id))
-                unlocked = True
-
+    # Lưu xuống DB - Lúc này TRIGGER trên Supabase sẽ tự chạy để tặng đồ
     db.commit()
-    return {"new_affinity": conv.affinity_score, "unlocked_item": unlocked}
+    db.refresh(conv)
+
+    return {
+        "new_affinity": conv.affinity_score,
+        "status": "success",
+        "message": f"Điểm thiện cảm hiện tại: {conv.affinity_score}/100"
+    }
 
 # --- ENDPOINT BOSS (DRAG & DROP) ---
 
