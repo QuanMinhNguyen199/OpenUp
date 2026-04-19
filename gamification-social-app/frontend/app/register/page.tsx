@@ -62,7 +62,6 @@ export default function RegisterPage() {
       if (response.ok && data.status === "success") {
         localStorage.setItem("user_id", data.user_id.toString());
         localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.username);
         router.push("/lobby");
       } else {
         // Handle specific "Username already exists" or other errors
@@ -105,7 +104,7 @@ export default function RegisterPage() {
 
       <div className="relative z-10 flex min-h-screen items-center justify-center p-6">
         {/* Register Card */}
-        <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#39FF14]/50 hover:shadow-[#39FF14]/20">
+        <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#00F0FF]/90 hover:shadow-[#00F0FF]/50">
           <div className="text-center">
             <h2 className="bg-gradient-to-r from-[#00F0FF] to-[#39FF14] bg-clip-text text-4xl font-black uppercase text-transparent drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]">
               Đăng ký
@@ -117,17 +116,16 @@ export default function RegisterPage() {
               {/* Username Input */}
               <div className="group relative">
                 <label className="mb-2 block text-sm font-bold uppercase text-[#39FF14]">
-                  Tên tài khoản mới
+                  Tên tài khoản
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${
-                    usernameError
-                      ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                      : "border-white/10 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.2)]"
-                  }`}
+                  className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${usernameError
+                    ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
+                    : "border-white/10 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.2)]"
+                    }`}
                   placeholder="Username"
                 />
                 {usernameError && (
@@ -140,18 +138,17 @@ export default function RegisterPage() {
               {/* Password Input */}
               <div className="group relative">
                 <label className="mb-2 block text-sm font-bold uppercase text-[#00F0FF]">
-                  Mật khẩu bí mật
+                  Mật khẩu
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${
-                      passwordError
-                        ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                        : "border-white/10 focus:border-[#00F0FF] focus:shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-                    }`}
+                    className={`w-full rounded-lg border bg-black/50 px-4 py-3 text-white outline-none transition-all placeholder:text-gray-600 ${passwordError
+                      ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
+                      : "border-white/10 focus:border-[#00F0FF] focus:shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                      }`}
                     placeholder="••••••••"
                   />
                   <button
@@ -209,11 +206,10 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`relative w-full overflow-hidden rounded-lg py-4 font-black uppercase tracking-widest transition-all duration-300 ${
-                  isFormValid && !isLoading
-                    ? "bg-gradient-to-r from-[#00F0FF] to-[#39FF14] text-black shadow-[0_0_20px_rgba(57,255,20,0.4)] active:scale-95"
-                    : "cursor-not-allowed border border-white/5 bg-white/5 text-gray-600"
-                }`}
+                className={`relative w-full overflow-hidden rounded-lg py-4 font-black uppercase tracking-widest transition-all duration-300 ${isFormValid && !isLoading
+                  ? "bg-gradient-to-r from-[#00F0FF] to-[#39FF14] text-black shadow-[0_0_20px_rgba(57,255,20,0.4)] active:scale-95"
+                  : "cursor-not-allowed border border-white/5 bg-white/5 text-gray-600"
+                  }`}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -233,7 +229,7 @@ export default function RegisterPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    Khởi tạo...
+                    Chờ tí...
                   </span>
                 ) : (
                   "Tạo tài khoản"

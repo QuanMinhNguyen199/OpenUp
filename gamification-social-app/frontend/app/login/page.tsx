@@ -62,7 +62,6 @@ export default function LoginPage() {
       if (response.ok && data.status === "success") {
         localStorage.setItem("user_id", data.user_id.toString());
         localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.username);
         router.push("/lobby");
       } else {
         setErrorMessage("Tên tài khoản hoặc mật khẩu không đúng");
@@ -108,7 +107,7 @@ export default function LoginPage() {
 
       <div className="relative z-10 flex min-h-screen items-center justify-center p-6">
         {/* Login Card */}
-        <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#00F0FF]/50 hover:shadow-[#00F0FF]/20">
+        <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#00F0FF]/90 hover:shadow-[#00F0FF]/50">
           <div className="text-center">
             <h2 className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] bg-clip-text text-4xl font-black uppercase text-transparent drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">
               Đăng nhập
