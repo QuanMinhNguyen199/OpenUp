@@ -67,32 +67,32 @@ export default function LoginPage() {
       } else {
         setErrorMessage("Tên tài khoản hoặc mật khẩu không đúng");
         setErrorVisible(true);
-        setTimeout(() => setErrorVisible(false), 1500);
+        setTimeout(() => setErrorVisible(false), 2000);
       }
     } catch (error) {
       setErrorMessage("Lỗi kết nối server!");
       setErrorVisible(true);
-      setTimeout(() => setErrorVisible(false), 1500);
+      setTimeout(() => setErrorVisible(false), 2000);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#050505] text-white">
       {/* Mesh Gradient Background */}
       <div className="absolute inset-0 z-0 h-full w-full bg-[#050505] overflow-hidden">
         <div
           className="absolute inset-[-100%] animate-strip-fast will-change-transform"
           style={{
             background: `linear-gradient(
-        45deg, 
-        #050505 5%, 
-        #39FF14 25%, 
-        #00F0FF 50%, 
-        #39FF14 75%, 
-        #050505 95%
-      )`,
+              45deg, 
+              #050505 5%, 
+              #39FF14 25%, 
+              #00F0FF 50%, 
+              #39FF14 75%, 
+              #050505 95%
+            )`,
             backgroundSize: '200% 200%',
             opacity: 0.5, // Tăng nhẹ độ sáng
           }}
@@ -110,18 +110,17 @@ export default function LoginPage() {
         {/* Login Card */}
         <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#00F0FF]/50 hover:shadow-[#00F0FF]/20">
           <div className="text-center">
-            <h2 className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] bg-clip-text text-4xl font-black uppercase tracking-widest text-transparent drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">
-              Login Protocol
+            <h2 className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] bg-clip-text text-4xl font-black uppercase text-transparent drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">
+              Đăng nhập
             </h2>
-            <p className="mt-2 text-sm text-gray-400">Authorized Personnel Only</p>
           </div>
 
           <form onSubmit={handleLogin} className="mt-8 space-y-6">
             <div className="space-y-4">
               {/* Username Input */}
               <div className="group relative">
-                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#39FF14]">
-                  User ID / Username
+                <label className="mb-2 block text-sm font-bold uppercase text-[#39FF14]">
+                  Tên tài khoản
                 </label>
                 <input
                   type="text"
@@ -131,10 +130,10 @@ export default function LoginPage() {
                     ? "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
                     : "border-white/10 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.2)]"
                     }`}
-                  placeholder="ENTER USERNAME..."
+                  placeholder="Username"
                 />
                 {usernameError && (
-                  <p className="mt-1 text-xs font-medium text-red-300 animate-pulse">
+                  <p className="mt-1 text-sm font-medium text-red-300 animate-pulse">
                     {usernameError}
                   </p>
                 )}
@@ -142,8 +141,8 @@ export default function LoginPage() {
 
               {/* Password Input */}
               <div className="group relative">
-                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#00F0FF]">
-                  Access Key / Password
+                <label className="mb-2 block text-sm font-bold uppercase text-[#00F0FF]">
+                  Mật khẩu
                 </label>
                 <div className="relative">
                   <input
@@ -200,7 +199,7 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {passwordError && (
-                  <p className="mt-1 text-xs font-medium text-red-500 animate-pulse">
+                  <p className="mt-1 text-sm font-medium text-red-300 animate-pulse">
                     {passwordError}
                   </p>
                 )}
@@ -234,7 +233,7 @@ export default function LoginPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    Processing...
+                    Chờ tí...
                   </span>
                 ) : (
                   "Vào game"
@@ -257,9 +256,9 @@ export default function LoginPage() {
 
       {/* Futuristic Error Notification */}
       {errorVisible && (
-        <div className="fixed inset-x-0 bottom-10 z-50 flex justify-center px-4">
+        <div className="fixed inset-x-0 top-10 z-50 flex justify-center px-4">
           <div className="animate-bounce rounded-lg border-2 border-red-500 bg-black/90 px-8 py-4 text-center font-black uppercase tracking-tighter text-red-500 shadow-[0_0_30px_rgba(239,68,68,0.5)]">
-            <span className="mr-2">⚠ ERROR:</span>
+            <span className="mr-2">⚠</span>
             {errorMessage}
           </div>
         </div>
@@ -267,27 +266,27 @@ export default function LoginPage() {
 
       {/* Global CSS for some effects */}
       <style jsx global>{`
-  @keyframes strip-fast {
-    0% {
-      background-position: 0% 50%;
-      transform: rotate(0deg);
-    }
-    50% {
-      /* Di chuyển dải màu cực nhanh qua điểm đối xứng */
-      background-position: 100% 50%;
-      transform: rotate(4deg) scale(1.1);
-    }
-    100% {
-      background-position: 0% 50%;
-      transform: rotate(0deg);
-    }
-  }
+        @keyframes strip-fast {
+          0% {
+            background-position: 0% 50%;
+            transform: rotate(0deg);
+          }
+          50% {
+            /* Di chuyển dải màu cực nhanh qua điểm đối xứng */
+            background-position: 100% 50%;
+            transform: rotate(4deg) scale(1.1);
+          }
+          100% {
+            background-position: 0% 50%;
+            transform: rotate(0deg);
+          }
+        }
 
-  .animate-strip-fast {
-    /* Tốc độ được đẩy lên 4 giây - Rất nhanh và sôi động */
-    animation: strip-fast 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-`}</style>
+        .animate-strip-fast {
+          /* Tốc độ 4 giây */
+          animation: strip-fast 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+      `}</style>
     </div>
   );
 }
