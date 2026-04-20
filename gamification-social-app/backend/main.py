@@ -125,57 +125,70 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 # --- ENDPOINTS GAMEPLAY (AI & NPC) ---
 
-app.get("/game/scenario/{npc_id}")
-async def get_scenario(npc_id: int, user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+@app.get("/game/scenario/{npc_id}")
+async def get_scenario(
+    npc_id: int, 
+    user_id: int, 
+    turn: int = 1, # Thêm turn để AI biết đang ở lượt mấy (1, 2, hoặc 3)
+    db: Session = Depends(get_db), 
+    x_token: str = Header(None)
+):
     verify_token(user_id, db, x_token)
     
     npc = db.query(models.NPC).get(npc_id)
     if not npc:
         raise HTTPException(status_code=404, detail="NPC không tồn tại!")
 
-    # Member 2: Lấy nguyên liệu từ heirloom (nếu có)
-    ingredient_name = npc.heirloom[0].name if npc.heirloom else "bí mật pha chế"
+    # Member 2: Lấy nguyên liệu từ heirloom
+    ingredient_name = npc.heirloom[0].name if npc.heirloom else "bí mật giao tiếp"
     
-    # Gọi AI sinh nội dung dựa trên tính cách và Map
-    ai_content = await generate_npc_dialog(npc.name, ingredient_name)
+    # Gọi AI sinh nội dung (Member 1 nhớ cập nhật hàm generate_npc_dialog nhận thêm turn)
+    ai_content = await generate_npc_dialog(npc.name, ingredient_name, turn)
     
-    # Mix lựa chọn để tăng độ khó
     options = ai_content["options"]
     random.shuffle(options) 
 
     return {
         "npc_name": npc.name,
         "map_location": npc.map_location,
+        "turn": turn, # Trả về turn để Frontend dễ quản lý
         "npc_question": ai_content["question"],
         "options": options
     }
 
 @app.post("/game/choose-option")
-def choose_option(npc_id: int, option_type: str, user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+def choose_option(
+    npc_id: int, 
+    option_type: str, 
+    user_id: int, 
+    db: Session = Depends(get_db), 
+    x_token: str = Header(None)
+):
     """
     option_type: 'good', 'neutral', 'bad'
     """
     verify_token(user_id, db, x_token)
     
+    # Tìm hoặc tạo mới bản ghi hội thoại
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id).first()
     if not conv:
         conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=0.0)
         db.add(conv)
 
-    # Logic điểm mới của Member 2
+    # Tính điểm EQ theo thiết kế của Member 2
     points = {"good": 10.0, "neutral": 0.0, "bad": -10.0}
     bonus = points.get(option_type, 0.0)
     
+    # Cập nhật điểm (Trigger trên Supabase sẽ tự động tặng đồ nếu chạm 100)
     conv.affinity_score = max(0, min(100, conv.affinity_score + bonus))
     
-    # Lưu xuống DB - Lúc này TRIGGER trên Supabase sẽ tự chạy để tặng đồ
     db.commit()
     db.refresh(conv)
 
     return {
         "new_affinity": conv.affinity_score,
         "status": "success",
-        "message": f"Điểm thiện cảm hiện tại: {conv.affinity_score}/100"
+        "message": f"Điểm thiện cảm: {conv.affinity_score}/100"
     }
 
 # --- ENDPOINT BOSS (DRAG & DROP) ---

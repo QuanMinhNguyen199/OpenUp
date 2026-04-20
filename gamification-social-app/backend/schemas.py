@@ -1,17 +1,18 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import datetime
 
 # --- SCHEMAS CHO AI & NPC DIALOG ---
 
 class DialogOptionSchema(BaseModel):
     text: str
     option_type: str  # 'good', 'neutral', 'bad'
-    feedback: str
+    feedback: str     # Giải thích tại sao (dành cho mục đích giáo dục EQ)
 
 class NPCScenarioResponse(BaseModel):
     npc_name: str
     map_location: str
+    turn: int         # Lượt hiện tại (1, 2, 3)
+    is_final_turn: bool # Đánh dấu lượt cuối để Frontend biết khi nào kết thúc phiên
     question: str
     options: List[DialogOptionSchema]
 
@@ -20,42 +21,36 @@ class NPCScenarioResponse(BaseModel):
 class ChoiceRequest(BaseModel):
     npc_id: int
     user_id: int
-    option_type: str # Frontend gửi về 'good', 'neutral' hoặc 'bad'
+    option_type: str 
+    current_turn: int # Gửi kèm turn để DB cập nhật lượt hội thoại
 
 class ChoiceResponse(BaseModel):
     new_affinity: float
-    feedback: str
+    npc_feedback: str   # "Ồ, em thấu hiểu chị quá..."
+    system_message: str # "Điểm thiện cảm +10. Bạn đang ở lượt 2/3."
     unlocked_item: bool
-    message: str # Thông báo ví dụ: "Bạn nhận được Muối biển!"
+    item_name: Optional[str] = None # Tên vật phẩm nếu vừa được mở khóa
 
 # --- SCHEMAS CHO BOSS (DRAG & DROP) ---
 
 class BossChallengeRequest(BaseModel):
     user_id: int
-    # Danh sách tên nguyên liệu hoặc ID theo thứ tự người chơi xếp
-    user_items: List[str] 
+    # Gửi List ID để đảm bảo tính chính xác kỹ thuật
+    user_item_ids: List[int] 
 
 class BossResponse(BaseModel):
     is_correct: bool
-    message: str
-    status: str # 'WIN' hoặc 'RETRY'
+    message: str       # Lời mắng hoặc khen của Cụ Phan
+    status: str        # 'WIN' hoặc 'RETRY'
 
 # --- SCHEMAS CHO USER & COLLECTION ---
-
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    level: int
-    total_xp: int
-
-    class Config:
-        from_attributes = True
 
 class CollectionItemResponse(BaseModel):
     id: int
     name: str
     description: Optional[str]
     is_owned: bool
+    step_order: Optional[int] # Để Frontend biết thứ tự sắp xếp trong túi đồ
 
     class Config:
         from_attributes = True
