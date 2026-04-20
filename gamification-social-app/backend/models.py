@@ -20,14 +20,14 @@ class NPC(Base):
     __tablename__ = "npcs"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    role = Column(String) # Ví dụ: Kiến trúc sư, Chủ quán...
-    base_prompt = Column(Text) # Mô tả tính cách để nạp vào AI
-    map_location = Column(String, default="Cafe") # Map mà NPC này xuất hiện (OpenUp! Maps)
+    role = Column(String)
+    base_prompt = Column(Text)
+    map_location = Column(String, default="Cafe")
     
     conversations = relationship("Conversation", back_populates="npc")
     scenarios = relationship("DialogScenario", back_populates="npc")
-    # heirlooms là danh sách vật phẩm NPC nắm giữ (Thường là 1)
-    heirloom = relationship("Collection", back_populates="npc")
+    # Thêm uselist=False để lấy trực tiếp npc.heirloom thay vì một list
+    heirloom = relationship("Collection", back_populates="npc", uselist=False)
 
 class DialogScenario(Base):
     __tablename__ = "dialog_scenarios"
@@ -83,8 +83,11 @@ class Conversation(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     npc_id = Column(Integer, ForeignKey("npcs.id"))
     
-    # Điểm thân thiện tích lũy (0.0 -> 100.0)
     affinity_score = Column(Float, default=0.0) 
+    
+    # MỚI: Lưu lượt hội thoại hiện tại (Ví dụ: đang ở lượt 2/3)
+    # Điều này giúp nếu người chơi thoát ra vào lại, AI vẫn biết đang nói dở ở đâu.
+    current_turn = Column(Integer, default=1) 
     
     last_interaction = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
