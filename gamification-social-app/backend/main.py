@@ -22,7 +22,7 @@ app = FastAPI(title="Salted Coffee RPG API - Full Version")
 # --- CẤU HÌNH CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Khi deploy thật hãy thay "*" bằng URL của Vercel
+    allow_origins=["https://a20-app-061.onrender.com", "http://localhost:3000"],  # Khi deploy thật hãy thay "*" bằng URL của Vercel
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
