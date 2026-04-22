@@ -20,11 +20,7 @@ app = FastAPI(title="OpenUp! Social RPG API - Chapter System")
 
 app.add_middleware(
     CORSMiddleware,
-<<<<<<< HEAD
-    allow_origins=["*"],
-=======
     allow_origins=["https://a20-app-061.onrender.com", "http://localhost:3000"],  # Khi deploy thật hãy thay "*" bằng URL của Vercel
->>>>>>> 88550b7eab32568e44a01f4942f198086fb7b261
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
