@@ -42,6 +42,14 @@ def verify_password(plain_password, hashed_password):
 
     return get_password_hash(plain_password) == hashed_password
 
+def is_strong_password(password: str) -> bool:
+    # Yêu cầu: Ít nhất 6 ký tự, có cả chữ (a-z, A-Z) và số (0-9)
+    if len(password) < 6:
+        return False
+    has_letter = re.search(r"[a-zA-Z]", password)
+    has_digit = re.search(r"\d", password)
+    return bool(has_letter and has_digit)
+
 def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user or user.token != x_token or x_token is None:
@@ -119,6 +127,12 @@ async def register(data: RegisterRequest, db: Session = Depends(get_db)):
     
     if db.query(models.User).filter_by(username=clean_username).first():
         raise HTTPException(status_code=400, detail="Tài khoản này đã có người sử dụng!")
+    
+    if not is_strong_password(data.password):
+        raise HTTPException(
+            status_code=400, 
+            detail="Mật khẩu phải có ít nhất 6 ký tự, bao gồm cả chữ cái và chữ số!"
+        )
 
     # 2. Tạo Token và User mới
     random_token = secrets.token_hex(32)
