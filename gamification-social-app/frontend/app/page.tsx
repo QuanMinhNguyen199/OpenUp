@@ -3,15 +3,18 @@ import Typewriter from "./components/Typewriter";
 
 export default function HomePage() {
   return (
-    <main
-      className="relative flex min-h-screen flex-col"
-      style={{
-        backgroundImage: "url('/bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <main className="relative flex min-h-screen flex-col overflow-hidden">
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/bg_video.mp4" type="video/mp4" />
+      </video>
+
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-black/50" />
 
@@ -38,7 +41,7 @@ export default function HomePage() {
         {/* Centered hero text */}
         <div className="flex flex-1 flex-col items-center justify-center px-4 text-center gap-y-20 mt-[-4rem]">
           <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl">
-            Game học giao tiếp với AI
+            OpenUp: học giao tiếp với AI
           </h1>
           <div className="flex flex-col gap-y-6">
             <p className="mb-3 text-3xl font-medium text-white md:text-4xl flex items-center justify-center gap-2 flex-wrap">
