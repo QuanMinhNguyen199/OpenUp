@@ -38,6 +38,10 @@ def get_db():
 def get_password_hash(password: str):
     return hashlib.sha256(password.encode()).hexdigest()
 
+def verify_password(plain_password, hashed_password):
+
+    return get_password_hash(plain_password) == hashed_password
+
 def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user or user.token != x_token or x_token is None:
@@ -46,6 +50,117 @@ def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
             detail="Phiên đăng nhập hết hạn!"
         )
     return user
+
+# --- TỰ ĐỘNG TẠO ADMIN ---
+
+@app.on_event("startup")
+
+async def startup_event():
+
+    db = database.SessionLocal()
+
+    try:
+
+        default_admins = [
+
+            {"username": "admin_quan", "password": "123456"},
+
+            {"username": "admin_tri", "password": "654321"}
+
+        ]
+
+        for admin in default_admins:
+
+            exists = db.query(models.User).filter_by(username=admin["username"]).first()
+
+            if not exists:
+
+                new_admin = models.User(
+
+                    username=admin["username"],
+
+                    password_hash=get_password_hash(admin["password"]),
+
+                    role="ADMIN"
+
+                )
+
+                db.add(new_admin)
+
+        db.commit()
+
+    except Exception as e:
+
+        print(f"Lỗi khởi tạo Admin: {e}")
+
+    finally:
+        db.close()
+
+# --- SCHEMAS ---
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+
+class BossChallengeRequest(BaseModel):
+    user_id: int
+    user_items: List[str]
+
+# --- ENDPOINTS AUTH ---
+@app.post("/api/register")
+async def register(data: RegisterRequest, db: Session = Depends(get_db)):
+    # 1. Validate Username (Thêm lowercase để tránh tạo 2 account "Admin" và "admin")
+    clean_username = data.username.strip().lower()
+    if len(clean_username) < 3 or not re.match("^[a-zA-Z0-9_]*$", clean_username):
+        raise HTTPException(status_code=400, detail="Username không hợp lệ (tối thiểu 3 ký tự, không dấu)!")
+    
+    if db.query(models.User).filter_by(username=clean_username).first():
+        raise HTTPException(status_code=400, detail="Tài khoản này đã có người sử dụng!")
+
+    # 2. Tạo Token và User mới
+    random_token = secrets.token_hex(32)
+    new_user = models.User(
+        username=clean_username,
+        password_hash=get_password_hash(data.password),
+        role="PLAYER",
+        token=random_token,
+        level=1, # Đảm bảo bắt đầu từ Chap 1
+        total_xp=0
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return {
+        "status": "success", 
+        "user_id": new_user.id, 
+        "token": random_token,
+        "current_chapter": new_user.level
+    }
+
+@app.post("/api/login")
+async def login(data: LoginRequest, db: Session = Depends(get_db)):
+    clean_username = data.username.strip().lower()
+    user = db.query(models.User).filter_by(username=clean_username).first()
+    
+    if not user or not verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Tên đăng nhập hoặc mật khẩu không chính xác")
+    
+    # Tạo token mới mỗi lần login để đảm bảo an toàn
+    random_token = secrets.token_hex(32)
+    user.token = random_token
+    db.commit()
+    
+    return {
+        "status": "success", 
+        "user_id": user.id, 
+        "token": random_token, 
+        "username": user.username,
+        "current_chapter": user.level # Trả về level để Frontend load Map
+    }
 
 # --- ENDPOINTS GAMEPLAY (CHAPTER LOGIC) ---
 
