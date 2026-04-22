@@ -4,7 +4,6 @@ import secrets
 from typing import List, Optional
 import random
 
-
 from fastapi import FastAPI, Depends, HTTPException, status, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -17,12 +16,11 @@ from ai_service import generate_npc_dialog
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI(title="Salted Coffee RPG API - Full Version")
+app = FastAPI(title="OpenUp! Social RPG API - Chapter System")
 
-# --- CẤU HÌNH CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Khi deploy thật hãy thay "*" bằng URL của Vercel
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,110 +38,46 @@ def get_db():
 def get_password_hash(password: str):
     return hashlib.sha256(password.encode()).hexdigest()
 
-def verify_password(plain_password, hashed_password):
-    return get_password_hash(plain_password) == hashed_password
-
 def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user or user.token != x_token or x_token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Phiên đăng nhập hết hạn hoặc không hợp lệ!"
+            detail="Phiên đăng nhập hết hạn!"
         )
     return user
 
-# --- TỰ ĐỘNG TẠO ADMIN ---
-@app.on_event("startup")
-async def startup_event():
-    db = database.SessionLocal()
-    try:
-        default_admins = [
-            {"username": "admin_quan", "password": "123456"},
-            {"username": "admin_tri", "password": "654321"}
-        ]
-        for admin in default_admins:
-            exists = db.query(models.User).filter_by(username=admin["username"]).first()
-            if not exists:
-                new_admin = models.User(
-                    username=admin["username"],
-                    password_hash=get_password_hash(admin["password"]),
-                    role="ADMIN"
-                )
-                db.add(new_admin)
-        db.commit()
-    except Exception as e:
-        print(f"Lỗi khởi tạo Admin: {e}")
-    finally:
-        db.close()
-
-# --- SCHEMAS ---
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-class RegisterRequest(BaseModel):
-    username: str
-    password: str
-
-class BossChallengeRequest(BaseModel):
-    user_id: int
-    user_items: List[str]
-
-# --- ENDPOINTS AUTH ---
-
-@app.post("/api/register")
-async def register(data: RegisterRequest, db: Session = Depends(get_db)):
-    if len(data.username) < 3 or not re.match("^[a-zA-Z0-9_]*$", data.username):
-        raise HTTPException(status_code=400, detail="Username không hợp lệ!")
-    
-    if db.query(models.User).filter_by(username=data.username).first():
-        raise HTTPException(status_code=400, detail="Tài khoản đã tồn tại!")
-
-    random_token = secrets.token_hex(32)
-    new_user = models.User(
-        username=data.username,
-        password_hash=get_password_hash(data.password),
-        role="PLAYER",
-        token=random_token
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    
-    return {"status": "success", "user_id": new_user.id, "token": random_token}
-
-@app.post("/api/login")
-async def login(data: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter_by(username=data.username).first()
-    if not user or not verify_password(data.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Sai tài khoản hoặc mật khẩu")
-    
-    random_token = secrets.token_hex(32)
-    user.token = random_token
-    db.commit()
-    return {"status": "success", "user_id": user.id, "token": random_token, "username": user.username}
-
-# --- ENDPOINTS GAMEPLAY (AI & NPC) ---
+# --- ENDPOINTS GAMEPLAY (CHAPTER LOGIC) ---
 
 @app.get("/game/scenario/{npc_id}")
 async def get_scenario(
     npc_id: int, 
     user_id: int, 
-    turn: int = 1, # Thêm turn để AI biết đang ở lượt mấy (1, 2, hoặc 3)
     db: Session = Depends(get_db), 
     x_token: str = Header(None)
 ):
-    verify_token(user_id, db, x_token)
+    user = verify_token(user_id, db, x_token)
     
+    # 1. Kiểm tra quyền vào Chapter (Chặn nhảy cóc)
+    if npc_id > user.level and npc_id != 8:
+        raise HTTPException(status_code=403, detail="Bạn chưa mở khóa Chapter này!")
+
+    # 2. Lấy hội thoại hiện tại hoặc tạo mới
+    conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id).first()
+    if not conv:
+        conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=20.0)
+        db.add(conv)
+        db.commit()
+        db.refresh(conv)
+
     npc = db.query(models.NPC).get(npc_id)
     if not npc:
         raise HTTPException(status_code=404, detail="NPC không tồn tại!")
 
-    # Member 2: Lấy nguyên liệu từ heirloom
-    ingredient_name = npc.heirloom[0].name if npc.heirloom else "bí mật giao tiếp"
+    artifact_name = npc.heirloom.name if npc.heirloom else "Mảnh ghép tri thức"
     
-    # Gọi AI sinh nội dung (Member 1 nhớ cập nhật hàm generate_npc_dialog nhận thêm turn)
-    ai_content = await generate_npc_dialog(npc.name, ingredient_name, turn)
+    # Gọi AI sinh nội dung dựa trên lượt hiện tại của User với NPC này
+    ai_content = await generate_npc_dialog(npc.name, artifact_name, conv.current_turn)
     
     options = ai_content["options"]
     random.shuffle(options) 
@@ -151,9 +85,10 @@ async def get_scenario(
     return {
         "npc_name": npc.name,
         "map_location": npc.map_location,
-        "turn": turn, # Trả về turn để Frontend dễ quản lý
+        "turn": conv.current_turn,
         "npc_question": ai_content["question"],
-        "options": options
+        "options": options,
+        "current_affinity": conv.affinity_score
     }
 
 @app.post("/game/choose-option")
@@ -164,57 +99,103 @@ def choose_option(
     db: Session = Depends(get_db), 
     x_token: str = Header(None)
 ):
-    """
-    option_type: 'good', 'neutral', 'bad'
-    """
-    verify_token(user_id, db, x_token)
+    user = verify_token(user_id, db, x_token)
     
-    # Tìm hoặc tạo mới bản ghi hội thoại
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id).first()
     if not conv:
-        conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=0.0)
+        conv = models.Conversation(user_id=user_id, npc_id=npc_id, affinity_score=20.0)
         db.add(conv)
 
-    # Tính điểm EQ theo thiết kế của Member 2
-    points = {"good": 10.0, "neutral": 0.0, "bad": -10.0}
+    # 1. Xử lý Neutral Streak (Chống Loop)
+    if option_type == "neutral":
+        conv.neutral_streak += 1
+    else:
+        conv.neutral_streak = 0
+
+    # 2. Định nghĩa bảng điểm
+    points = {"good": 10.0, "neutral": 0.0, "bad": -25.0} # Phạt Bad nặng để tăng kịch tính
     bonus = points.get(option_type, 0.0)
     
-    # Cập nhật điểm (Trigger trên Supabase sẽ tự động tặng đồ nếu chạm 100)
-    conv.affinity_score = max(0, min(100, conv.affinity_score + bonus))
+    potential_score = conv.affinity_score + bonus
     
+    is_chapter_failed = False
+    is_kicked = False
+    unlocked_new_chapter = False
+    message = ""
+
+    # 3. KIỂM TRA ĐIỀU KIỆN THẤT BẠI
+    if potential_score <= 0:
+        is_chapter_failed = True
+        conv.affinity_score = 20.0  # Reset Chapter hiện tại về điểm vốn
+        conv.current_turn = 1       # Reset về lượt đầu
+        conv.neutral_streak = 0
+        message = "Thất bại! NPC đã mất sạch lòng tin. Bạn phải làm lại Chapter này từ đầu."
+    
+    elif conv.neutral_streak >= 3:
+        is_kicked = True
+        conv.affinity_score = max(0, conv.affinity_score - 10.0)
+        conv.current_turn = 1 
+        conv.neutral_streak = 0
+        message = "NPC cảm thấy bạn quá hời hợt và không muốn tiếp chuyện nữa."
+
+    # 4. KIỂM TRA ĐIỀU KIỆN THÀNH CÔNG
+    else:
+        conv.affinity_score = min(100, potential_score)
+        
+        if conv.affinity_score >= 100 and user.level == npc_id:
+            user.level += 1  # Auto-save: Tiến trình tổng tăng lên
+            user.total_xp += 100
+            unlocked_new_chapter = True
+            conv.current_turn = 1 # Reset lượt cho lần gặp sau (nếu có)
+            message = "Chúc mừng! Bạn đã nhận được mảnh ghép và mở khóa Chapter tiếp theo!"
+        else:
+            conv.current_turn += 1
+            message = f"Thiện cảm: {conv.affinity_score}/100"
+
     db.commit()
-    db.refresh(conv)
 
     return {
         "new_affinity": conv.affinity_score,
-        "status": "success",
-        "message": f"Điểm thiện cảm: {conv.affinity_score}/100"
+        "is_chapter_completed": unlocked_new_chapter,
+        "is_chapter_failed": is_chapter_failed,
+        "is_kicked": is_kicked,
+        "next_chapter_id": user.level if unlocked_new_chapter else None,
+        "message": message
     }
 
-# --- ENDPOINT BOSS (DRAG & DROP) ---
+# --- ENDPOINT BOSS (SLIDING PUZZLE) ---
 
 @app.post("/game/boss-challenge")
-async def boss_challenge(data: BossChallengeRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
-    # 1. Bảo mật
-    verify_token(data.user_id, db, x_token)
+async def boss_challenge(
+    user_id: int, 
+    user_tile_sequence: List[int], # ID các mảnh theo thứ tự từ ô 0-8
+    db: Session = Depends(get_db), 
+    x_token: str = Header(None)
+):
+    user = verify_token(user_id, db, x_token)
     
-    # 2. Gọi logic kiểm tra của Member 2
-    result = check_boss_sequence(data.user_items)
+    if user.level < 8:
+        raise HTTPException(status_code=400, detail="Cháu chưa đủ trải nghiệm để gặp ta!")
+
+    # Member 2 check logic puzzle trượt hình
+    result = check_boss_sequence(user_tile_sequence)
     
+    if result["is_correct"]:
+        user.level = 9 # Trạng thái phá đảo Chapter 1
+        db.commit()
+
     return result
 
-@app.get("/api/user/codex/{user_id}")
-def get_user_codex(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
-    verify_token(user_id, db, x_token)
-    unlocked_ids = [c.collection_id for c in db.query(models.UserCollection).filter_by(user_id=user_id).all()]
-    all_ingredients = db.query(models.Collection).order_by(models.Collection.step_order).all()
-    
-    return [{
-        "id": item.id,
-        "name": item.name if item.id in unlocked_ids else "???",
-        "is_owned": item.id in unlocked_ids
-    } for item in all_ingredients]
+@app.get("/api/user/status/{user_id}")
+def get_user_status(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(user_id, db, x_token)
+    return {
+        "username": user.username,
+        "current_chapter": user.level,
+        "total_xp": user.total_xp,
+        "is_finished_v1": user.level >= 9
+    }
 
 @app.get("/")
 def read_root():
-    return {"message": "API Salted Coffee is Online - Ready for Demo"}
+    return {"message": "OpenUp! Engine - Social RPG Logic Online"}

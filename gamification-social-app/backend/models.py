@@ -10,7 +10,8 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, default="PLAYER") 
     token = Column(String, nullable=True)
-    level = Column(Integer, default=1)
+    # level = Chapter hiện tại của người chơi (1, 2, 3...)
+    level = Column(Integer, default=1) 
     total_xp = Column(Integer, default=0)
     
     conversations = relationship("Conversation", back_populates="user")
@@ -26,7 +27,6 @@ class NPC(Base):
     
     conversations = relationship("Conversation", back_populates="npc")
     scenarios = relationship("DialogScenario", back_populates="npc")
-    # Thêm uselist=False để lấy trực tiếp npc.heirloom thay vì một list
     heirloom = relationship("Collection", back_populates="npc", uselist=False)
 
 class DialogScenario(Base):
@@ -34,7 +34,7 @@ class DialogScenario(Base):
     id = Column(Integer, primary_key=True, index=True)
     npc_id = Column(Integer, ForeignKey("npcs.id"))
     npc_question = Column(Text, nullable=False)
-    context = Column(Text) # Ngữ cảnh Map
+    context = Column(Text) 
     
     npc = relationship("NPC", back_populates="scenarios")
     options = relationship("DialogOption", back_populates="scenario")
@@ -44,25 +44,23 @@ class DialogOption(Base):
     id = Column(Integer, primary_key=True, index=True)
     scenario_id = Column(Integer, ForeignKey("dialog_scenarios.id"))
     option_text = Column(String)
-    
-    # Thay đổi theo yêu cầu Member 2: Phân loại 3 mức độ
-    # type có thể là: 'good' (+10), 'neutral' (0), 'bad' (-10)
     option_type = Column(String, default="neutral") 
-    
-    feedback = Column(String) # Phản hồi của NPC khi chọn câu này
+    feedback = Column(String) 
 
     scenario = relationship("DialogScenario", back_populates="options")
 
 class Collection(Base):
     __tablename__ = "collections"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False) # Tên nguyên liệu
+    name = Column(String, nullable=False) 
     description = Column(Text)
     npc_id = Column(Integer, ForeignKey("npcs.id"))
     
-    # Thứ tự trong công thức pha chế của Boss Cụ Phan
+    # MỚI: Vị trí đúng trong Sliding Puzzle (0-8)
+    target_idx = Column(Integer, nullable=True) 
+    
+    # Vẫn giữ để làm thứ tự thu thập nếu cần
     step_order = Column(Integer, nullable=True) 
-    # Mặc định là 100.0 theo yêu cầu mới của Member 2
     required_affinity = Column(Float, default=100.0) 
 
     npc = relationship("NPC", back_populates="heirloom")
@@ -82,11 +80,9 @@ class Conversation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     npc_id = Column(Integer, ForeignKey("npcs.id"))
+    neutral_streak = Column(Integer, default=0)
     
     affinity_score = Column(Float, default=0.0) 
-    
-    # MỚI: Lưu lượt hội thoại hiện tại (Ví dụ: đang ở lượt 2/3)
-    # Điều này giúp nếu người chơi thoát ra vào lại, AI vẫn biết đang nói dở ở đâu.
     current_turn = Column(Integer, default=1) 
     
     last_interaction = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
