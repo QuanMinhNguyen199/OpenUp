@@ -25,7 +25,12 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
 
 ]
 
-
+def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
+  event0 = EVENT_PROMPT[0] if event else ''
+  event1 = EVENT_PROMPT[1] if event else ''
+  case0 = STORY_MODE_PROMPTS[index]['case'][case][0]
+  case1 = STORY_MODE_PROMPTS[index]['case'][case][1]
+  return STORY_MODE_PROMPTS[index]['prompt'], STORY_MODE_PROMPTS[index]['return'].format(event0=event0, event1=event1, case0=case0, case1=case1)
 
 
 # Từ đây trở xuống tạm thời bỏ đi
