@@ -6,6 +6,36 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ---
 
+## Tuần 4 — 24/04/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
+
+### Đã làm
+- Hoàn thiện bộ UI đồng nhất cho cụm màn hình Login/Register
+- chốt gameplay tổng quan cho story mode
+- deploy fe và be
+- xây prompt mẫu
+
+### Khó nhất tuần này
+- thống nhất gameplay cho ngưởi chơi
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Gemini | Nhờ nhận xét gameplay mới và cũ, tham khảo 1 số hướng triển khai màn cuối | chốt đc gameplay và màn cuối |
+
+### Học được
+- cách deploy 1 dự án
+
+### Nếu làm lại, sẽ làm khác
+- k có
+
+### Kế hoạch tuần tới
+- Hoàn thiện các prompt cho story mode
+- Tạo UI lobby
+- Làm route phản hồi cho story mode
+
+---
+
 ## Tuần 3 — 17/04/2026
 **Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
 
