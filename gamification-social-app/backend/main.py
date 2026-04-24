@@ -117,6 +117,13 @@ class BossChallengeRequest(BaseModel):
     user_id: int
     user_items: List[str]
 
+class StoryModeRequest(BaseModel):
+    user_id: int
+    index: int
+    event: bool
+    case: int
+    history: list[dict]
+
 # --- ENDPOINTS AUTH ---
 @app.post("/api/register")
 async def register(data: RegisterRequest, db: Session = Depends(get_db)):
