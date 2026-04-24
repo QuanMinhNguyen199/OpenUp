@@ -78,3 +78,7 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
 #     "Hương": "Tình huống: Nói 'không sao' nhưng tay run và nhìn né tránh. Kỹ năng: Nhận diện ngôn ngữ cơ thể và hỏi han tinh tế.",
 #     "Ông Ba": "Tình huống: Nhờ bạn làm một việc sai quy định của quán. Kỹ năng: Cách nói 'Không' nhưng vẫn giữ được sự kính trọng."
 # }
+
+# keep to avoid bugs but not use
+NPC_SYSTEM_PROMPT = ''
+SPECIFIC_NPC_CONTEXT = {'':''}
