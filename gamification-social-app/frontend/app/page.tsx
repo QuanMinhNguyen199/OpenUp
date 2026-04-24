@@ -11,6 +11,7 @@ export default function HomePage() {
         muted
         playsInline
         className="absolute inset-0 h-full w-full object-cover"
+        poster="/bg_poster.jpg"
       >
         <source src="/bg_vid.mp4" type="video/mp4" />
       </video>
