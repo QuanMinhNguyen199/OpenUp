@@ -1,7 +1,7 @@
 import hashlib
 import re
 import secrets
-from typing import List, Optional
+from typing import List, TypedDict, Optional
 import random
 
 from fastapi import FastAPI, Depends, HTTPException, status, Header
@@ -117,12 +117,16 @@ class BossChallengeRequest(BaseModel):
     user_id: int
     user_items: List[str]
 
+class History(TypedDict):
+    role: str
+    content: str
+
 class StoryModeRequest(BaseModel):
     user_id: int
     index: int
     event: bool
     case: int
-    history: list[dict]
+    history: List[History]
 
 # --- ENDPOINTS AUTH ---
 @app.post("/api/register")

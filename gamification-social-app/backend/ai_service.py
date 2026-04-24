@@ -5,6 +5,7 @@ from google import genai
 from dotenv import load_dotenv
 # Nhớ kiểm tra file prompts có tên đúng là system_prompts.py không nhé
 from system_prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
+import openai
 
 load_dotenv()
 
