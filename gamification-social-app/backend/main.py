@@ -200,7 +200,7 @@ async def get_scenario(
     user = verify_token(user_id, db, x_token)
     
     # 1. Kiểm tra quyền vào Chapter (Chặn nhảy cóc)
-    if npc_id > user.level and npc_id != 8:
+    if npc_id > user.chap and npc_id != 8:
         raise HTTPException(status_code=403, detail="Bạn chưa mở khóa Chapter này!")
 
     # 2. Lấy hội thoại hiện tại hoặc tạo mới
@@ -283,12 +283,17 @@ def choose_option(
     else:
         conv.affinity_score = min(100, potential_score)
         
-        if conv.affinity_score >= 100 and user.level == npc_id:
-            user.level += 1  # Auto-save: Tiến trình tổng tăng lên
-            user.total_xp += 100
+        # Chỉ chuyển Chapter nếu đây là NPC đang trùng với Savepoint hiện tại
+        if conv.affinity_score >= 100 and user.chap == npc_id:
+            user.chap += 1       # Tiến trình cốt truyện đi tiếp
+            user.total_xp += 150 # Thưởng 150 XP khi qua màn
+            
+            # Công thức tính Level đơn giản: Cứ 200 XP thì lên 1 Level
+            user.level = (user.total_xp // 200) + 1 
+            
             unlocked_new_chapter = True
-            conv.current_turn = 1 # Reset lượt cho lần gặp sau (nếu có)
-            message = "Chúc mừng! Bạn đã nhận được mảnh ghép và mở khóa Chapter tiếp theo!"
+            conv.current_turn = 1 
+            message = f"Chúc mừng! Bạn mở khóa Chapter {user.chap} và đạt Level {user.level}!"
         else:
             conv.current_turn += 1
             message = f"Thiện cảm: {conv.affinity_score}/100"
@@ -300,7 +305,8 @@ def choose_option(
         "is_chapter_completed": unlocked_new_chapter,
         "is_chapter_failed": is_chapter_failed,
         "is_kicked": is_kicked,
-        "next_chapter_id": user.level if unlocked_new_chapter else None,
+        "next_chapter_id": user.chap if unlocked_new_chapter else None, # Đổi thành chap
+        "current_level": user.level, # Trả về để FE có hiệu ứng Level Up
         "message": message
     }
 
@@ -315,14 +321,16 @@ async def boss_challenge(
 ):
     user = verify_token(user_id, db, x_token)
     
-    if user.level < 8:
+    if user.chap < 8:
         raise HTTPException(status_code=400, detail="Cháu chưa đủ trải nghiệm để gặp ta!")
 
     # Member 2 check logic puzzle trượt hình
     result = check_boss_sequence(user_tile_sequence)
     
     if result["is_correct"]:
-        user.level = 9 # Trạng thái phá đảo Chapter 1
+        user.chap = 9 # Đánh dấu phá đảo Chapter 1
+        user.total_xp += 500 # Thưởng khủng đánh Boss
+        user.level = (user.total_xp // 200) + 1
         db.commit()
 
     return result

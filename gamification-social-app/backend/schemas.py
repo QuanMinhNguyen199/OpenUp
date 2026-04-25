@@ -27,16 +27,19 @@ class ChoiceRequest(BaseModel):
 
 class ChoiceResponse(BaseModel):
     new_affinity: float
-    npc_feedback: str
-    system_message: str
-    unlocked_item: bool
+    message: str  # Gộp chung phản hồi để Frontend dễ hiển thị thành 1 popup
+    # --- THÔNG TIN VẬT PHẨM ---
+    unlocked_item: bool = False
     item_name: Optional[str] = None
-    # MỚI: Tín hiệu Auto-save đã nhảy Chapter
+    # --- CÁC CỜ TRẠNG THÁI (Dành cho Member 3 điều hướng UI) ---
     is_chapter_completed: bool 
-    next_chapter: Optional[int] = None 
+    is_chapter_failed: bool
+    is_kicked: bool
+    # --- TIẾN TRÌNH CỦA NGƯỜI CHƠI ---
+    next_chapter_id: Optional[int] = None # Dùng 'chap' làm savepoint
+    current_level: int
 
 # --- SCHEMAS CHO BOSS (SLIDING PUZZLE) ---
-
 class BossChallengeRequest(BaseModel):
     user_id: int
     # Danh sách ID mảnh ghép theo thứ tự người chơi trượt (từ ô 0 đến 8)

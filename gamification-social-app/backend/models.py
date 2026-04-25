@@ -11,7 +11,8 @@ class User(Base):
     role = Column(String, default="PLAYER") 
     token = Column(String, nullable=True)
     # level = Chapter hiện tại của người chơi (1, 2, 3...)
-    level = Column(Integer, default=1) 
+    chap = Column(Integer, default=1)  # Lưu Savepoint cốt truyện (1-8)
+    level = Column(Integer, default=1) # Cấp độ RPG (tăng theo XP)
     total_xp = Column(Integer, default=0)
     
     conversations = relationship("Conversation", back_populates="user")
