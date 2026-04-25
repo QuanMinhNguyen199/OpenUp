@@ -62,10 +62,13 @@ export default function HomePage() {
               <Typewriter />
             </p>
             {/* <p className="text-3xl font-semibold text-cyan-300 drop-shadow md:text-4xl"> */}
-            <p className="text-3xl font-semibold md:text-4xl
+            {/* <p className="text-3xl font-semibold md:text-4xl
             bg-gradient-to-r from-[#2eea12] to-[#00e6ff]
             bg-clip-text text-transparent
-            drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]">
+            drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]"> */}
+            <p className="text-3xl font-semibold md:text-4xl
+            text-[#00e6ff]
+            drop-shadow-[0_0_12px_rgba(0,240,255,0.45)]">
               👉🏻 Web này dành cho bạn
             </p>
           </div>
