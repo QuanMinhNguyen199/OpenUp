@@ -26,7 +26,11 @@ export default function HomePage() {
           <Link
             href="/login"
             id="btn-login"
-            className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
+            // className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
+            className="rounded-xl border border-cyan-300/40 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md
+              transition-all duration-200 ease-out
+              hover:bg-cyan-300/10 hover:border-cyan-300/70
+              hover:shadow-[0_0_10px_rgba(0,240,255,0.25)]"
           >
             Đăng nhập
           </Link>
