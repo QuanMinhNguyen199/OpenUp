@@ -33,7 +33,15 @@ export default function HomePage() {
           <Link
             href="/register"
             id="btn-register"
-            className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-8 py-2.5 text-lg font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
+            // className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-8 py-2.5 text-lg font-semibold text-white shadow-lg shadow-violet-500/30 transition-all duration-300 hover:from-violet-400 hover:to-indigo-400 hover:shadow-xl hover:shadow-violet-500/40"
+            className="rounded-xl
+              bg-gradient-to-r from-[#2eea12] to-[#00e6ff]
+              px-8 py-2.5 text-lg font-semibold text-black
+              shadow-[0_0_10px_rgba(0,240,255,0.3),0_0_30px_rgba(0,240,255,0.2)]
+              transition-all duration-200 ease-out
+              hover:brightness-110
+              hover:shadow-[0_0_14px_rgba(0,240,255,0.35),0_0_40px_rgba(0,240,255,0.25)]
+              active:scale-95"
           >
             Đăng ký
           </Link>
@@ -49,7 +57,7 @@ export default function HomePage() {
               <span>Bạn muốn:</span>
               <Typewriter />
             </p>
-            <p className="text-3xl font-semibold text-yellow-300 drop-shadow md:text-4xl">
+            <p className="text-3xl font-semibold text-cyan-300 drop-shadow md:text-4xl">
               👉🏻 Web này dành cho bạn
             </p>
           </div>
