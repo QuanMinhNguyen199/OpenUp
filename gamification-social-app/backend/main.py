@@ -1,7 +1,8 @@
 import hashlib
 import re
 import secrets
-from typing import List, TypedDict, Optional
+from typing import List, Optional
+from typing_extensions import TypedDict
 import random
 
 from fastapi import FastAPI, Depends, HTTPException, status, Header
@@ -137,7 +138,7 @@ async def register(data: RegisterRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username không hợp lệ (tối thiểu 3 ký tự, không dấu)!")
     
     if db.query(models.User).filter_by(username=clean_username).first():
-        raise HTTPException(status_code=400, detail="Tài khoản này đã có người sử dụng!")
+        raise HTTPException(status_code=400, detail="Tên tài khoản này đã bị người khác chiếm!")
     
     if not is_strong_password(data.password):
         raise HTTPException(

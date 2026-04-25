@@ -26,6 +26,10 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
 ]
 
 def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
+  if index < 0 or index > len(STORY_MODE_PROMPTS) - 1:
+    return None, None
+  if case != 0 and case != 1:
+    return None, None
   event0 = EVENT_PROMPT[0] if event else ''
   event1 = EVENT_PROMPT[1] if event else ''
   case0 = STORY_MODE_PROMPTS[index]['case'][case][0]
