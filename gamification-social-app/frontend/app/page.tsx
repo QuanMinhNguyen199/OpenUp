@@ -41,7 +41,7 @@ export default function HomePage() {
             className="rounded-xl
               bg-gradient-to-r from-[#2eea12] to-[#00e6ff]
               px-8 py-2.5 text-lg font-semibold text-black
-              shadow-[0_0_10px_rgba(0,240,255,0.3),0_0_30px_rgba(0,240,255,0.2)]
+              shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_10px_rgba(0,240,255,0.3),0_0_30px_rgba(0,240,255,0.2)]
               transition-all duration-200 ease-out
               hover:brightness-110
               hover:shadow-[0_0_14px_rgba(0,240,255,0.35),0_0_40px_rgba(0,240,255,0.25)]
