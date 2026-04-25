@@ -4,12 +4,60 @@ import asyncio
 from google import genai
 from dotenv import load_dotenv
 # Nhớ kiểm tra file prompts có tên đúng là system_prompts.py không nhé
-from system_prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
-import openai
+from system_prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT, get_story_mode_prompt
+from openai import OpenAI
 
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+openai_client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL"),
+    timeout=60
+)
+
+async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict]):
+    system_prompt, request_prompt = get_story_mode_prompt(index=index, event=event, case=case)
+    # Build messages: system → history → request
+    messages = [{"role": "system", "content": system_prompt}]
+    for msg in history:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": request_prompt})
+
+    MAX_RETRIES = 3
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.8,
+            )
+            raw = response.choices[0].message.content.strip()
+            # Strip markdown code fences if present (```json ... ```)
+            if raw.startswith("```"):
+                raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
+                if raw.endswith("```"):
+                    raw = raw[:-3].strip()
+            return json.loads(raw)
+        except json.JSONDecodeError as e:
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] JSON decode lỗi: {e}\nRaw: {raw}")
+            if attempt == MAX_RETRIES:
+                return {"raw_response": raw}
+            await asyncio.sleep(1)
+        except Exception as e:
+            print(f"❌ [{attempt}/{MAX_RETRIES}] Lỗi gen_dialogue_story_mode: {e}")
+            if attempt == MAX_RETRIES:
+                return {
+                    "npc_behavior": "nhìn bạn chờ đợi",
+                    "npc_say": "Chờ tôi chút",
+                    "options": [
+                        {"option": "Ý bạn là sao?", "quantity": 0},
+                        {"option": "Ừm", "quantity": 0},
+                        {"option": "Để làm gì vậy?", "quantity": 0},
+                    ]
+                }
+            await asyncio.sleep(1)
 
 async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
     """
