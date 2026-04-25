@@ -68,6 +68,7 @@ export default function HomePage() {
             drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]"> */}
             <p className="text-3xl font-semibold md:text-4xl
             text-[#00e6ff]
+            animate-pulse
             drop-shadow-[0_0_12px_rgba(0,240,255,0.45)]">
               👉🏻 Web này dành cho bạn
             </p>
