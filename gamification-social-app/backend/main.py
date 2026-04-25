@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 import models, schemas, database
 from boss_logic import check_boss_sequence
-from ai_service import generate_npc_dialog
+from ai_service import generate_npc_dialog, gen_dialogue_story_mode
 
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
@@ -189,6 +189,27 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 # --- ENDPOINTS GAMEPLAY (CHAPTER LOGIC) ---
+
+@app.post("/story_mode")
+async def story_mode(
+    data: StoryModeRequest,
+    db: Session = Depends(get_db), 
+    x_token: str = Header(None)
+):
+    user = verify_token(data.user_id, db, x_token)
+    if data.index < 0 or data.index > 7:
+        raise HTTPException(status_code=400, detail="Chapter không tồn tại !")
+    elif data.index + 1 > user.chap:
+        raise HTTPException(status_code=403, detail="Bạn chưa đủ trình chơi Chapter này :)")
+    elif data.case != 0 and data.case != 1:
+        raise HTTPException(status_code=400, detail="Trường hợp không tồn tại")
+    result = await gen_dialogue_story_mode(
+        index=data.index,
+        event=data.event,
+        case=data.case,
+        history=data.history
+    )
+    return result
 
 @app.get("/game/scenario/{npc_id}")
 async def get_scenario(

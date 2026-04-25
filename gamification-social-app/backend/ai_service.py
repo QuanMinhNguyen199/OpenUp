@@ -19,6 +19,8 @@ openai_client = OpenAI(
 
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict]):
     system_prompt, request_prompt = get_story_mode_prompt(index=index, event=event, case=case)
+    if system_prompt is None or request_prompt is None:
+        return {"raw_response": None}
     # Build messages: system → history → request
     messages = [{"role": "system", "content": system_prompt}]
     for msg in history:
