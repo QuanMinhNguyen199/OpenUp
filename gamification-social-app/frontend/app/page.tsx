@@ -62,7 +62,7 @@ export default function HomePage() {
                   group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]"></div>
 
             {/* Nội dung giữ nguyên không nghiêng */}
-            <span className="relative z-10 italic">Đăng nhập</span>
+            <span className="relative z-10 italic bg-gradient-to-r from-[#2eea12] to-[#00e6ff] bg-clip-text text-transparent">Đăng nhập</span>
           </Link>
           <Link
             href="/register"
