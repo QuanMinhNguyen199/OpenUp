@@ -71,9 +71,15 @@ export default function HomePage() {
           >
             {/* Lớp nền hình bình hành đổ màu Gradient */}
             <div className="absolute inset-0 skew-x-[-20deg] bg-gradient-to-r from-[#2eea12] to-[#00e6ff] 
-                  shadow-[0_0_20px_rgba(46,234,18,0.3)] transition-all duration-300 
-                  group-hover:brightness-110 group-hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] 
-                  group-active:scale-95"></div>
+            shadow-[0_0_20px_rgba(46,234,18,0.3)] transition-all duration-300 
+            group-hover:brightness-110 group-hover:shadow-[0_0_40px_rgba(0,240,255,0.7)] 
+            group-active:scale-95 overflow-hidden">
+              {/* glow sweep */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100
+              bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent)]
+              translate-x-[-100%] group-hover:translate-x-[100%]
+              transition duration-700"></div>
+            </div>
 
             {/* Nội dung bên trong - dùng italic để hợp với độ nghiêng của nút */}
             <span className="relative z-10 italic">Đăng ký</span>
