@@ -24,7 +24,7 @@ export default function HomePage() {
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Top bar with buttons */}
         <nav className="z-50 flex w-full items-center justify-end gap-3 px-6 py-4">
-          <Link
+          {/* <Link
             href="/login"
             id="btn-login"
             // className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
@@ -49,6 +49,20 @@ export default function HomePage() {
             active:scale-95"
           >
             Đăng ký
+          </Link> */}
+
+          <Link
+            href="/login"
+            id="btn-login"
+            className="group relative px-6 py-2.5 text-lg font-black text-white transition-all duration-300 uppercase tracking-tighter"
+          >
+            {/* Lớp nền hình bình hành */}
+            <div className="absolute inset-0 skew-x-[-20deg] border border-cyan-300/50 bg-cyan-300/10 backdrop-blur-md 
+                  transition-all duration-300 group-hover:border-cyan-300 group-hover:bg-cyan-300/20 
+                  group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]"></div>
+
+            {/* Nội dung giữ nguyên không nghiêng */}
+            <span className="relative z-10 italic">Đăng nhập</span>
           </Link>
         </nav>
 
