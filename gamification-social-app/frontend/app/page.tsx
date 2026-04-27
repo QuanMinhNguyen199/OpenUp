@@ -64,6 +64,20 @@ export default function HomePage() {
             {/* Nội dung giữ nguyên không nghiêng */}
             <span className="relative z-10 italic">Đăng nhập</span>
           </Link>
+          <Link
+            href="/register"
+            id="btn-register"
+            className="group relative px-8 py-2.5 text-lg font-black uppercase tracking-tighter text-black transition-all duration-300"
+          >
+            {/* Lớp nền hình bình hành đổ màu Gradient */}
+            <div className="absolute inset-0 skew-x-[-20deg] bg-gradient-to-r from-[#2eea12] to-[#00e6ff] 
+                  shadow-[0_0_20px_rgba(46,234,18,0.3)] transition-all duration-300 
+                  group-hover:brightness-110 group-hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] 
+                  group-active:scale-95"></div>
+
+            {/* Nội dung bên trong - dùng italic để hợp với độ nghiêng của nút */}
+            <span className="relative z-10 italic">Đăng ký</span>
+          </Link>
         </nav>
 
         {/* Centered hero text */}
