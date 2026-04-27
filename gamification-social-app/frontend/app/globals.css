@@ -55,7 +55,7 @@ body {
   text-shadow: 0 0 7px #39ff14;
 }
 
-* {
+/* * {
   cursor: none;
 }
 
@@ -68,8 +68,46 @@ body {
   pointer-events: none;
   z-index: 9999;
   box-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF;
-}
+} */
 
 .cursor-dot {
   z-index: 9999;
+}
+
+* {
+  cursor: none;
+}
+
+/* Dot (core) */
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: #00F0FF;
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF;
+}
+
+/* Ring (outer) */
+.cursor-ring {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(0, 240, 255, 0.6);
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.2s ease-out, opacity 0.2s;
+}
+
+/* Hover state */
+.cursor-hover .cursor-ring {
+  transform: scale(10.8);
+  opacity: 0.8;
+}
+
+.cursor-hover .cursor-dot {
+  transform: scale(1.5);
 }
