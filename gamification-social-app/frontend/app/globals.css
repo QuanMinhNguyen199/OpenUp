@@ -109,5 +109,7 @@ body {
 }
 
 .cursor-hover .cursor-dot {
-  transform: scale(1.5);
+  transform: scale(5.5);
+  background: #39FF14;
+  box-shadow: 0 0 15px #39FF14, 0 0 30px #39FF14;
 }

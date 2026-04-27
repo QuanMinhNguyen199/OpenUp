@@ -40,6 +40,13 @@ export default function Cursor() {
 
         animate();
         window.addEventListener("mousemove", move);
+        window.addEventListener("mousedown", () => {
+            ring.style.transform += " scale(0.8)";
+        });
+
+        window.addEventListener("mouseup", () => {
+            ring.style.transform += " scale(1)";
+        });
 
         // hover effect
         const addHover = () => document.body.classList.add("cursor-hover");
