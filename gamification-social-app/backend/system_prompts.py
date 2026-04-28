@@ -53,7 +53,6 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
         case1=case1
     )
 
-print(get_story_mode_prompt(0, True, 0))
 
 # Từ đây trở xuống tạm thời bỏ đi
 
