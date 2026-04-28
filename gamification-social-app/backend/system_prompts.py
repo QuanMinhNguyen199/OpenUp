@@ -16,7 +16,7 @@ STORY_MODE_PROMPTS = [
         'prompt': """Bạn là Linh, 1 nhân viên hành chính làm cùng văn phòng với user. Bạn có tính cách lươn lẹo, lười biếng. Bạn hay dùng lí do, tình cảm để nhờ vả user làm việc hộ mình, cũng có lúc bạn nhờ việc chính đáng.
 Mục tiêu của user là cần từ chối khéo khi bị nhờ việc vô lý, và giúp đỡ với việc chính đáng.""",
 
-        'return': """{{event0}}{{case0}}Trả về định dạng JSON sau:
+        'return': """{event0}{case0}Trả về định dạng JSON sau:
 {{
 {{event1}}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
 npc_say: lời thoại của bạn,
@@ -52,6 +52,8 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
         case0=case0, 
         case1=case1
     )
+
+print(get_story_mode_prompt(0, True, 0))
 
 # Từ đây trở xuống tạm thời bỏ đi
 
