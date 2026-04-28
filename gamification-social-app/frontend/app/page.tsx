@@ -18,12 +18,13 @@ export default function HomePage() {
 
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-black/50" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.08),transparent_70%)]" />
 
       {/* Content layer */}
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Top bar with buttons */}
         <nav className="z-50 flex w-full items-center justify-end gap-3 px-6 py-4">
-          <Link
+          {/* <Link
             href="/login"
             id="btn-login"
             // className="rounded-xl border border-white/30 bg-white/10 px-6 py-2.5 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:shadow-white/10"
@@ -48,12 +49,62 @@ export default function HomePage() {
             active:scale-95"
           >
             Đăng ký
+          </Link> */}
+
+          <Link
+            href="/login"
+            id="btn-login"
+            className="group relative px-6 py-2.5 text-lg font-black uppercase tracking-tighter transition-all duration-300"
+          >
+            {/* Background */}
+            <div className="absolute inset-0 skew-x-[-20deg] 
+            bg-gradient-to-r from-[#2eea12]/20 to-[#00e6ff]/20
+            border border-cyan-300/50 backdrop-blur-md
+            transition-all duration-300 overflow-hidden
+            group-hover:from-[#2eea12]/30 group-hover:to-[#00e6ff]/30
+            group-hover:border-cyan-300
+            group-hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+              {/* glow sweep nhẹ hơn register */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100
+              bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent)]
+              translate-x-[-100%] group-hover:translate-x-[100%]
+              transition duration-700"></div>
+            </div>
+
+            {/* Text */}
+            <span className="relative z-10 italic 
+            bg-gradient-to-r from-[#2eea12] to-[#00e6ff] 
+            bg-clip-text text-transparent
+            drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
+              Đăng nhập
+            </span>
+          </Link>
+
+          <Link
+            href="/register"
+            id="btn-register"
+            className="group relative px-8 py-2.5 text-lg font-black uppercase tracking-tighter text-black transition-all duration-300"
+          >
+            {/* Lớp nền hình bình hành đổ màu Gradient */}
+            <div className="absolute inset-0 skew-x-[-20deg] bg-gradient-to-r from-[#2eea12] to-[#00e6ff] 
+            shadow-[0_0_20px_rgba(46,234,18,0.3)] transition-all duration-300 
+            group-hover:brightness-110 group-hover:shadow-[0_0_40px_rgba(0,240,255,0.7)] 
+            group-active:scale-95 overflow-hidden">
+              {/* glow sweep */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100
+              bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent)]
+              translate-x-[-100%] group-hover:translate-x-[100%]
+              transition duration-700"></div>
+            </div>
+
+            {/* Nội dung bên trong - dùng italic để hợp với độ nghiêng của nút */}
+            <span className="relative z-10 italic">Đăng ký</span>
           </Link>
         </nav>
 
         {/* Centered hero text */}
         <div className="flex flex-1 flex-col items-center justify-center px-4 text-center gap-y-20 mt-[-4rem]">
-          <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl">
+          <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl drop-shadow-[0_0_15px_rgba(0,240,255,0.5)] [text-shadow:2px_2px_0px_#39FF14]">
             OpenUp: học giao tiếp với AI
           </h1>
           <div className="flex flex-col gap-y-6">
