@@ -18,7 +18,7 @@ export default function Cursor() {
         let ringX = 0;
         let ringY = 0;
 
-        const speed = 0.15; // càng nhỏ càng delay nhiều (trail effect)
+        const speed = 0.3; // càng nhỏ càng delay nhiều (trail effect)
 
         const move = (e: MouseEvent) => {
             mouseX = e.clientX;
