@@ -18,7 +18,7 @@ Mục tiêu của user là cần từ chối khéo khi bị nhờ việc vô lý
 
         'return': """{event0}{case0}Trả về định dạng JSON sau:
 {{
-{{event1}}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
+{event1}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
 npc_say: lời thoại của bạn,
 options: [{{option: hành động hoặc câu nói để user chọn (có 3 option: {{case1}}), quantity: lượng điểm thay đổi}}]
 }}
