@@ -54,16 +54,32 @@ export default function HomePage() {
           <Link
             href="/login"
             id="btn-login"
-            className="group relative px-6 py-2.5 text-lg font-black text-white transition-all duration-300 uppercase tracking-tighter"
+            className="group relative px-6 py-2.5 text-lg font-black uppercase tracking-tighter transition-all duration-300"
           >
-            {/* Lớp nền hình bình hành */}
-            <div className="absolute inset-0 skew-x-[-20deg] border border-cyan-300/50 bg-cyan-300/10 backdrop-blur-md 
-                  transition-all duration-300 group-hover:border-cyan-300 group-hover:bg-cyan-300/20 
-                  group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)]"></div>
+            {/* Background */}
+            <div className="absolute inset-0 skew-x-[-20deg] 
+            bg-gradient-to-r from-[#2eea12]/20 to-[#00e6ff]/20
+            border border-cyan-300/50 backdrop-blur-md
+            transition-all duration-300 overflow-hidden
+            group-hover:from-[#2eea12]/30 group-hover:to-[#00e6ff]/30
+            group-hover:border-cyan-300
+            group-hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+              {/* glow sweep nhẹ hơn register */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100
+              bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent)]
+              translate-x-[-100%] group-hover:translate-x-[100%]
+              transition duration-700"></div>
+            </div>
 
-            {/* Nội dung giữ nguyên không nghiêng */}
-            <span className="relative z-10 italic bg-gradient-to-r from-[#2eea12] to-[#00e6ff] bg-clip-text text-transparent">Đăng nhập</span>
+            {/* Text */}
+            <span className="relative z-10 italic 
+            bg-gradient-to-r from-[#2eea12] to-[#00e6ff] 
+            bg-clip-text text-transparent
+            drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
+              Đăng nhập
+            </span>
           </Link>
+
           <Link
             href="/register"
             id="btn-register"
