@@ -1,66 +1,74 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 
-# --- SCHEMAS CHO AI & NPC DIALOG ---
+# --- 1. SCHEMAS CHO STORY MODE (AI) ---
 
-class DialogOptionSchema(BaseModel):
-    text: str
-    option_type: str  # 'good', 'neutral', 'bad'
-    feedback: str     # Giải thích lý do EQ
+class HistoryItem(BaseModel):
+    role: str    # 'user' hoặc 'assistant'
+    content: str
 
-class NPCScenarioResponse(BaseModel):
-    npc_name: str
-    map_location: str
-    turn: int
-    is_final_turn: bool
-    question: str
-    options: List[DialogOptionSchema]
-    current_user_chapter: int # Để FE đồng bộ bối cảnh
+class StoryModeRequest(BaseModel):
+    user_id: int
+    index: int   # NPC Index (0-7)
+    event: bool
+    case: int
+    history: List[HistoryItem]
 
-# --- SCHEMAS CHO GAMEPLAY ---
+# Schema cho Options trả về từ AI
+class DialogOptionAI(BaseModel):
+    option: str
+    quantity: int
+
+class StoryModeResponse(BaseModel):
+    npc_behavior: str
+    npc_say: str
+    event: Optional[str] = None
+    options: List[DialogOptionAI]
+
+# --- 2. SCHEMAS CHO GAMEPLAY (HÀNH ĐỘNG CHỌN) ---
 
 class ChoiceRequest(BaseModel):
     npc_id: int
+    option_type: str # 'good', 'neutral', 'bad'
     user_id: int
-    option_type: str 
-    current_turn: int
 
 class ChoiceResponse(BaseModel):
     new_affinity: float
-    message: str  # Gộp chung phản hồi để Frontend dễ hiển thị thành 1 popup
-    # --- THÔNG TIN VẬT PHẨM ---
-    unlocked_item: bool = False
-    item_name: Optional[str] = None
-    # --- CÁC CỜ TRẠNG THÁI (Dành cho Member 3 điều hướng UI) ---
+    message: str
     is_chapter_completed: bool 
-    is_chapter_failed: bool
-    is_kicked: bool
-    # --- TIẾN TRÌNH CỦA NGƯỜI CHƠI ---
-    next_chapter_id: Optional[int] = None # Dùng 'chap' làm savepoint
+    is_failed: bool # Gộp chung cả Failed điểm <= 0 và Kicked
     current_level: int
+    next_chapter_id: Optional[int] = None
 
-# --- SCHEMAS CHO BOSS (SLIDING PUZZLE) ---
+# --- 3. SCHEMAS CHO BOSS (SLIDING PUZZLE) ---
+
 class BossChallengeRequest(BaseModel):
     user_id: int
-    # Danh sách ID mảnh ghép theo thứ tự người chơi trượt (từ ô 0 đến 8)
     user_tile_sequence: List[int] 
 
 class BossResponse(BaseModel):
     is_correct: bool
-    message: str       # Lời thoại Cụ Phan
-    status: str        # 'WIN' hoặc 'RETRY'
-    correct_count: int # Số lượng mảnh đã nằm đúng vị trí (để làm thanh tiến độ)
+    message: str
+    status: str      # 'WIN' hoặc 'RETRY'
+    correct_count: int
 
-# --- SCHEMAS CHO USER & COLLECTION ---
+# --- 4. SCHEMAS CHO USER & COLLECTION ---
+
+class UserStatusResponse(BaseModel):
+    username: str
+    current_chap: int
+    level: int
+    total_xp: int
+    is_winner: bool
 
 class CollectionItemResponse(BaseModel):
     id: int
     name: str
     description: Optional[str]
     is_owned: bool
-    # MỚI: Vị trí đúng trên lưới 3x3 (0 đến 8)
     target_idx: int 
-    image_url: Optional[str] # URL mảnh cắt của bức tranh
+    image_url: Optional[str]
 
     class Config:
-        from_attributes = True
+        from_attributes = True # Cho phép Pydantic đọc dữ liệu từ SQLAlchemy Model

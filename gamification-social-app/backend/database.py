@@ -4,31 +4,32 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 
-# 1. Đảm bảo load biến môi trường từ file .env
 load_dotenv()
 
-# 2. Lấy URL và xử lý lỗi định dạng tiềm ẩn từ Supabase
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Một số thư viện yêu cầu postgresql:// thay vì postgres:// của Supabase
+# Xử lý lỗi định dạng postgres:// của Supabase/Heroku
 if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# 3. Khởi tạo Engine với các tham số tối ưu cho Cloud
+# Kiểm tra nếu chưa cấu hình biến môi trường
+if not SQLALCHEMY_DATABASE_URL:
+    raise ValueError("⚠️ Lỗi: Chưa tìm thấy DATABASE_URL trong file .env!")
+
 engine = create_engine(
-        SQLALCHEMY_DATABASE_URL,
-        pool_pre_ping=True,
-        pool_size=5,            # Giữ tối đa 5 kết nối mở sẵn
-        max_overflow=10,        # Cho phép mở thêm tối đa 10 kết nối nếu quá tải
-        pool_recycle=300,       # Reset kết nối sau mỗi 5 phút để tránh bị Firewall ngắt
-        connect_args={"sslmode": "require"} if SQLALCHEMY_DATABASE_URL else {}
-    )
+    SQLALCHEMY_DATABASE_URL,
+    pool_pre_ping=True,
+    pool_size=10,            # Tăng lên 10 nếu có nhiều người chơi
+    max_overflow=20,
+    pool_recycle=300,
+    connect_args={"sslmode": "require"} 
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# Hàm bổ trợ để lấy DB session cho mỗi request
+# Lưu ý: Hàm get_db ở đây sẽ được import vào main.py
 def get_db():
     db = SessionLocal()
     try:
