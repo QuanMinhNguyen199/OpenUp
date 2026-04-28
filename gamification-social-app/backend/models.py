@@ -81,12 +81,18 @@ class Conversation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     npc_id = Column(Integer, ForeignKey("npcs.id"))
-    neutral_streak = Column(Integer, default=0)
     
-    affinity_score = Column(Float, default=0.0) 
+    neutral_streak = Column(Integer, default=0)
+    affinity_score = Column(Float, default=20.0) # Bắt đầu từ 20 cho dễ chơi
     current_turn = Column(Integer, default=1) 
     
-    last_interaction = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    # --- 2 CỘT MỚI ĐỂ BẢO MẬT ---
+    # Dùng để chặn hack: Phải gọi story_mode mới được gọi choose_option
+    is_waiting_for_reply = Column(Boolean, default=False) 
+    
+    # Dùng để chặn spam: Mỗi câu trả lời cách nhau ít nhất 2 giây
+    last_interaction = Column(DateTime, default=datetime.datetime.utcnow)
+    # ----------------------------
 
     user = relationship("User", back_populates="conversations")
     npc = relationship("NPC", back_populates="conversations")
