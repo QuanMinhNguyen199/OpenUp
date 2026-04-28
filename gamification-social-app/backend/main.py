@@ -110,7 +110,7 @@ async def register(data: RegisterRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username không hợp lệ!")
     
     if db.query(models.User).filter_by(username=clean_username).first():
-        raise HTTPException(status_code=400, detail="Tài khoản đã tồn tại!")
+        raise HTTPException(status_code=400, detail="Tên tài khoản đã tồn tại!")
     
     if not is_strong_password(data.password):
         raise HTTPException(status_code=400, detail="Mật khẩu quá yếu!")
