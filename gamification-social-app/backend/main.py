@@ -297,3 +297,6 @@ def get_user_status(user_id: int, db: Session = Depends(get_db), x_token: str = 
 @app.get("/")
 def read_root():
     return {"message": "OpenUp! Engine - Secure Mode Online"}
+
+
+# SINGLEPLAYER MODE, don't fix code below unless you are coding this mode
