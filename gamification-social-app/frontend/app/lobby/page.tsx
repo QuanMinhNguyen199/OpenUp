@@ -83,8 +83,16 @@ export default function LobbyPage() {
     const maxExp = 1000;
     const expPercentage = Math.min(100, Math.max(0, (currentExp / maxExp) * 100));
 
-    // Get Avatar Initials
-    const avatarInitials = userData.username ? userData.username.substring(0, 2).toUpperCase() : "OP";
+    // Derive rank title from level
+    const getRank = (level: number) => {
+        if (level >= 50) return "GRANDMASTER";
+        if (level >= 30) return "MASTER";
+        if (level >= 20) return "EXPERT";
+        if (level >= 10) return "ADVANCED";
+        if (level >= 5) return "INTERMEDIATE";
+        return "ROOKIE";
+    };
+    const rank = getRank(userData.level);
 
     return (
         <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
@@ -109,23 +117,16 @@ export default function LobbyPage() {
 
                 {/* TOP: Player Info */}
                 <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-6">
-                        {/* Avatar Hexagon Style */}
-                        <div className="relative h-20 w-20">
-                            <div className="absolute inset-0 skew-x-[-15deg] bg-gradient-to-tr from-[#39FF14] to-[#00F0FF] p-[2px]">
-                                <div className="h-full w-full bg-black flex items-center justify-center">
-                                    <span className="text-2xl font-black text-[#00F0FF]">{avatarInitials}</span>
-                                </div>
-                            </div>
-                            <div className="absolute -bottom-2 -right-2 bg-[#39FF14] px-2 py-0.5 text-[10px] font-bold text-black">
-                                ONLINE
-                            </div>
-                        </div>
-
+                    <div className="flex items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
-                                {userData.username}
-                            </h1>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
+                                    {userData.username}
+                                </h1>
+                                <span className="skew-x-[-10deg] bg-gradient-to-r from-[#39FF14] to-[#00F0FF] px-3 py-0.5 text-[10px] font-black text-black uppercase tracking-wider">
+                                    {rank}
+                                </span>
+                            </div>
                             <div className="mt-2 flex items-center gap-4">
                                 <span className="text-sm font-bold text-[#39FF14]">LV. {userData.level}</span>
                                 <div className="group relative h-3 w-64 border border-white/20 bg-black/50">
@@ -142,15 +143,15 @@ export default function LobbyPage() {
                         </div>
                     </div>
 
-                    {/* Currency / Stats blocks */}
+                    {/* Player Stats */}
                     <div className="hidden md:flex gap-4">
                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Chapter</p>
-                            <p className="font-mono text-xl font-bold text-[#39FF14]">{userData.current_chap}</p>
+                            <p className="text-[10px] uppercase text-gray-400">Total XP</p>
+                            <p className="font-mono text-xl font-bold text-[#39FF14]">{userData.total_xp.toLocaleString()}</p>
                         </div>
                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Status</p>
-                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.is_winner ? "Winner" : "Active"}</p>
+                            <p className="text-[10px] uppercase text-gray-400">Rank</p>
+                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{rank}</p>
                         </div>
                     </div>
                 </div>
@@ -175,10 +176,10 @@ export default function LobbyPage() {
                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
                     <div className="space-y-1">
                         <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-                            &gt; System_Core: Active
+                            &gt; Player_Level: {userData.level} | XP: {userData.total_xp}
                         </p>
                         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                            &gt; Neural_Link: Stable (24ms)
+                            &gt; Rank: {rank} | Story_Progress: Chapter {userData.current_chap}/9
                         </p>
                     </div>
 
