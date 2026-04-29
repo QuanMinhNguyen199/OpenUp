@@ -112,8 +112,8 @@ export default function CustomCursor() {
             } else {
                 const dx = targetPos.current.x - trailingPos.current.x;
                 const dy = targetPos.current.y - trailingPos.current.y;
-                trailingPos.current.x += dx * 0.15; // Smoother catch-up
-                trailingPos.current.y += dy * 0.15;
+                trailingPos.current.x += dx * 0.09; // Smoother catch-up
+                trailingPos.current.y += dy * 0.09;
             }
 
             if (cursorRef.current) {
