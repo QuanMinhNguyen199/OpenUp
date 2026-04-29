@@ -70,16 +70,18 @@ body {
   box-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF;
 } */
 
-.cursor-dot {
+
+
+/* .cursor-dot {
   z-index: 9999;
 }
 
 * {
   cursor: none;
-}
+} */
 
 /* Dot (core) */
-.cursor-dot {
+/* .cursor-dot {
   width: 6px;
   height: 6px;
   background: #00F0FF;
@@ -88,10 +90,10 @@ body {
   pointer-events: none;
   z-index: 9999;
   box-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF;
-}
+} */
 
 /* Ring (outer) */
-.cursor-ring {
+/* .cursor-ring {
   width: 28px;
   height: 28px;
   border: 1px solid rgba(0, 240, 255, 0.6);
@@ -100,10 +102,10 @@ body {
   pointer-events: none;
   z-index: 9998;
   transition: transform 0.2s ease-out, opacity 0.2s;
-}
+} */
 
 /* Hover state */
-.cursor-hover .cursor-ring {
+/* .cursor-hover .cursor-ring {
   transform: scale(10.8);
   opacity: 0.8;
 }
@@ -112,4 +114,10 @@ body {
   transform: scale(5.5);
   background: #39FF14;
   box-shadow: 0 0 15px #39FF14, 0 0 30px #39FF14;
+} */
+
+
+/* Hide native cursor globally (CustomCursor replaces it) */
+* {
+  cursor: none !important;
 }

@@ -104,7 +104,7 @@ export default function HomePage() {
 
         {/* Centered hero text */}
         <div className="flex flex-1 flex-col items-center justify-center px-4 text-center gap-y-20 mt-[-4rem]">
-          <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl drop-shadow-[0_0_15px_rgba(0,240,255,0.5)] [text-shadow:2px_2px_0px_#39FF14]">
+          <h1 className="mb-4 text-5xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl drop-shadow-[0_0_15px_rgba(0,240,255,0.5)] [text-shadow:2.8px_2.8px_0px_#39FF14]">
             OpenUp: học giao tiếp với AI
           </h1>
           <div className="flex flex-col gap-y-6">
