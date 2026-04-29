@@ -141,18 +141,18 @@ export default function CustomCursor() {
   // Upper Lip (Cupid's bow)
   // Closed: Top middle Y=35, Bottom middle Y=50
   const upperClosed = "M 15 50 Q 32 15 50 35 Q 68 15 85 50 Q 50 50 15 50 Z";
-  // Open: Top middle Y=25, Bottom middle Y=40
-  const upperOpen   = "M 15 50 Q 32 5 50 25 Q 68 5 85 50 Q 50 40 15 50 Z";
+  // Open: Top middle Y=20, Bottom middle Y=35 (Gap starts here)
+  const upperOpen   = "M 15 50 Q 32 0 50 20 Q 68 0 85 50 Q 50 20 15 50 Z";
 
   // Lower Lip
-  // Closed: Top middle Y=50, Bottom middle Y=65 (using Q 80 means curve reaches 65)
+  // Closed: Top middle Y=50, Bottom middle Y=65
   const lowerClosed = "M 15 50 Q 50 50 85 50 Q 50 80 15 50 Z";
-  // Open: Top middle Y=60 (Q 70), Bottom middle Y=75 (Q 100)
-  const lowerOpen   = "M 15 50 Q 50 70 85 50 Q 50 100 15 50 Z";
+  // Open: Top middle Y=65, Bottom middle Y=80 (Gap ends here)
+  const lowerOpen   = "M 15 50 Q 50 80 85 50 Q 50 110 15 50 Z";
 
   // Mouth Hole (Black background between the lips when open)
   const holeClosed = "M 15 50 Q 50 50 85 50 Q 50 50 15 50 Z";
-  const holeOpen   = "M 15 50 Q 50 40 85 50 Q 50 70 15 50 Z";
+  const holeOpen   = "M 15 50 Q 50 20 85 50 Q 50 80 15 50 Z";
 
   return (
     <div
