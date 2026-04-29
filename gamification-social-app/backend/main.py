@@ -291,7 +291,8 @@ def get_user_status(user_id: int, db: Session = Depends(get_db), x_token: str = 
         "current_chap": user.chap,
         "level": user.level,
         "total_xp": user.total_xp,
-        "is_winner": user.chap >= 9
+        "is_winner": user.chap >= 9,
+        "role": user.role
     }
 
 @app.get("/")
