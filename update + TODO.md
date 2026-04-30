@@ -6,7 +6,7 @@
 ## Trí sửa BE:
 - [30/4] thêm helper func tính level theo rule mới (Cần 100xp lên lv2, thêm 200xp lên lv3, thêm 300xp lên lv4...) và thay những chỗ trong main.py đang tính level thủ công -> gọi hàm
 - [29/4] trả thêm role cho endpoint "/api/user/status/{user_id}"
-- [29/4] sửa thông báo lỗi khi đăng ký tk mới mà username đã có
+- [29/4] sửa thông báo lỗi khi đăng ký tk mới mà username đã tồn tại
 
 ---
 
