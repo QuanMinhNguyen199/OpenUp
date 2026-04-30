@@ -111,7 +111,7 @@ export default function LobbyPage() {
                 <div className="relative h-[500px] w-[500px]">
                     <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-3 border-dashed border-cyan-500/40" />
                     <div className="absolute inset-10 animate-[spin_20s_linear_infinite_reverse] rounded-full border-3 border-dashed border-green-500/30" />
-                    <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/5 blur-[100px]" />
+                    <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/30 blur-[100px]" />
                 </div>
             </div>
 
