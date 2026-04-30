@@ -200,8 +200,8 @@ export default function LobbyPage() {
             </div>
 
             {/* Decorative Corner Elements */}
-            <div className="absolute bottom-0 left-0 h-32 w-32 border-b-4 border-l-4 border-[#39FF14]/20 p-2 opacity-50">
-                <div className="h-full w-full border-b border-l border-[#00F0FF]/30" />
+            <div className="absolute bottom-0 left-0 h-32 w-32 border-b-4 border-l-4 border-[#39FF14]/50 p-2 opacity-50">
+                <div className="h-full w-full border-b border-l border-[#00F0FF]/60" />
             </div>
         </main>
     );
