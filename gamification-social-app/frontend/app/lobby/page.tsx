@@ -189,11 +189,11 @@ export default function LobbyPage() {
                     <div className="flex gap-8">
                         <button className="group flex flex-col items-center gap-1 cursor-pointer">
                             <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-[#39FF14]" />
-                            <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">Cài đặt</span>
+                            <span className="text-sm font-bold italic tracking-tighter text-gray-500 group-hover:text-white">Cài đặt</span>
                         </button>
                         <button onClick={handleLogout} className="group flex flex-col items-center gap-1 cursor-pointer">
                             <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-red-500" />
-                            <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">Đăng xuất</span>
+                            <span className="text-sm font-bold italic tracking-tighter text-gray-500 group-hover:text-white">Đăng xuất</span>
                         </button>
                     </div>
                 </div>
