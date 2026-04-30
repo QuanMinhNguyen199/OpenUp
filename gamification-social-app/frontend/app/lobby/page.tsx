@@ -85,12 +85,12 @@ export default function LobbyPage() {
 
     // Derive rank title from level
     const getRank = (level: number) => {
-        if (level >= 50) return "GRANDMASTER";
-        if (level >= 30) return "MASTER";
-        if (level >= 20) return "EXPERT";
-        if (level >= 10) return "ADVANCED";
-        if (level >= 5) return "INTERMEDIATE";
-        return "ROOKIE";
+        if (level >= 50) return "Grandmaster";
+        if (level >= 30) return "Master";
+        if (level >= 20) return "Expert";
+        if (level >= 10) return "Advanced";
+        if (level >= 5) return "Intermediate";
+        return "Newbie";
     };
     const rank = getRank(userData.level);
 
@@ -146,7 +146,7 @@ export default function LobbyPage() {
                     {/* Player Stats */}
                     <div className="hidden md:flex gap-4">
                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Xếp hạng</p>
+                            <p className="text-[10px] uppercase text-gray-400">Rank</p>
                             <p className="font-mono text-xl font-bold text-[#39FF14]">{rank}</p>
                         </div>
                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
