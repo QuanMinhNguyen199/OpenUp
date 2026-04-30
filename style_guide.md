@@ -1,0 +1,1 @@
+tôi làm web với chủ đề Game dạy giao tiếp với AI, muốn theo style kiểu cyperpunk kết hợp giữa màu neon xanh lá với màu cyan, xem file frontend/app/page.tsx (homepage) và frontend/app/login/page.tsx để tham khảo thêm. Hãy code những page khác bám sát theo chủ đề, style đó.
