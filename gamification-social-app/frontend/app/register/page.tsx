@@ -27,7 +27,7 @@ export default function RegisterPage() {
   const validatePassword = (val: string) => {
     if (val.length === 0) return "";
     if (val.length < 6) return "Mật khẩu tối thiểu 6 ký tự!";
-    if (!/\d/.test(val)) return "Mật khẩu phải có nhất 1 số!";
+    if (!(/[a-zA-Z]/.test(val) && /\d/.test(val))) return "Mật khẩu phải có cả chữ và số!";
     return "";
   };
 

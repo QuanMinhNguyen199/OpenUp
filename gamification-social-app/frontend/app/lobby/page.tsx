@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 
 export default function LobbyPage() {
     const router = useRouter();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [onlineCount, setOnlineCount] = useState<number | null>(null);
 
     useEffect(() => {
         const userId = localStorage.getItem("user_id");
@@ -44,6 +46,37 @@ export default function LobbyPage() {
 
         fetchUser();
     }, [router]);
+
+    // Supabase Realtime Presence: track online users
+    useEffect(() => {
+        const userId = localStorage.getItem("user_id");
+        if (!userId) return;
+
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
+        );
+
+        const channel = supabase.channel("lobby-presence", {
+            config: { presence: { key: userId } },
+        });
+
+        channel
+            .on("presence", { event: "sync" }, () => {
+                const state = channel.presenceState();
+                setOnlineCount(Object.keys(state).length);
+            })
+            .subscribe(async (status) => {
+                if (status === "SUBSCRIBED") {
+                    await channel.track({ user_id: userId, online_at: new Date().toISOString() });
+                }
+            });
+
+        return () => {
+            channel.untrack();
+            supabase.removeChannel(channel);
+        };
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("user_id");
@@ -101,17 +134,17 @@ export default function LobbyPage() {
         <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
             {/* --- LỚP NỀN (BACKGROUND) --- */}
             {/* Lưới tọa độ Cyber */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_5px),linear-gradient(to_bottom,#80808012_1px,transparent_5px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
             {/* Hiệu ứng Scanline (Vạch nhiễu màn hình) */}
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
 
             {/* Hologram Cầu ở trung tâm */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90">
                 <div className="relative h-[500px] w-[500px]">
-                    <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed border-cyan-500/40" />
-                    <div className="absolute inset-10 animate-[spin_15s_linear_infinite_reverse] rounded-full border border-green-500/30" />
-                    <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/5 blur-[100px]" />
+                    <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-3 border-dashed border-cyan-500/40" />
+                    <div className="absolute inset-10 animate-[spin_20s_linear_infinite_reverse] rounded-full border-3 border-dashed border-green-500/30" />
+                    <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/30 blur-[100px]" />
                 </div>
             </div>
 
@@ -139,7 +172,7 @@ export default function LobbyPage() {
                                     />
                                     {/* Tooltip EXP */}
                                     <span className="absolute -top-6 right-0 text-[10px] text-gray-400 opacity-0 transition-opacity group-hover:opacity-100">
-                                        {currentExp} / {maxExp} EXP (Total: {userData.total_xp})
+                                        {currentExp} / {maxExp} XP
                                     </span>
                                 </div>
                             </div>
@@ -149,12 +182,12 @@ export default function LobbyPage() {
                     {/* Player Stats */}
                     <div className="hidden md:flex gap-4">
                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Rank</p>
+                            <p className="text-sm uppercase text-gray-400">Rank</p>
                             <p className="font-mono text-xl font-bold text-[#39FF14]">{rank}</p>
                         </div>
                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Chapter</p>
-                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.current_chap}</p>
+                            <p className="text-sm uppercase text-gray-400">Tổng XP</p>
+                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.total_xp}</p>
                         </div>
                     </div>
                 </div>
@@ -163,7 +196,7 @@ export default function LobbyPage() {
                 <div className="flex flex-col items-end gap-8 pr-10">
                     {menuItems.map((item, idx) => (
                         <button key={idx} className="group relative text-right transition-transform hover:scale-110 cursor-pointer">
-                            <span className="block text-xs font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-70">
+                            <span className="block text-sm font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-80">
                                 {item.desc}
                             </span>
                             <span className={`relative text-6xl font-black uppercase italic leading-none transition-colors group-hover:text-[#00F0FF]`}>
@@ -178,30 +211,30 @@ export default function LobbyPage() {
                 {/* BOTTOM BAR: Systems */}
                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
                     <div className="space-y-1">
-                        <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-                            &gt; Player_Level: {userData.level} | XP: {userData.total_xp}
+                        <p className="text-sm font-mono text-[#39FF14]/90 uppercase tracking-widest">
+                            &gt; Số người online: {onlineCount !== null ? onlineCount : "..."}
                         </p>
-                        <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                            &gt; Rank: {rank} | Story_Progress: Chapter {userData.current_chap}/9
+                        <p className="text-sm font-mono text-gray-300 uppercase tracking-widest">
+                            &gt; Bạn thuộc top {rank === "Grandmaster" ? "1" : rank === "Master" ? "5" : rank === "Expert" ? "15" : rank === "Advanced" ? "30" : rank === "Intermediate" ? "60" : "100"}% người chơi
                         </p>
                     </div>
 
-                    <div className="flex gap-8">
+                    <div className="flex gap-10">
                         <button className="group flex flex-col items-center gap-1 cursor-pointer">
-                            <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-[#39FF14]" />
-                            <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">SETTINGS</span>
+                            <span className="h-1 w-12 bg-gray-700 transition-colors group-hover:bg-[#39FF14]" />
+                            <span className="text-base font-bold italic tracking-tighter text-gray-400 group-hover:text-white">CÀI ĐẶT</span>
                         </button>
                         <button onClick={handleLogout} className="group flex flex-col items-center gap-1 cursor-pointer">
-                            <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-red-500" />
-                            <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">LOGOUT</span>
+                            <span className="h-1 w-12 bg-gray-700 transition-colors group-hover:bg-red-500" />
+                            <span className="text-base font-bold italic tracking-tighter text-gray-400 group-hover:text-white">ĐĂNG XUẤT</span>
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Decorative Corner Elements */}
-            <div className="absolute bottom-0 left-0 h-32 w-32 border-b-4 border-l-4 border-[#39FF14]/20 p-2 opacity-50">
-                <div className="h-full w-full border-b border-l border-[#00F0FF]/30" />
+            <div className="absolute bottom-0 left-0 h-32 w-32 border-b-4 border-l-4 border-[#39FF14]/50 p-2 opacity-50">
+                <div className="h-full w-full border-b border-l border-[#00F0FF]/60" />
             </div>
         </main>
     );
