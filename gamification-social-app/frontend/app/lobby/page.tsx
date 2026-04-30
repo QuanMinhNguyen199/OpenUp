@@ -107,10 +107,10 @@ export default function LobbyPage() {
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
 
             {/* Hologram Cầu ở trung tâm */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90">
                 <div className="relative h-[500px] w-[500px]">
-                    <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed border-cyan-500/40" />
-                    <div className="absolute inset-10 animate-[spin_15s_linear_infinite_reverse] rounded-full border border-green-500/30" />
+                    <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-3 border-dashed border-cyan-500/40" />
+                    <div className="absolute inset-10 animate-[spin_20s_linear_infinite_reverse] rounded-full border-3 border-dashed border-green-500/30" />
                     <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/5 blur-[100px]" />
                 </div>
             </div>
