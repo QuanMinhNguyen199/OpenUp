@@ -128,7 +128,7 @@ export default function LobbyPage() {
                                 </span>
                             </div>
                             <div className="mt-2 flex items-center gap-4">
-                                <span className="text-sm font-bold text-[#39FF14]">LV. {userData.level}</span>
+                                <span className="text-sm font-bold text-[#39FF14]">Level {userData.level}</span>
                                 <div className="group relative h-3 w-64 border border-white/20 bg-black/50">
                                     <div
                                         className="h-full bg-gradient-to-r from-[#39FF14] to-[#00F0FF] shadow-[0_0_15px_#39FF14] transition-all duration-1000"
