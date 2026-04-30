@@ -139,7 +139,7 @@ export default function LobbyPage() {
                                     />
                                     {/* Tooltip EXP */}
                                     <span className="absolute -top-6 right-0 text-[10px] text-gray-400 opacity-0 transition-opacity group-hover:opacity-100">
-                                        {currentExp} / {maxExp} EXP (Total: {userData.total_xp})
+                                        {currentExp} / {maxExp} XP
                                     </span>
                                 </div>
                             </div>
