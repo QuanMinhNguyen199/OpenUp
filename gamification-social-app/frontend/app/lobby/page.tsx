@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 
 export default function LobbyPage() {
     const router = useRouter();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [onlineCount, setOnlineCount] = useState<number | null>(null);
 
     useEffect(() => {
         const userId = localStorage.getItem("user_id");
@@ -44,6 +46,37 @@ export default function LobbyPage() {
 
         fetchUser();
     }, [router]);
+
+    // Supabase Realtime Presence: track online users
+    useEffect(() => {
+        const userId = localStorage.getItem("user_id");
+        if (!userId) return;
+
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
+        );
+
+        const channel = supabase.channel("lobby-presence", {
+            config: { presence: { key: userId } },
+        });
+
+        channel
+            .on("presence", { event: "sync" }, () => {
+                const state = channel.presenceState();
+                setOnlineCount(Object.keys(state).length);
+            })
+            .subscribe(async (status) => {
+                if (status === "SUBSCRIBED") {
+                    await channel.track({ user_id: userId, online_at: new Date().toISOString() });
+                }
+            });
+
+        return () => {
+            channel.untrack();
+            supabase.removeChannel(channel);
+        };
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("user_id");
@@ -179,7 +212,7 @@ export default function LobbyPage() {
                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
                     <div className="space-y-1">
                         <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-                            &gt; Số người online:
+                            &gt; Số người online: {onlineCount !== null ? onlineCount : "..."}
                         </p>
                         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
                             &gt; Bạn thuộc top {rank === "Grandmaster" ? "1" : rank === "Master" ? "5" : rank === "Expert" ? "15" : rank === "Advanced" ? "30" : rank === "Intermediate" ? "60" : "100"}% người chơi
