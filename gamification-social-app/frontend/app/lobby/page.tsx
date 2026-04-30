@@ -163,7 +163,7 @@ export default function LobbyPage() {
                 <div className="flex flex-col items-end gap-8 pr-10">
                     {menuItems.map((item, idx) => (
                         <button key={idx} className="group relative text-right transition-transform hover:scale-110 cursor-pointer">
-                            <span className="block text-xs font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-70">
+                            <span className="block text-sm font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-80">
                                 {item.desc}
                             </span>
                             <span className={`relative text-6xl font-black uppercase italic leading-none transition-colors group-hover:text-[#00F0FF]`}>
