@@ -149,11 +149,11 @@ export default function LobbyPage() {
                     {/* Player Stats */}
                     <div className="hidden md:flex gap-4">
                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Rank</p>
+                            <p className="text-sm uppercase text-gray-400">Rank</p>
                             <p className="font-mono text-xl font-bold text-[#39FF14]">{rank}</p>
                         </div>
                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Tổng XP</p>
+                            <p className="text-sm uppercase text-gray-400">Tổng XP</p>
                             <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.total_xp}</p>
                         </div>
                     </div>
