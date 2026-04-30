@@ -83,8 +83,16 @@ export default function LobbyPage() {
     const maxExp = 1000;
     const expPercentage = Math.min(100, Math.max(0, (currentExp / maxExp) * 100));
 
-    // Get Avatar Initials
-    const avatarInitials = userData.username ? userData.username.substring(0, 2).toUpperCase() : "OP";
+    // Derive rank title from level
+    const getRank = (level: number) => {
+        if (level >= 50) return "Grandmaster";
+        if (level >= 30) return "Master";
+        if (level >= 20) return "Expert";
+        if (level >= 10) return "Advanced";
+        if (level >= 5) return "Intermediate";
+        return "Newbie";
+    };
+    const rank = getRank(userData.level);
 
     return (
         <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
@@ -109,25 +117,18 @@ export default function LobbyPage() {
 
                 {/* TOP: Player Info */}
                 <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-6">
-                        {/* Avatar Hexagon Style */}
-                        <div className="relative h-20 w-20">
-                            <div className="absolute inset-0 skew-x-[-15deg] bg-gradient-to-tr from-[#39FF14] to-[#00F0FF] p-[2px]">
-                                <div className="h-full w-full bg-black flex items-center justify-center">
-                                    <span className="text-2xl font-black text-[#00F0FF]">{avatarInitials}</span>
-                                </div>
-                            </div>
-                            <div className="absolute -bottom-2 -right-2 bg-[#39FF14] px-2 py-0.5 text-[10px] font-bold text-black">
-                                ONLINE
-                            </div>
-                        </div>
-
+                    <div className="flex items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
-                                {userData.username}
-                            </h1>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
+                                    {userData.username}
+                                </h1>
+                                <span className="skew-x-[-10deg] bg-gradient-to-r from-[#39FF14] to-[#00F0FF] px-3 py-0.5 text-[10px] font-black text-black uppercase tracking-wider">
+                                    {rank}
+                                </span>
+                            </div>
                             <div className="mt-2 flex items-center gap-4">
-                                <span className="text-sm font-bold text-[#39FF14]">LV. {userData.level}</span>
+                                <span className="text-sm font-bold text-[#39FF14]">Level {userData.level}</span>
                                 <div className="group relative h-3 w-64 border border-white/20 bg-black/50">
                                     <div
                                         className="h-full bg-gradient-to-r from-[#39FF14] to-[#00F0FF] shadow-[0_0_15px_#39FF14] transition-all duration-1000"
@@ -142,15 +143,15 @@ export default function LobbyPage() {
                         </div>
                     </div>
 
-                    {/* Currency / Stats blocks */}
+                    {/* Player Stats */}
                     <div className="hidden md:flex gap-4">
                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Chapter</p>
-                            <p className="font-mono text-xl font-bold text-[#39FF14]">{userData.current_chap}</p>
+                            <p className="text-[10px] uppercase text-gray-400">Rank</p>
+                            <p className="font-mono text-xl font-bold text-[#39FF14]">{rank}</p>
                         </div>
                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
-                            <p className="text-[10px] uppercase text-gray-400">Status</p>
-                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.is_winner ? "Winner" : "Active"}</p>
+                            <p className="text-[10px] uppercase text-gray-400">Chapter</p>
+                            <p className="font-mono text-xl font-bold text-[#00F0FF]">{userData.current_chap}</p>
                         </div>
                     </div>
                 </div>
@@ -175,10 +176,10 @@ export default function LobbyPage() {
                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
                     <div className="space-y-1">
                         <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-                            &gt; System_Core: Active
+                            &gt; Player_Level: {userData.level} | XP: {userData.total_xp}
                         </p>
                         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                            &gt; Neural_Link: Stable (24ms)
+                            &gt; Rank: {rank} | Story_Progress: Chapter {userData.current_chap}/9
                         </p>
                     </div>
 
@@ -203,133 +204,6 @@ export default function LobbyPage() {
     );
 }
 
-// "use client";
-// import React from "react";
-// import Link from "next/link";
-
-// export default function LobbyPage() {
-//     const menuItems = [
-//         { name: "Story Mode", desc: "Hành trình khởi đầu", color: "from-[#39FF14]" },
-//         { name: "Singleplayer", desc: "Huấn luyện chuyên sâu", color: "from-[#00F0FF]" },
-//         { name: "Multiplayer", desc: "Đấu trường thực tế", color: "from-[#39FF14]" },
-//     ];
-
-//     return (
-//         <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
-//             {/* --- LỚP NỀN (BACKGROUND) --- */}
-//             {/* Lưới tọa độ Cyber */}
-//             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-
-//             {/* Hiệu ứng Scanline (Vạch nhiễu màn hình) */}
-//             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
-
-//             {/* Hologram Cầu ở trung tâm */}
-//             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30">
-//                 <div className="relative h-[500px] w-[500px]">
-//                     <div className="absolute inset-0 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed border-cyan-500/40" />
-//                     <div className="absolute inset-10 animate-[spin_15s_linear_infinite_reverse] rounded-full border border-green-500/30" />
-//                     <div className="absolute inset-20 animate-pulse rounded-full bg-cyan-500/5 blur-[100px]" />
-//                 </div>
-//             </div>
-
-//             {/* --- GIAO DIỆN CHÍNH (UI) --- */}
-//             <div className="relative z-10 flex h-screen flex-col justify-between p-10">
-
-//                 {/* TOP: Player Info */}
-//                 <div className="flex items-start justify-between">
-//                     <div className="flex items-center gap-6">
-//                         {/* Avatar Hexagon Style */}
-//                         <div className="relative h-20 w-20">
-//                             <div className="absolute inset-0 skew-x-[-15deg] bg-gradient-to-tr from-[#39FF14] to-[#00F0FF] p-[2px]">
-//                                 <div className="h-full w-full bg-black flex items-center justify-center">
-//                                     <span className="text-2xl font-black text-[#00F0FF]">OP</span>
-//                                 </div>
-//                             </div>
-//                             <div className="absolute -bottom-2 -right-2 bg-[#39FF14] px-2 py-0.5 text-[10px] font-bold text-black">
-//                                 ONLINE
-//                             </div>
-//                         </div>
-
-//                         <div>
-//                             <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
-//                                 USER_COMMANDER_01
-//                             </h1>
-//                             <div className="mt-2 flex items-center gap-4">
-//                                 <span className="text-sm font-bold text-[#39FF14]">LV. 18</span>
-//                                 <div className="group relative h-3 w-64 border border-white/20 bg-black/50">
-//                                     <div
-//                                         className="h-full bg-gradient-to-r from-[#39FF14] to-[#00F0FF] shadow-[0_0_15px_#39FF14]"
-//                                         style={{ width: "65%" }}
-//                                     />
-//                                     {/* Tooltip EXP */}
-//                                     <span className="absolute -top-6 right-0 text-[10px] text-gray-400 opacity-0 transition-opacity group-hover:opacity-100">
-//                                         1250 / 2000 EXP
-//                                     </span>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-
-//                     {/* Currency / Stats blocks */}
-//                     <div className="hidden md:flex gap-4">
-//                         <div className="border-r-2 border-[#39FF14] bg-white/5 px-4 py-2 text-right">
-//                             <p className="text-[10px] uppercase text-gray-400">Neural Kredits</p>
-//                             <p className="font-mono text-xl font-bold text-[#39FF14]">25,400</p>
-//                         </div>
-//                         <div className="border-r-2 border-[#00F0FF] bg-white/5 px-4 py-2 text-right">
-//                             <p className="text-[10px] uppercase text-gray-400">Comm Rate</p>
-//                             <p className="font-mono text-xl font-bold text-[#00F0FF]">98%</p>
-//                         </div>
-//                     </div>
-//                 </div>
-
-//                 {/* MIDDLE: Main Menu (Right Aligned) */}
-//                 <div className="flex flex-col items-end gap-8 pr-10">
-//                     {menuItems.map((item, idx) => (
-//                         <button key={idx} className="group relative text-right transition-transform hover:scale-110">
-//                             <span className="block text-xs font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-70">
-//                                 {item.desc}
-//                             </span>
-//                             <span className={`relative text-6xl font-black uppercase italic leading-none transition-colors group-hover:text-[#00F0FF]`}>
-//                                 {item.name}
-//                             </span>
-//                             {/* Decorative line */}
-//                             <div className="mt-2 h-[2px] w-0 bg-gradient-to-l from-[#00F0FF] to-transparent transition-all duration-500 group-hover:w-full shadow-[0_0_10px_#00F0FF]" />
-//                         </button>
-//                     ))}
-//                 </div>
-
-//                 {/* BOTTOM BAR: Systems */}
-//                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
-//                     <div className="space-y-1">
-//                         <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-//                             &gt; System_Core: Active
-//                         </p>
-//                         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-//                             &gt; Neural_Link: Stable (24ms)
-//                         </p>
-//                     </div>
-
-//                     <div className="flex gap-8">
-//                         <button className="group flex flex-col items-center gap-1">
-//                             <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-[#39FF14]" />
-//                             <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">SETTINGS</span>
-//                         </button>
-//                         <button className="group flex flex-col items-center gap-1">
-//                             <span className="h-1 w-8 bg-gray-700 transition-colors group-hover:bg-red-500" />
-//                             <span className="text-xs font-bold italic tracking-tighter text-gray-500 group-hover:text-white">LOGOUT</span>
-//                         </button>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             {/* Decorative Corner Elements */}
-//             <div className="absolute bottom-0 left-0 h-32 w-32 border-b-4 border-l-4 border-[#39FF14]/20 p-2 opacity-50">
-//                 <div className="h-full w-full border-b border-l border-[#00F0FF]/30" />
-//             </div>
-//         </main>
-//     );
-// }
 
 
 // 'use client';

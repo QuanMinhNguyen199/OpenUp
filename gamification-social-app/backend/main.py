@@ -55,6 +55,12 @@ def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
         )
     return user
 
+def calculate_level(total_xp: int) -> int:
+    if total_xp < 200:
+        return 1
+    # Mốc Level 2 là 200 XP, Level 3 là 300 XP... (mỗi mức cách nhau 100)
+    return total_xp // 100
+
 # --- TỰ ĐỘNG TẠO ADMIN ---
 
 @app.on_event("startup")
@@ -242,7 +248,7 @@ def choose_option(
             user.chap += 1
             user.total_xp += 150
             update_leaderboard(user.username, user.total_xp)
-            user.level = (user.total_xp // 200) + 1
+            user.level = calculate_level(user.total_xp)
             is_completed = True
             message = f"Tuyệt vời! Mở khóa Chapter {user.chap}!"
         else:
@@ -278,7 +284,7 @@ async def boss_challenge(
     if result["is_correct"]:
         user.chap = 9 # Phá đảo
         user.total_xp += 500
-        user.level = (user.total_xp // 200) + 1
+        user.level = calculate_level(user.total_xp)
         db.commit()
 
     return result
