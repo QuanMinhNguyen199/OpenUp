@@ -179,10 +179,10 @@ export default function LobbyPage() {
                 <div className="flex items-end justify-between border-t border-white/10 pt-6">
                     <div className="space-y-1">
                         <p className="text-[10px] font-mono text-[#39FF14]/60 uppercase tracking-widest">
-                            &gt; Player_Level: {userData.level} | XP: {userData.total_xp}
+                            &gt; Số người online:
                         </p>
                         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                            &gt; Rank: {rank} | Story_Progress: Chapter {userData.current_chap}/9
+                            &gt; Bạn thuộc top {rank === "Grandmaster" ? "1" : rank === "Master" ? "5" : rank === "Expert" ? "15" : rank === "Advanced" ? "30" : rank === "Intermediate" ? "60" : "100"}% người chơi
                         </p>
                     </div>
 
