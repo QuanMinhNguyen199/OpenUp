@@ -78,11 +78,12 @@ export default function LobbyPage() {
         { name: "Multiplayer", desc: "Đấu trường thực tế", color: "from-[#39FF14]" },
     ];
 
-    // Calc XP progress based on new rules
+    // Calc XP progress based on new quadratic rules
     const level = userData.level;
     const totalXp = userData.total_xp;
-    const maxExp = level === 1 ? 200 : 100;
-    const currentExp = level === 1 ? totalXp : (totalXp % 100);
+    const xpAtCurrentLevel = 50 * (level * level - level);
+    const maxExp = 100 * level;
+    const currentExp = totalXp - xpAtCurrentLevel;
     const expPercentage = Math.min(100, Math.max(0, (currentExp / maxExp) * 100));
 
     // Derive rank title from level
