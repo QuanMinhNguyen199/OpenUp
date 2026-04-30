@@ -4,8 +4,8 @@
 ---
 
 ## Trí sửa BE:
-- thêm helper func tính level theo rule mới (Mốc Level 2 là 200 XP, Level 3 là 300 XP... mỗi mức cách nhau 100) và thay những chỗ trong main.py đang tính level thủ công -> gọi hàm
-- trả thêm role cho endpoint "/api/user/status/{user_id}"
+- [30/4] thêm helper func tính level theo rule mới (Mốc Level 2 là 200 XP, Level 3 là 300 XP... mỗi mức cách nhau 100) và thay những chỗ trong main.py đang tính level thủ công -> gọi hàm
+- [29/4] trả thêm role cho endpoint "/api/user/status/{user_id}"
 
 ---
 
