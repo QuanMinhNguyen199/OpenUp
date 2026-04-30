@@ -1,5 +1,11 @@
 # 📝 Nhật Ký Cập Nhật & CÔNG VIỆC (TODO)
-**Ngày cập nhật:** 11/04/2026
+**Ngày cập nhật:** 30/04/2026
+
+---
+
+## Trí sửa BE:
+- thêm helper func tính level theo rule mới (Mốc Level 2 là 200 XP, Level 3 là 300 XP... mỗi mức cách nhau 100) và thay những chỗ trong main.py đang tính level thủ công -> gọi hàm
+- trả thêm role cho endpoint "/api/user/status/{user_id}"
 
 ---
 
