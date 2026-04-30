@@ -1,4 +1,5 @@
 import hashlib
+import math
 import re
 import secrets
 from datetime import datetime
@@ -56,10 +57,11 @@ def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
     return user
 
 def calculate_level(total_xp: int) -> int:
-    if total_xp < 200:
+    if total_xp <= 0:
         return 1
-    # Mốc Level 2 là 200 XP, Level 3 là 300 XP... (mỗi mức cách nhau 100)
-    return total_xp // 100
+    # Công thức: S = 50 * (L^2 - L) => L = (1 + sqrt(1 + 0.08 * S)) / 2
+    # Cần 100xp lên lv2, thêm 200xp lên lv3, thêm 300xp lên lv4...
+    return int((1 + math.sqrt(1 + 0.08 * total_xp)) / 2)
 
 # --- TỰ ĐỘNG TẠO ADMIN ---
 
