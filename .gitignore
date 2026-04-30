@@ -18,3 +18,4 @@ build/
 # AI logs — tracked structure, ignored content
 .ai-log/*.jsonl
 .next/
+style_guide.md
