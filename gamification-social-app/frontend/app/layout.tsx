@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import Cursor from "./components/Cursor";
 import CustomCursor from "./components/CustomCursor";
+import PresenceProvider from "./components/PresenceProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {/* <Cursor /> */}
         <CustomCursor />
-        {children}
+        <PresenceProvider>
+          {children}
+        </PresenceProvider>
       </body>
     </html>
   );
