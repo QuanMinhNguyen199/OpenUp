@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { usePresence } from "../components/PresenceProvider";
+import Loading from "../components/Loading";
 
 export default function LobbyPage() {
     const router = useRouter();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [onlineCount, setOnlineCount] = useState<number | null>(null);
+    const { onlineCount } = usePresence();
 
     useEffect(() => {
         const userId = localStorage.getItem("user_id");
@@ -47,36 +48,7 @@ export default function LobbyPage() {
         fetchUser();
     }, [router]);
 
-    // Supabase Realtime Presence: track online users
-    useEffect(() => {
-        const userId = localStorage.getItem("user_id");
-        if (!userId) return;
 
-        const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
-        );
-
-        const channel = supabase.channel("lobby-presence", {
-            config: { presence: { key: userId } },
-        });
-
-        channel
-            .on("presence", { event: "sync" }, () => {
-                const state = channel.presenceState();
-                setOnlineCount(Object.keys(state).length);
-            })
-            .subscribe(async (status) => {
-                if (status === "SUBSCRIBED") {
-                    await channel.track({ user_id: userId, online_at: new Date().toISOString() });
-                }
-            });
-
-        return () => {
-            channel.untrack();
-            supabase.removeChannel(channel);
-        };
-    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("user_id");
@@ -85,11 +57,7 @@ export default function LobbyPage() {
     };
 
     if (loading) {
-        return (
-            <main className="relative min-h-screen w-full bg-[#050505] flex items-center justify-center font-sans text-white">
-                <div className="animate-pulse text-[#39FF14] text-xl font-bold tracking-widest">LOADING NEURAL LINK...</div>
-            </main>
-        );
+        return <Loading />;
     }
 
     if (userData?.role === "ADMIN") {
