@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePresence } from "../components/PresenceProvider";
+import Loading from "../components/Loading";
 
 export default function LobbyPage() {
     const router = useRouter();
@@ -56,11 +57,7 @@ export default function LobbyPage() {
     };
 
     if (loading) {
-        return (
-            <main className="relative min-h-screen w-full bg-[#050505] flex items-center justify-center font-sans text-white">
-                <div className="animate-pulse text-[#39FF14] text-xl font-bold tracking-widest">LOADING NEURAL LINK...</div>
-            </main>
-        );
+        return <Loading />;
     }
 
     if (userData?.role === "ADMIN") {
