@@ -6,6 +6,36 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ---
 
+## Tuần 5 — 1/5/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
+
+### Đã làm
+- ui lobby, loading
+- fix cursor
+- add guardrail
+- refactor lại backend
+- update file seed cho supabase
+
+### Khó nhất tuần này
+- thống nhất gameplay
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Gemini | vibecode | layout cơ bản |
+
+### Học được
+- k có
+
+### Nếu làm lại, sẽ làm khác
+- k có
+
+### Kế hoạch tuần tới
+- Hoàn thiện singleplayer mode
+- fix redis client 
+
+---
+
 ## Tuần 4 — 24/04/2026
 **Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
 
