@@ -13,14 +13,21 @@ const PresenceContext = createContext<PresenceContextType>({ onlineCount: null }
 export const usePresence = () => useContext(PresenceContext);
 
 export default function PresenceProvider({ children }: { children: React.ReactNode }) {
+    const [sessionUserId, setSessionUserId] = useState<string | null>(null);
     const [onlineCount, setOnlineCount] = useState<number | null>(null);
     const pathname = usePathname();
 
+    // Cập nhật sessionUserId khi chuyển trang (để nhận diện login/logout)
     useEffect(() => {
         const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
-        
+        if (userId !== sessionUserId) {
+            setSessionUserId(userId);
+        }
+    }, [pathname, sessionUserId]);
+
+    useEffect(() => {
         // Nếu không có userId (chưa login), không join channel
-        if (!userId) {
+        if (!sessionUserId) {
             setOnlineCount(null);
             return;
         }
@@ -31,7 +38,7 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
         );
 
         const channel = supabase.channel("app-presence", {
-            config: { presence: { key: userId } },
+            config: { presence: { key: sessionUserId } },
         });
 
         channel
@@ -41,7 +48,7 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
             })
             .subscribe(async (status) => {
                 if (status === "SUBSCRIBED") {
-                    await channel.track({ user_id: userId, online_at: new Date().toISOString() });
+                    await channel.track({ user_id: sessionUserId, online_at: new Date().toISOString() });
                 }
             });
 
@@ -49,7 +56,7 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
             channel.untrack();
             supabase.removeChannel(channel);
         };
-    }, [pathname]); // Re-check khi chuyển trang để đảm bảo vẫn đang online
+    }, [sessionUserId]); // Chỉ chạy lại khi userId thay đổi thật sự (Login/Logout)
 
     return (
         <PresenceContext.Provider value={{ onlineCount }}>
