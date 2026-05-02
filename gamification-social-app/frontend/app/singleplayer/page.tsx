@@ -19,7 +19,7 @@ const LoadingScreen = () => {
                 {quotes.map((quote, index) => (
                     <div
                         key={index}
-                        className={`flex whitespace-nowrap text-2xl font-black italic uppercase tracking-widest ${index % 2 === 0 ? "animate-slide-left" : "animate-slide-right"
+                        className={`flex whitespace-nowrap text-2xl font-bold italic uppercase tracking-widest ${index % 2 === 0 ? "animate-slide-left" : "animate-slide-right"
                             }`}
                     >
                         {/* Lặp lại chuỗi để tạo hiệu ứng chạy vô tận */}
