@@ -173,7 +173,7 @@ export default function SingleplayerPage() {
                                         <p className="text-[#39FF14] font-bold">Đạt 100 điểm</p>
                                     </div>
                                     <div className="border border-white/10 p-3 bg-black/40 col-span-2 md:col-span-1">
-                                        <p className="text-gray-500 uppercase text-[10px] mb-1">Phần thưởng</p>
+                                        <p className="text-gray-300 uppercase text-[10px] mb-1">Phần thưởng</p>
                                         <p className="text-[#00F0FF] font-bold">+10 XP</p>
                                     </div>
                                 </div>
