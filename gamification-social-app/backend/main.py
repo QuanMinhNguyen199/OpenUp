@@ -309,3 +309,15 @@ def read_root():
 
 
 # SINGLEPLAYER MODE, don't fix code below unless you are coding this mode
+
+class ChatHistory(TypedDict):
+    role: str
+    content: str
+
+class SingleplayerRequest(BaseModel):
+    user_id: int
+    event: int
+    history: List[ChatHistory]
+
+
+
