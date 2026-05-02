@@ -34,7 +34,7 @@ const LoadingScreen = () => {
 
             {/* 2. Chữ LOADING ở trung tâm */}
             <div className="relative z-10 flex flex-col items-center">
-                <h1 className="text-6xl font-black italic tracking-tighter text-[#00F0FF] drop-shadow-[0_0_20px_#00F0FF] animate-pulse">
+                <h1 className="text-5xl font-black tracking-tighter text-[#00F0FF] drop-shadow-[0_0_20px_#00F0FF] animate-pulse">
                     LOADING
                 </h1>
                 {/* Thanh progress bar nhỏ phía dưới (Tùy chọn) */}
