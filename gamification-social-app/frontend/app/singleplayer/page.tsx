@@ -83,7 +83,7 @@ export default function SingleplayerPage() {
 
                     <h1 className="text-4xl font-black text-red-500 mb-4 tracking-tighter italic uppercase">Truy cập bị chặn</h1>
                     <p className="text-gray-400 mb-8 font-mono text-sm leading-relaxed">
-                        Chế độ <span className="text-white font-bold">SINGLE PLAYER</span> chỉ dành cho người chơi. 
+                        Chế độ <span className="text-white font-bold">SINGLE PLAYER</span> chỉ dành cho người chơi.
                         Tài khoản <span className="text-red-400">ADMIN</span> không được phép tham gia để đảm bảo tính công bằng.
                     </p>
                     <div className="flex justify-center">
@@ -104,12 +104,12 @@ export default function SingleplayerPage() {
             <div className="relative z-10 flex justify-between items-start p-8 md:p-12">
                 {/* Top Left: Player Stats (Copied from Lobby) */}
                 <div className="flex items-center gap-6">
-                    <div className="relative h-20 w-20">
+                    {/* <div className="relative h-20 w-20">
                         <div className="absolute inset-0 rotate-45 border-2 border-[#39FF14] bg-black shadow-[0_0_15px_#39FF14]" />
                         <div className="absolute inset-0 flex items-center justify-center font-black text-2xl text-[#39FF14] drop-shadow-[0_0_5px_#39FF14]">
                             {userData.username[0].toUpperCase()}
                         </div>
-                    </div>
+                    </div> */}
 
                     <div>
                         <div className="flex items-center gap-3">
@@ -151,18 +151,18 @@ export default function SingleplayerPage() {
                     <div className="relative p-8 md:p-10 border border-white/10 bg-white/5 backdrop-blur-md rounded-br-[40px] overflow-hidden group">
                         {/* Background Decoration */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#00F0FF]/10 to-transparent -mr-16 -mt-16 rounded-full blur-2xl group-hover:bg-[#00F0FF]/20 transition-all duration-700" />
-                        
+
                         <div className="relative z-10">
                             <h3 className="text-xl font-black italic text-[#39FF14] mb-6 flex items-center gap-3">
                                 <span className="w-8 h-[2px] bg-[#39FF14]"></span>
                                 LUẬT CHƠI & HƯỚNG DẪN
                             </h3>
-                            
+
                             <div className="space-y-6">
                                 <p className="text-lg md:text-xl font-medium text-gray-200 leading-relaxed italic">
                                     "Bạn sẽ được đặt vào 1 tình huống giao tiếp ngẫu nhiên với AI, bạn cần trả lời AI hướng tới mục tiêu ẩn để tăng điểm."
                                 </p>
-                                
+
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 font-mono text-sm">
                                     <div className="border border-white/10 p-3 bg-black/40">
                                         <p className="text-gray-500 uppercase text-[10px] mb-1">Thua</p>
@@ -185,7 +185,7 @@ export default function SingleplayerPage() {
                                     {/* Button Background & Animation */}
                                     <div className="absolute inset-0 bg-[#39FF14] skew-x-[-15deg] translate-x-0 group-hover/btn:translate-x-full transition-transform duration-500 ease-out" />
                                     <div className="absolute inset-0 border-2 border-[#39FF14] skew-x-[-15deg]" />
-                                    
+
                                     <span className="relative z-10 text-2xl font-black italic tracking-tighter text-black group-hover/btn:text-[#39FF14] transition-colors duration-300">
                                         BẮT ĐẦU NGAY
                                     </span>
@@ -198,8 +198,8 @@ export default function SingleplayerPage() {
 
             {/* Decorative Corner Element */}
             <div className="absolute bottom-0 right-0 w-48 h-48 pointer-events-none opacity-20">
-                 <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-l from-[#00F0FF] to-transparent" />
-                 <div className="absolute bottom-0 right-0 h-full w-[2px] bg-gradient-to-t from-[#00F0FF] to-transparent" />
+                <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-l from-[#00F0FF] to-transparent" />
+                <div className="absolute bottom-0 right-0 h-full w-[2px] bg-gradient-to-t from-[#00F0FF] to-transparent" />
             </div>
         </main>
     );
