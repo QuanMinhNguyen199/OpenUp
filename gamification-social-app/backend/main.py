@@ -316,8 +316,9 @@ class ChatHistory(TypedDict):
 
 class SingleplayerRequest(BaseModel):
     user_id: int
-    event: int
     history: List[ChatHistory]
 
-
+@app.post("/singleplayer")
+async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
 
