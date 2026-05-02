@@ -101,7 +101,7 @@ export default function SingleplayerPage() {
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
 
             {/* TOP SECTION */}
-            <div className="relative z-10 flex justify-between items-start p-8 md:p-12">
+            <div className="relative z-10 flex justify-between items-start p-8 md:p-10">
                 {/* Top Left: Player Stats (Copied from Lobby) */}
                 <div className="flex items-center gap-6">
                     {/* <div className="relative h-20 w-20">
