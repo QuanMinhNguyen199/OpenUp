@@ -4,13 +4,12 @@ import React from "react";
 
 const LoadingScreen = () => {
     const quotes = [
+        "Ăn có nhai, nói có nghĩ",
         "Họa từ miệng mà ra",
+        "Cái miệng hại cái thân",
+        "Lưỡi không xương, trăm đường lắt léo",
         "Uốn lưỡi bảy lần trước khi nói",
-        "Lời nói chẳng mất tiền mua",
-        "Lựa lời mà nói cho vừa lòng nhau",
-        "Sảy chân có thể đứng vững, sảy miệng không thể rút lại",
-        "Nói dài nói dai nói dại",
-        "Biết thì thưa thốt, không biết thì dựa cột mà nghe",
+        "Lưỡi sắc hơn gươm",
     ];
 
     return (
