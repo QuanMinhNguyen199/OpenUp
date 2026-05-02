@@ -142,7 +142,7 @@ export default function SingleplayerPage() {
                     {/* Mode Header */}
                     <div className="text-center mb-12">
                         {/* <h2 className="text-sm font-bold tracking-[0.5em] text-[#39FF14] uppercase mb-2 opacity-80">Game Mode</h2> */}
-                        <h1 className="text-7xl md:text-8xl font-black italic tracking-tighter text-white uppercase leading-none">
+                        <h1 className="text-7xl md:text-8xl font-black italic tracking-tighter text-white uppercase leading-none flex">
                             Single <span className="text-[#00F0FF] drop-shadow-[0_0_20px_#00F0FF]">Player</span>
                         </h1>
                     </div>
