@@ -165,15 +165,15 @@ export default function SingleplayerPage() {
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 font-mono text-sm">
                                     <div className="border border-white/10 p-3 bg-black/40">
-                                        <p className="text-gray-300 uppercase text-[10px] mb-1">Điều kiện Thua</p>
+                                        <p className="text-gray-300 uppercase text-sm mb-1">Điều kiện Thua</p>
                                         <p className="text-red-500 font-bold">Điểm về 0</p>
                                     </div>
                                     <div className="border border-white/10 p-3 bg-black/40">
-                                        <p className="text-gray-300 uppercase text-[10px] mb-1">Điều kiện Thắng</p>
+                                        <p className="text-gray-300 uppercase text-sm mb-1">Điều kiện Thắng</p>
                                         <p className="text-[#39FF14] font-bold">Đạt 100 điểm</p>
                                     </div>
                                     <div className="border border-white/10 p-3 bg-black/40 col-span-2 md:col-span-1">
-                                        <p className="text-gray-300 uppercase text-[10px] mb-1">Phần thưởng</p>
+                                        <p className="text-gray-300 uppercase text-sm mb-1">Phần thưởng</p>
                                         <p className="text-[#00F0FF] font-bold">+10 XP</p>
                                     </div>
                                 </div>
