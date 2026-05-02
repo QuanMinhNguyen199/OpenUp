@@ -160,7 +160,7 @@ export default function SingleplayerPage() {
 
                             <div className="space-y-6">
                                 <p className="text-lg md:text-xl font-medium text-gray-200 leading-relaxed italic">
-                                    "Bạn sẽ được đặt vào 1 tình huống giao tiếp ngẫu nhiên với AI, bạn cần trả lời AI hướng tới mục tiêu ẩn để tăng điểm."
+                                    Bạn sẽ được đặt vào 1 tình huống giao tiếp ngẫu nhiên với AI, bạn cần trả lời AI hướng tới mục tiêu ẩn để tăng điểm.
                                 </p>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 font-mono text-sm">
