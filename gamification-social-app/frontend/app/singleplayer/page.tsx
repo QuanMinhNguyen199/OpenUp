@@ -155,7 +155,7 @@ export default function SingleplayerPage() {
                         <div className="relative z-10">
                             <h3 className="text-xl font-black italic text-[#39FF14] mb-6 flex items-center gap-3">
                                 <span className="w-8 h-[2px] bg-[#39FF14]"></span>
-                                LUẬT CHƠI & HƯỚNG DẪN
+                                LUẬT CHƠI
                             </h3>
 
                             <div className="space-y-6">
