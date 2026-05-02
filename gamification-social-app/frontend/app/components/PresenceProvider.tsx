@@ -14,10 +14,11 @@ export const usePresence = () => useContext(PresenceContext);
 
 export default function PresenceProvider({ children }: { children: React.ReactNode }) {
     const [sessionUserId, setSessionUserId] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
     const [onlineCount, setOnlineCount] = useState<number | null>(null);
     const pathname = usePathname();
 
-    // Cập nhật sessionUserId khi chuyển trang (để nhận diện login/logout)
+    // 1. Cập nhật sessionUserId khi chuyển trang (để nhận diện login/logout)
     useEffect(() => {
         const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
         if (userId !== sessionUserId) {
@@ -25,9 +26,28 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
         }
     }, [pathname, sessionUserId]);
 
+    // 2. Fetch role từ backend mỗi khi sessionUserId thay đổi (không tin tưởng localStorage)
     useEffect(() => {
-        // Nếu không có userId (chưa login), không join channel
         if (!sessionUserId) {
+            setUserRole(null);
+            return;
+        }
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/user/status/${sessionUserId}`, {
+            headers: { "x-token": token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            setUserRole(data.role || "PLAYER");
+        })
+        .catch(() => setUserRole("PLAYER"));
+    }, [sessionUserId]);
+
+    // 3. Chỉ kết nối/ngắt kết nối khi sessionUserId hoặc userRole thay đổi thật sự
+    useEffect(() => {
+        if (!sessionUserId || !userRole) {
             setOnlineCount(null);
             return;
         }
@@ -44,11 +64,20 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
         channel
             .on("presence", { event: "sync" }, () => {
                 const state = channel.presenceState();
-                setOnlineCount(Object.keys(state).length);
+                // Chỉ đếm số lượng User ID duy nhất có role là PLAYER
+                const playerUserIds = Object.keys(state).filter((key) => {
+                    const presences = state[key] as any[];
+                    return presences.some((p) => p.role === "PLAYER");
+                });
+                setOnlineCount(playerUserIds.length);
             })
             .subscribe(async (status) => {
                 if (status === "SUBSCRIBED") {
-                    await channel.track({ user_id: sessionUserId, online_at: new Date().toISOString() });
+                    await channel.track({ 
+                        user_id: sessionUserId, 
+                        role: userRole,
+                        online_at: new Date().toISOString() 
+                    });
                 }
             });
 
@@ -56,7 +85,7 @@ export default function PresenceProvider({ children }: { children: React.ReactNo
             channel.untrack();
             supabase.removeChannel(channel);
         };
-    }, [sessionUserId]); // Chỉ chạy lại khi userId thay đổi thật sự (Login/Logout)
+    }, [sessionUserId, userRole]); // Chỉ chạy lại khi userId thay đổi thật sự (Login/Logout)
 
     return (
         <PresenceContext.Provider value={{ onlineCount }}>

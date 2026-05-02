@@ -309,3 +309,16 @@ def read_root():
 
 
 # SINGLEPLAYER MODE, don't fix code below unless you are coding this mode
+
+
+@app.post("/singleplayer")
+async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+
+class ChatHistory(TypedDict):
+    role: str
+    content: str
+
+class SingleplayerRequest(BaseModel):
+    user_id: int
+    history: List[ChatHistory]
