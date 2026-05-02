@@ -4,23 +4,22 @@ import React from "react";
 
 const LoadingScreen = () => {
     const quotes = [
+        "Ăn có nhai, nói có nghĩ",
         "Họa từ miệng mà ra",
+        "Cái miệng hại cái thân",
+        "Lưỡi không xương, trăm đường lắt léo",
         "Uốn lưỡi bảy lần trước khi nói",
-        "Lời nói chẳng mất tiền mua",
-        "Lựa lời mà nói cho vừa lòng nhau",
-        "Sảy chân có thể đứng vững, sảy miệng không thể rút lại",
-        "Nói dài nói dai nói dại",
-        "Biết thì thưa thốt, không biết thì dựa cột mà nghe",
+        "Lưỡi sắc hơn gươm",
     ];
 
     return (
         <div className="relative flex h-screen w-full flex-col justify-center overflow-hidden bg-[#050505] font-sans text-white">
             {/* 1. Các dòng chữ chạy nền (Background Stream) */}
-            <div className="absolute inset-0 flex flex-col justify-around opacity-20 pointer-events-none">
+            <div className="absolute inset-0 flex flex-col justify-around opacity-30 pointer-events-none">
                 {quotes.map((quote, index) => (
                     <div
                         key={index}
-                        className={`flex whitespace-nowrap text-2xl font-black italic uppercase tracking-widest ${index % 2 === 0 ? "animate-slide-left" : "animate-slide-right"
+                        className={`flex whitespace-nowrap text-2xl font-bold italic uppercase tracking-widest ${index % 2 === 0 ? "animate-slide-left" : "animate-slide-right"
                             }`}
                     >
                         {/* Lặp lại chuỗi để tạo hiệu ứng chạy vô tận */}
@@ -35,8 +34,8 @@ const LoadingScreen = () => {
 
             {/* 2. Chữ LOADING ở trung tâm */}
             <div className="relative z-10 flex flex-col items-center">
-                <h1 className="text-6xl font-black italic tracking-tighter text-[#00F0FF] drop-shadow-[0_0_20px_#00F0FF] animate-pulse">
-                    LOADING...
+                <h1 className="text-5xl font-black tracking-tighter text-[#00F0FF] drop-shadow-[0_0_20px_#00F0FF] animate-pulse">
+                    LOADING
                 </h1>
                 {/* Thanh progress bar nhỏ phía dưới (Tùy chọn) */}
                 <div className="mt-4 h-1 w-48 overflow-hidden bg-gray-800">
@@ -45,7 +44,7 @@ const LoadingScreen = () => {
             </div>
 
             {/* 3. Hiệu ứng nhiễu (Vignette & Scanlines) */}
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,transparent_20%,black_90%)]"></div>
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,transparent_30%,black_90%)]"></div>
 
             <style jsx>{`
         @keyframes slide-left {
