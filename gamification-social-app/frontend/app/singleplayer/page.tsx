@@ -125,7 +125,7 @@ export default function SingleplayerPage() {
                                 <span className="text-xs font-bold text-[#39FF14] uppercase tracking-widest opacity-70">Level</span>
                                 <span className="text-2xl font-black text-white italic">{userData.level}</span>
                             </div>
-                            <div className="h-1.5 w-48 bg-white/5 overflow-hidden">
+                            <div className="h-1.5 w-48 bg-white/15 overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-[#39FF14] to-[#00F0FF] shadow-[0_0_10px_#39FF14]" style={{ width: `${expPercentage}%` }} />
                             </div>
                         </div>
