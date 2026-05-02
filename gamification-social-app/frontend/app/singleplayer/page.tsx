@@ -15,7 +15,7 @@ const LoadingScreen = () => {
     return (
         <div className="relative flex h-screen w-full flex-col justify-center overflow-hidden bg-[#050505] font-sans text-white">
             {/* 1. Các dòng chữ chạy nền (Background Stream) */}
-            <div className="absolute inset-0 flex flex-col justify-around opacity-20 pointer-events-none">
+            <div className="absolute inset-0 flex flex-col justify-around opacity-30 pointer-events-none">
                 {quotes.map((quote, index) => (
                     <div
                         key={index}
