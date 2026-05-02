@@ -44,7 +44,7 @@ const LoadingScreen = () => {
             </div>
 
             {/* 3. Hiệu ứng nhiễu (Vignette & Scanlines) */}
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,transparent_20%,black_90%)]"></div>
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,transparent_30%,black_90%)]"></div>
 
             <style jsx>{`
         @keyframes slide-left {
