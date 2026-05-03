@@ -17,6 +17,11 @@ try:
     print("✅ Đã kết nối thành công tới Redis!")
 except Exception as e:
     print(f"⚠️ Cảnh báo: Không thể kết nối Redis ({e}). BXH sẽ tạm thời trống.")
+    if 'redis_conn' in locals() and redis_conn:
+        try:
+            redis_conn.close()
+        except:
+            pass
     redis_conn = None
 
 def update_leaderboard(username: str, xp: int):

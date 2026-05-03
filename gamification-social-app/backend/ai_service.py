@@ -42,7 +42,10 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     messages.append({"role": "user", "content": request_prompt})
 
     MAX_RETRIES = 2
+    raw = "" # Khởi tạo biến raw để tránh lỗi scope
+    
     for attempt in range(1, MAX_RETRIES + 1):
+        # BƯỚC 1: Gọi API (Chỉ retry nếu lỗi đường truyền hoặc lỗi từ phía máy chủ OpenAI)
         try:
             response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -51,21 +54,31 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                 response_format={ "type": "json_object" } # Ép GPT trả về JSON
             )
             raw = response.choices[0].message.content.strip()
-            return json.loads(raw)
             
         except Exception as e:
-            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Story Mode: {e}")
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Mạng/API OpenAI Story Mode: {e}")
             if attempt == MAX_RETRIES:
-                return {
-                    "npc_behavior": "đang suy nghĩ",
-                    "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?",
-                    "options": [
-                        {"option": "Nhắc lại ý vừa rồi", "quantity": 0},
-                        {"option": "Để tôi nói lại cho rõ", "quantity": 0},
-                        {"option": "Im lặng chờ đợi", "quantity": 0}
-                    ]
-                }
+                break  # Hết lượt cứu chữa, thoát vòng lặp để xuống dùng Fallback
             await asyncio.sleep(1)
+            continue # Gọi lại API lần nữa
+            
+        # BƯỚC 2: Parse JSON (Nếu gọi API thành công nhưng AI nhả JSON lỗi -> Thoát luôn, KHÔNG gọi lại API gây tốn tiền)
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as e:
+            print(f"⚠ Lỗi Parse JSON (Dừng, không gọi lại API): {e}\nRaw: {raw}")
+            break # Thoát vòng lặp ngay lập tức để xuống dùng Fallback
+
+    # BƯỚC 3: Fallback cứng (Chỉ chạy đến đây nếu API sập cả 2 lần hoặc JSON bị rác)
+    return {
+        "npc_behavior": "đang suy nghĩ",
+        "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?",
+        "options": [
+            {"option": "Nhắc lại ý vừa rồi", "quantity": 0},
+            {"option": "Để tôi nói lại cho rõ", "quantity": 0},
+            {"option": "Im lặng chờ đợi", "quantity": 0}
+        ]
+    }
 
 # --- CHẾ ĐỘ 2: CREATIVE MODE (AI SINH TỰ DO THEO TURN) ---
 async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):

@@ -17,19 +17,18 @@ def run_setup():
     try:
         print("🛠 Chạy Migrations (Cập nhật cấu trúc bảng)...")
         # Danh sách các cột cần đảm bảo có mặt trong Database
-        migrations = [
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS chap INTEGER DEFAULT 1;",
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0;",
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS level INTEGER DEFAULT 1;",
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS current_turn INTEGER DEFAULT 1;",
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS neutral_streak INTEGER DEFAULT 0;",
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS affinity_score FLOAT DEFAULT 20.0;",
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS is_waiting_for_reply BOOLEAN DEFAULT FALSE;",
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS last_interaction TIMESTAMP;",
-            "ALTER TABLE collections ADD COLUMN IF NOT EXISTS target_idx INTEGER;",
-            "ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;"
-            "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS game_mode TEXT DEFAULT 'story';"
-        ]
+        migrations = {
+            "chap": "ALTER TABLE users ADD COLUMN IF NOT EXISTS chap INTEGER DEFAULT 1;",
+            "total_xp": "ALTER TABLE users ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0;",
+            "level": "ALTER TABLE users ADD COLUMN IF NOT EXISTS level INTEGER DEFAULT 1;",
+            "current_turn": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS current_turn INTEGER DEFAULT 1;",
+            "neutral_streak": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS neutral_streak INTEGER DEFAULT 0;",
+            "affinity_score": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS affinity_score FLOAT DEFAULT 20.0;",
+            "is_waiting_for_reply": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS is_waiting_for_reply BOOLEAN DEFAULT FALSE;",
+            "game_mode": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS game_mode TEXT DEFAULT 'story';",
+            "target_idx": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS target_idx INTEGER;",
+            "image_url": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;"
+        }
         for sql in migrations:
             try:
                 db.execute(text(sql))
