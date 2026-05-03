@@ -25,10 +25,10 @@ def check_boss_sequence(user_tile_sequence: list):
     Ví dụ Frontend gửi lên: [3, 0, 1, 4, 8, 2, 6, 7, 5]
     """
     # 1. Kiểm tra số lượng mảnh ghép (Lưới 3x3 phải có đúng 9 ô, tính cả ô trống số 8)
-    if len(user_tile_sequence) != len(CORRECT_ORDER):
+    if len(user_tile_sequence) != len(CORRECT_ORDER) or len(set(user_tile_sequence)) != 9:
         return {
             "is_correct": False,
-            "message": "Cụ Phan: 'Khung tranh này có 9 ô cơ mà, cháu mang thiếu mảnh ghép rồi!'",
+            "message": "Cụ Phan: 'Khung tranh này có 9 ô cơ mà, cháu mang thiếu hoặc mang nhầm mảnh ghép rồi!'",
             "status": "RETRY",
             "correct_count": 0
         }

@@ -2,129 +2,130 @@ import os
 import json
 import asyncio
 from google import genai
-from dotenv import load_dotenv
-# Nhớ kiểm tra file prompts có tên đúng là system_prompts.py không nhé
-from system_prompts import NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT, get_story_mode_prompt
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# Import các kịch bản từ các file prompt riêng biệt
+from prompts.story_prompts import get_story_mode_prompt
+# Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
+from prompts.single_prompts import get_single_prompt, NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
 
 load_dotenv()
 
+# Khởi tạo Clients
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 openai_client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=os.getenv("OPENAI_BASE_URL"),
+    base_url=os.getenv("OPENAI_BASE_URL"), # Dùng nếu bạn chạy qua Proxy hoặc bối cảnh cụ thể
     timeout=60
 )
 
+# --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict]):
+    """
+    Xử lý hội thoại Story Mode bằng GPT-4o-mini.
+    Hệ thống lấy kịch bản từ story_prompts.py và AI xào nấu lại dựa trên lịch sử.
+    """
     system_prompt, request_prompt = get_story_mode_prompt(index=index, event=event, case=case)
+    
     if system_prompt is None or request_prompt is None:
-        return {"raw_response": None}
-    # Build messages: system → history → request
+        return {"error": "Không tìm thấy kịch bản cho Chapter này"}
+
+    # Xây dựng Messages: System -> Lịch sử chat -> Chỉ thị format
     messages = [{"role": "system", "content": system_prompt}]
-    for msg in history:
+    
+    # Chỉ lấy tối đa 6 lượt hội thoại gần nhất để tránh loãng kịch bản
+    for msg in history[-6:]:
         messages.append({"role": msg["role"], "content": msg["content"]})
+        
     messages.append({"role": "user", "content": request_prompt})
 
-    MAX_RETRIES = 3
+    MAX_RETRIES = 2
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                temperature=0.8,
+                temperature=0.7, # Thấp hơn để AI bám sát kịch bản cứng
+                response_format={ "type": "json_object" } # Ép GPT trả về JSON
             )
             raw = response.choices[0].message.content.strip()
-            # Strip markdown code fences if present (```json ... ```)
-            if raw.startswith("```"):
-                raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
-                if raw.endswith("```"):
-                    raw = raw[:-3].strip()
             return json.loads(raw)
-        except json.JSONDecodeError as e:
-            print(f"⚠ [{attempt}/{MAX_RETRIES}] JSON decode lỗi: {e}\nRaw: {raw}")
-            if attempt == MAX_RETRIES:
-                return {"raw_response": raw}
-            await asyncio.sleep(1)
+            
         except Exception as e:
-            print(f"❌ [{attempt}/{MAX_RETRIES}] Lỗi gen_dialogue_story_mode: {e}")
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Story Mode: {e}")
             if attempt == MAX_RETRIES:
                 return {
-                    "npc_behavior": "nhìn bạn chờ đợi",
-                    "npc_say": "Chờ tôi chút",
+                    "npc_behavior": "đang suy nghĩ",
+                    "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?",
                     "options": [
-                        {"option": "Ý bạn là sao?", "quantity": 0},
-                        {"option": "Ừm", "quantity": 0},
-                        {"option": "Để làm gì vậy?", "quantity": 0},
+                        {"option": "Nhắc lại ý vừa rồi", "quantity": 0},
+                        {"option": "Để tôi nói lại cho rõ", "quantity": 0},
+                        {"option": "Im lặng chờ đợi", "quantity": 0}
                     ]
                 }
             await asyncio.sleep(1)
 
+# --- CHẾ ĐỘ 2: CREATIVE MODE (AI SINH TỰ DO THEO TURN) ---
 async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
     """
-    Sinh kịch bản hội thoại dựa trên lượt (turn). 
-    Turn 1: Phá băng, Turn 2: Khai thác, Turn 3: Chốt hạ/Bài học EQ.
+    Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
+    Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
     """
-    extra_context = SPECIFIC_NPC_CONTEXT.get(npc_name, "")
+    extra_context = SPECIFIC_NPC_CONTEXT.get(npc_name, "Một NPC bí ẩn trong thế giới OpenUp.")
     
-    # Xác định mục tiêu theo lượt để ép AI đi đúng hướng
+    # Chiến lược dẫn dắt theo lượt
     turn_goals = {
-        1: "Khởi đầu nhẹ nhàng, quan sát thái độ. Đưa ra tình huống 'phá băng'.",
-        2: "Đi sâu vào tâm tư hoặc mâu thuẫn. NPC bắt đầu đặt niềm tin hoặc thử thách.",
-        3: "Tình huống quyết định để nhận được 'nguyên liệu kỹ năng'. Trả về feedback mang tính giáo dục EQ."
+        1: "Phá băng: NPC làm quen hoặc đưa ra một vấn đề nhẹ nhàng.",
+        2: "Khai thác: Đi sâu vào mâu thuẫn hoặc cảm xúc. Đòi hỏi EQ cao hơn.",
+        3: "Chốt hạ: Tình huống quyết định. Nếu thắng sẽ nhận được nguyên liệu kỹ năng."
     }
     goal = turn_goals.get(turn, turn_goals[1])
 
     try:
-        # Sử dụng model 2.0-flash để xử lý JSON và ngữ cảnh tốt hơn
+        # Sử dụng tính năng native JSON mode của Gemini 2.0 Flash
         response = client.models.generate_content(
             model='gemini-2.0-flash',
             config={
                 'system_instruction': NPC_SYSTEM_PROMPT,
-                'response_mime_type': 'application/json'
+                'response_mime_type': 'application/json',
+                'temperature': 0.9 # Cao hơn để AI sáng tạo lời thoại
             },
             contents=(
-                f"NPC: {npc_name}. Nguyên liệu đại diện: {ingredient}. "
-                f"Lượt hiện tại: {turn}/3. Mục tiêu: {goal}. "
-                f"Bối cảnh tâm lý: {extra_context}"
+                f"NPC: {npc_name}. Mảnh ghép đang giữ: {ingredient}. "
+                f"Lượt hiện tại: {turn}/3. Mục tiêu lượt này: {goal}. "
+                f"Bối cảnh tâm lý nhân vật: {extra_context}"
             )
         )
         
         if not response.text:
-            raise ValueError("AI trả về rỗng")
+            raise ValueError("Gemini trả về rỗng")
 
         result = json.loads(response.text)
-        
-        # Bổ sung thông tin turn vào output để Backend/Frontend dễ xử lý
         result["turn"] = turn
         result["is_final_turn"] = (turn >= 3)
         
         return result
 
     except Exception as e:
-        print(f"❌ Lỗi AI Service tại lượt {turn} của {npc_name}: {e}")
-        # Fallback an toàn nếu AI lỗi
+        print(f"❌ Lỗi Creative Mode ({npc_name} - Turn {turn}): {e}")
         return {
-            "question": f"[Lượt {turn}] {npc_name} nhìn bạn chờ đợi. 'Cậu nghĩ sao về vấn đề này?'",
+            "question": f"Tiếp tục câu chuyện với {npc_name}, bạn sẽ nói gì?",
             "options": [
-                {"text": "Lắng nghe và thấu hiểu", "type": "good", "feedback": "Bạn đang làm rất tốt việc phá băng!"},
-                {"text": "Trả lời xã giao", "type": "neutral", "feedback": "Câu trả lời hơi nhạt, hãy cố gắng hơn."},
-                {"text": "Ngắt lời NPC", "type": "bad", "feedback": "Kém duyên quá, NPC đang đóng lòng lại đấy."}
+                {"text": "Chia sẻ chân thành", "type": "good", "feedback": "Sự chân thành luôn là chìa khóa tốt nhất."},
+                {"text": "Nói chuyện xã giao", "type": "neutral", "feedback": "NPC vẫn đang quan sát bạn."},
+                {"text": "Phớt lờ cảm xúc của NPC", "type": "bad", "feedback": "NPC cảm thấy không được tôn trọng."}
             ],
             "turn": turn,
             "is_final_turn": (turn >= 3)
         }
 
-# Chạy thử để Member 2 kiểm soát nội dung
+# --- TEST CODE ---
 if __name__ == "__main__":
     async def test():
-        print("--- TEST LƯỢT 1 (PHÁ BĂNG) ---")
-        res1 = await generate_npc_dialog("Chị Lan", "Sự Thấu Cảm", turn=1)
-        print(json.dumps(res1, indent=2, ensure_ascii=False))
-        
-        print("\n--- TEST LƯỢT 3 (CHỐT HẠ) ---")
-        res3 = await generate_npc_dialog("Chị Lan", "Sự Thấu Cảm", turn=3)
-        print(json.dumps(res3, indent=2, ensure_ascii=False))
+        print("--- TEST CREATIVE MODE (TURN 2) ---")
+        res = await generate_npc_dialog("Linh", "Sự Khéo Léo", turn=2)
+        print(json.dumps(res, indent=2, ensure_ascii=False))
         
     asyncio.run(test())
