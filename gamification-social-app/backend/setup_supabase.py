@@ -29,12 +29,14 @@ def run_setup():
             "target_idx": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS target_idx INTEGER;",
             "image_url": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;"
         }
-        for sql in migrations:
+        
+        # ĐÃ SỬA LỖI LOGIC VÀ BẢO MẬT: Dùng .items() và bỏ hoàn toàn hàm split()
+        for col_name, sql_command in migrations.items():
             try:
-                db.execute(text(sql))
+                db.execute(text(sql_command))
             except Exception as e:
                 # Bỏ qua nếu lỗi (thường là do cột đã tồn tại ở một số phiên bản DB cũ)
-                print(f"⏩ Thông báo: {sql.split('ADD COLUMN')[1].split(' ')[1]} đã được xử lý.")
+                print(f"⏩ Thông báo: Cột '{col_name}' đã được xử lý hoặc đã tồn tại.")
         db.commit()
 
         print(f"📦 Đang nạp {len(STORY_MODE_PROMPTS)} Chapter vào Database...")
