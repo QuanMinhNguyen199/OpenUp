@@ -72,3 +72,13 @@ class CollectionItemResponse(BaseModel):
 
     class Config:
         from_attributes = True # Cho phép Pydantic đọc dữ liệu từ SQLAlchemy Model
+
+# --- 5. SCHEMAS CHO SINGLEPLAYER MODE (MEMBER 2) ---
+
+class ChatHistory(BaseModel):
+    role: str
+    content: str
+
+class SingleplayerRequest(BaseModel):
+    user_id: int
+    history: List[ChatHistory]

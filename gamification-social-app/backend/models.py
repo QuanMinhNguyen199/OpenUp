@@ -85,7 +85,8 @@ class Conversation(Base):
     neutral_streak = Column(Integer, default=0)
     affinity_score = Column(Float, default=20.0) # Bắt đầu từ 20 cho dễ chơi
     current_turn = Column(Integer, default=1) 
-    
+    # 'story' cho chế độ cốt truyện, 'creative' cho chế độ tự do
+    game_mode = Column(String, default="story")
     # --- 2 CỘT MỚI ĐỂ BẢO MẬT ---
     # Dùng để chặn hack: Phải gọi story_mode mới được gọi choose_option
     is_waiting_for_reply = Column(Boolean, default=False) 

@@ -14,6 +14,7 @@ from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode
+from schemas import SingleplayerRequest, StoryModeRequest
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -98,17 +99,6 @@ class RegisterRequest(BaseModel):
     username: str
     password: str
 
-class History(TypedDict):
-    role: str
-    content: str
-
-class StoryModeRequest(BaseModel):
-    user_id: int
-    index: int # NPC Index (0-7)
-    event: bool
-    case: int
-    history: List[History]
-
 # --- ENDPOINTS AUTH ---
 
 @app.post("/api/register")
@@ -184,7 +174,7 @@ async def story_mode(
     
     # KHÓA CHÉO: Đánh dấu đang chờ trả lời cho NPC này
     npc_id = data.index + 1
-    conv = db.query(models.Conversation).filter_by(user_id=user.id, npc_id=npc_id).first()
+    conv = db.query(models.Conversation).filter_by(user_id=user.id, npc_id=npc_id, game_mode="story").first()
     if not conv:
         conv = models.Conversation(user_id=user.id, npc_id=npc_id, affinity_score=20.0)
         db.add(conv)
@@ -208,7 +198,7 @@ def choose_option(
     if npc_id == 8:
         raise HTTPException(status_code=403, detail="Màn Boss yêu cầu giải đố, không thể chat!")
 
-    conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id).first()
+    conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id, game_mode="story").first()
     
     # 2. KIỂM TRA KHÓA CHÉO (Phải gọi story_mode trước)
     if not conv or not getattr(conv, 'is_waiting_for_reply', True):
@@ -314,11 +304,3 @@ def read_root():
 @app.post("/singleplayer")
 async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
-
-class ChatHistory(TypedDict):
-    role: str
-    content: str
-
-class SingleplayerRequest(BaseModel):
-    user_id: int
-    history: List[ChatHistory]
