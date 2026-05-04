@@ -15,6 +15,7 @@ import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode
 from schemas import SingleplayerRequest, StoryModeRequest
+from prompts.story_prompts import STORY_MODE_PROMPTS
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -159,7 +160,7 @@ async def story_mode(
     user = verify_token(data.user_id, db, x_token)
     
     # Bảo mật: Chặn nhảy chap
-    if data.index < 0 or data.index > 6:
+    if data.index < 0 or data.index >= len(STORY_MODE_PROMPTS):
         raise HTTPException(status_code=400, detail="Màn này không có cốt truyện !")
     elif data.index + 1 > user.chap:
         raise HTTPException(status_code=403, detail="Chưa mở khóa chương này !")
