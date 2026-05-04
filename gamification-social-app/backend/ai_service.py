@@ -37,7 +37,7 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     
     # Chỉ lấy tối đa 6 lượt hội thoại gần nhất để tránh loãng kịch bản
     for msg in history[-6:]:
-        messages.append({"role": msg["role"], "content": msg["content"]})
+        messages.append({"role": msg.role, "content": msg.content})
         
     messages.append({"role": "user", "content": request_prompt})
 
