@@ -145,17 +145,20 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
 ]
 
 def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
-    if index < 0 or index > len(STORY_MODE_PROMPTS) - 1:
-        return None, None
-    if case not in [0, 1]:
+    # 1. Kiểm tra index NPC có hợp lệ không
+    if index < 0 or index >= len(STORY_MODE_PROMPTS):
         return None, None
     
     data = STORY_MODE_PROMPTS[index]
     
+    # 2. BẢO MẬT: Kiểm tra case có nằm trong giới hạn mảng thực tế không (Thay thế cho if case not in [0, 1])
+    if case < 0 or case >= len(data.get('case', [])):
+        return None, None
+    
     event0 = ''
     event1 = ''
     
-    # Logic random sự kiện linh hoạt
+    # 3. Logic random sự kiện linh hoạt
     if event and 'events' in data:
         chosen_event = random.choice(data['events'])
         event0 = f'Đột ngột xảy ra sự cố: {chosen_event} Hãy phản ứng với sự cố này. '
@@ -164,7 +167,7 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
     case0 = data['case'][case][0]
     case1 = data['case'][case][1]
     
-    # Trả về prompt gốc và nội dung return đã được format
+    # 4. Trả về prompt gốc và nội dung return đã được format
     return data['prompt'], data['return'].format(
         event0=event0, 
         event1=event1, 

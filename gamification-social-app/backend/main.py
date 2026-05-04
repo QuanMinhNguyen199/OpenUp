@@ -159,10 +159,10 @@ async def story_mode(
     user = verify_token(data.user_id, db, x_token)
     
     # Bảo mật: Chặn nhảy chap
-    if data.index < 0 or data.index > 7:
-        raise HTTPException(status_code=400, detail="NPC không tồn tại!")
+    if data.index < 0 or data.index > 6:
+        raise HTTPException(status_code=400, detail="Màn này không có cốt truyện !")
     elif data.index + 1 > user.chap:
-        raise HTTPException(status_code=403, detail="Chưa mở khóa chương này!")
+        raise HTTPException(status_code=403, detail="Chưa mở khóa chương này !")
 
     # Gọi AI sinh kịch bản
     result = await gen_dialogue_story_mode(
