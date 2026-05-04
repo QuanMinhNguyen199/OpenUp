@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
-from prompts.single_prompts import get_single_prompt
+# from prompts.single_prompts import get_single_prompt
 
 load_dotenv()
 
