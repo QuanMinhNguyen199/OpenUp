@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
-from prompts.single_prompts import get_single_prompt, NPC_SYSTEM_PROMPT, SPECIFIC_NPC_CONTEXT
+# from prompts.single_prompts import get_single_prompt
 
 load_dotenv()
 
@@ -86,6 +86,9 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
     Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
     Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
     """
+    NPC_SYSTEM_PROMPT = ''
+    SPECIFIC_NPC_CONTEXT = {'':''}
+
     extra_context = SPECIFIC_NPC_CONTEXT.get(npc_name, "Một NPC bí ẩn trong thế giới OpenUp.")
     
     # Chiến lược dẫn dắt theo lượt
@@ -133,6 +136,12 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
             "turn": turn,
             "is_final_turn": (turn >= 3)
         }
+
+
+# SINGLEPLAYER MODE
+async def gen_dialogue_singleplayer():
+    pass
+
 
 # --- TEST CODE ---
 if __name__ == "__main__":
