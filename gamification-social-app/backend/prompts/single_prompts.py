@@ -53,6 +53,3 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
         case1=case1
     )
 
-
-NPC_SYSTEM_PROMPT = ''
-SPECIFIC_NPC_CONTEXT = {'':''}
