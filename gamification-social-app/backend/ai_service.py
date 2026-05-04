@@ -137,6 +137,12 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
             "is_final_turn": (turn >= 3)
         }
 
+
+# SINGLEPLAYER MODE
+async def gen_dialogue_singleplayer():
+    pass
+
+
 # --- TEST CODE ---
 if __name__ == "__main__":
     async def test():
