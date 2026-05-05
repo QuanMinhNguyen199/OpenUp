@@ -35,14 +35,37 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     # Xây dựng Messages: System -> Lịch sử chat -> Chỉ thị format
     messages = [{"role": "system", "content": system_prompt}]
     
-    # Chỉ lấy tối đa 6 lượt hội thoại gần nhất để tránh loãng kịch bản
+    # BƯỚC 2: Xử lý History an toàn (Chống lỗi 500 FastAPI vs Pydantic)
+    valid_roles = ["system", "assistant", "user"]
     for msg in history[-6:]:
-        messages.append({"role": msg.role, "content": msg.content})
+        role = getattr(msg, "role", None) or (msg.get("role") if isinstance(msg, dict) else "")
+        content = getattr(msg, "content", None) or (msg.get("content") if isinstance(msg, dict) else "")
         
-    messages.append({"role": "user", "content": request_prompt})
+        if role not in valid_roles: 
+            role = "user" # Nếu Frontend truyền linh tinh thì ép về user
+        if content: 
+            messages.append({"role": role, "content": content})
+
+    # BƯỚC 3: Bẻ lái kịch bản nếu đã có lịch sử chat (Chống lỗi lặp kịch bản)
+    if len(history) > 0:
+        request_prompt = (
+            "Dựa vào câu nói/hành động vừa rồi của user, hãy thể hiện cảm xúc và phản ứng lại. "
+            "Tự nghĩ ra diễn biến tiếp theo và đưa ra 3 lựa chọn mới cho user (kèm điểm quantity từ -20 đến +20). "
+            "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
+            "{\n"
+            '  "npc_behavior": "mô tả hành động",\n'
+            '  "npc_say": "lời thoại phản hồi",\n'
+            '  "options": [\n'
+            '    {"option": "lựa chọn 1", "quantity": điểm}\n'
+            "  ]\n"
+            "}"
+        )
+
+    # BƯỚC 4: Chốt lệnh (Chống lỗi 400 thiếu từ khóa JSON của OpenAI)
+    messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về kết quả dưới dạng JSON hợp lệ."})
 
     MAX_RETRIES = 2
-    raw = "" # Khởi tạo biến raw để tránh lỗi scope
+    raw = ""
     
     for attempt in range(1, MAX_RETRIES + 1):
         # BƯỚC 1: Gọi API (Chỉ retry nếu lỗi đường truyền hoặc lỗi từ phía máy chủ OpenAI)

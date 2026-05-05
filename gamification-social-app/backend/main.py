@@ -188,7 +188,7 @@ async def story_mode(
 @app.post("/game/choose-option")
 def choose_option(
     npc_id: int, 
-    option_type: str, 
+    score_change: float,  # NHẬN THẲNG ĐIỂM SỐ (quantity) TỪ FRONTEND
     user_id: int, 
     db: Session = Depends(get_db), 
     x_token: str = Header(None)
@@ -198,6 +198,10 @@ def choose_option(
     # 1. Chặn dùng mồm vượt Boss
     if npc_id == 8:
         raise HTTPException(status_code=403, detail="Màn Boss yêu cầu giải đố, không thể chat!")
+
+    # BẢO MẬT: Chống Hacker dùng Postman gửi bừa điểm ảo (Giới hạn mỗi lượt chỉ được cộng/trừ max 30 điểm)
+    if score_change > 30.0 or score_change < -30.0:
+        raise HTTPException(status_code=400, detail="Hệ thống phát hiện điểm số bất thường (Nghi vấn Hack)!")
 
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id, game_mode="story").first()
     
@@ -213,42 +217,48 @@ def choose_option(
     
     conv.last_interaction = now
 
-    # Logic tính điểm (Backend độc tài quyết định)
-    points = {"good": 10.0, "neutral": 0.0, "bad": -25.0}
-    bonus = points.get(option_type, 0.0)
-    potential_score = conv.affinity_score + bonus
+    # 4. TÍNH ĐIỂM MỚI (Lấy điểm cũ cộng với số điểm Frontend truyền lên)
+    potential_score = conv.affinity_score + score_change
     
-    # Xử lý Neutral Streak
-    conv.neutral_streak = (conv.neutral_streak + 1) if option_type == "neutral" else 0
+    # 5. Xử lý Neutral Streak (Vì không còn chữ "neutral", ta quy định điểm từ -3 đến +3 là hời hợt)
+    if -3.0 <= score_change <= 3.0:
+        conv.neutral_streak += 1
+    else:
+        conv.neutral_streak = 0
 
     message = ""
     is_failed = False
     is_completed = False
 
+    # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA
     if potential_score <= 0:
         is_failed = True
-        conv.affinity_score = 20.0
+        conv.affinity_score = 20.0 # Hồi sinh cho 20 điểm làm vốn
         conv.current_turn = 1
-        message = "NPC thất vọng hoàn toàn. Làm lại từ đầu chap nhé!"
+        message = "NPC thất vọng hoàn toàn. Bạn đã làm hỏng cuộc trò chuyện, hãy làm lại từ đầu!"
+        
     elif conv.neutral_streak >= 3:
         is_failed = True
         conv.affinity_score = max(0, conv.affinity_score - 10)
         conv.current_turn = 1
-        message = "Bạn quá hời hợt, NPC không muốn tiếp chuyện nữa."
+        message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
+        
     else:
-        conv.affinity_score = min(100, potential_score)
+        conv.affinity_score = min(100.0, potential_score) # Tối đa là 100 điểm
+        
+        # NẾU ĐẦY CÂY TÌNH CẢM -> THẮNG CHAPTER
         if conv.affinity_score >= 100 and user.chap == npc_id:
             user.chap += 1
             user.total_xp += 150
-            update_leaderboard(user.username, user.total_xp)
+            # update_leaderboard(user.username, user.total_xp) # Tạm cmt nếu Redis đang lỗi
             user.level = calculate_level(user.total_xp)
             is_completed = True
-            message = f"Tuyệt vời! Mở khóa Chapter {user.chap}!"
+            message = f"Tuyệt vời! Bạn đã mở khóa Chapter {user.chap}!"
         else:
             conv.current_turn += 1
-            message = f"Điểm hiện tại: {conv.affinity_score}/100"
+            message = f"NPC phản ứng lại. Điểm tình cảm: {conv.affinity_score}/100"
 
-    # Đóng khóa chéo: Phải gọi story_mode lại mới được chọn tiếp
+    # 7. Đóng khóa chéo: Phải gọi story_mode lại mới được chọn tiếp
     conv.is_waiting_for_reply = False 
     db.commit()
 
