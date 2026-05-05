@@ -1,4 +1,5 @@
 NAMES = ["Tuấn", "Lan", "Hùng", "Hoa", "Cường", "Mai", "Dũng", "Linh", "Hoàng", "Ngọc", "Khánh", "Trang", "Phú", "Thảo", "Nam", "Yến", "Phúc", "Hương", "Quân", "Diễm"]
+JOBS = ["Giáo viên", "Bác sĩ", "Kỹ sư", "Lập trình viên", "Kế toán", "Luật sư", "Nhân viên bán hàng", "Công nhân", "Tài xế", "Đầu bếp", "Thợ điện", "Thợ xây", "Nhà báo", "Thiết kế đồ họa", "Marketing", "Nhân viên ngân hàng", "Hướng dẫn viên du lịch", "Nông dân", "Công an", "Bộ đội"]
 
 # Keep but not use.
 # EVENT_PROMPT = (
