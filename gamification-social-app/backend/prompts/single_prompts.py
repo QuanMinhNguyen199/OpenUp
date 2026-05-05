@@ -1,3 +1,5 @@
+NAMES = ["Tuấn", "Lan", "Hùng", "Hoa", "Cường", "Mai", "Dũng", "Linh", "Hoàng", "Ngọc", "Khánh", "Trang", "Phú", "Thảo", "Nam", "Yến", "Phúc", "Hương", "Quân", "Diễm"]
+
 # Keep but not use.
 # EVENT_PROMPT = (
 #     'Thêm 1 sự cố tác động đến bạn và user. ',
