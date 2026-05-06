@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
-# from prompts.single_prompts import get_single_prompt
+from prompts.single_prompts import get_singleplayer_prompt
 
 load_dotenv()
 
@@ -162,8 +162,18 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
 
 
 # SINGLEPLAYER MODE
-async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str):
-    pass
+async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object]):
+    system_prompt, request_prompt = get_singleplayer_prompt(
+        name_idx=name_idx,
+        job_idx=job_idx,
+        relationship_idx=relationship_idx,
+        lesson_idx=lesson_idx,
+        event=event,
+        case=case,
+        turn=turn,
+        location=location
+    )
+    
 
 
 # --- TEST CODE ---
