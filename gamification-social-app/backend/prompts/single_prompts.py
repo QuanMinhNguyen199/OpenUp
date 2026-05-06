@@ -21,6 +21,9 @@ EVENT_PROMPT = (
     'event: mô tả sự cố,\n'
 )
 
+def get_singleplayer_prompt(name_idx, job_idx, relationship_idx, lesson_idx):
+    
+
 # Keep but not use.
 # EVENT_PROMPT = (
 #     'Thêm 1 sự cố tác động đến bạn và user. ',
