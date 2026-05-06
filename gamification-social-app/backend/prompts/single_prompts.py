@@ -16,10 +16,10 @@ Mục tiêu của user là cần từ chối khi bị nhờ việc vô lý và �
     }
 ]
 
-EVENT_PROMPT = (
-    'Thêm 1 sự cố tác động đến bạn và user. ',
-    'event: mô tả sự cố,\n'
-)
+EVENT_PROMPT = {
+    True: ('Thêm 1 sự cố tác động đến bạn và user. ', 'event: mô tả sự cố,\n'),
+    False: ('', '')
+}
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
@@ -34,7 +34,8 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
         return None, None
     
     job = JOBS[job_idx] if job_idx != 4 else 'học sinh'
-    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}."""
+    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}. {LESSONS[lesson_idx]['describe']}"""
+    request_prompt = f""""""
 
 # Keep but not use.
 # EVENT_PROMPT = (
