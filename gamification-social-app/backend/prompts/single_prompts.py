@@ -21,7 +21,7 @@ EVENT_PROMPT = (
     'event: mô tả sự cố,\n'
 )
 
-def get_singleplayer_prompt(name_idx, job_idx, relationship_idx, lesson_idx):
+def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0):
     
 
 # Keep but not use.
