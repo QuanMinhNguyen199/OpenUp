@@ -38,7 +38,7 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     if case != 0 and case != 1:
         return None, None
     
-    job = JOBS[job_idx] if job_idx != 4 else 'học sinh'
+    job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
     location_prompt = f', địa điểm: {location}' if turn > 1 else ''
     first_prompt = FIRST_PROMPT[turn > 1].format(criteria=LESSONS[lesson_idx]['cases'][case][1]) if turn > 1 else FIRST_PROMPT[turn > 1]
 
