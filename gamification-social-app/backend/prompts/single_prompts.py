@@ -23,7 +23,7 @@ EVENT_PROMPT = {
 
 FIRST_PROMPT = {
     True: "start_context: mô tả bối cảnh ban đầu để user nắm được,\nlocation: địa điểm,\n",
-    False: "score: chấm điểm câu trả lời gần nhất của user (theo tiêu chí: {criteria}),\nreason: giải thích vì sao lại có điểm như vậy,\n"
+    False: "score: chấm điểm câu trả lời gần nhất của user (theo tiêu chí: {criteria}),\nreason: lí do có điểm như vậy,\n"
 }
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = ''):
