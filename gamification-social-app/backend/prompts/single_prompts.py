@@ -51,7 +51,6 @@ npc_say: lời thoại của bạn
 Cả bạn và user đều sống ở Việt Nam"""
     return system_prompt, request_prompt
 
-print(get_singleplayer_prompt(0, 0, 0, 0, True, 0, 1, ""))
 
 # Keep but not use.
 # EVENT_PROMPT = (
