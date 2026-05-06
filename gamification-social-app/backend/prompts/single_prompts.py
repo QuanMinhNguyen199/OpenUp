@@ -33,7 +33,8 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     if case != 0 and case != 1:
         return None, None
     
-    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {JOBS[job_idx]}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}."""
+    job = JOBS[job_idx] if job_idx != 4 else 'học sinh'
+    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}."""
 
 # Keep but not use.
 # EVENT_PROMPT = (
