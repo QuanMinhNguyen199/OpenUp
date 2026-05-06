@@ -40,15 +40,16 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     
     job = JOBS[job_idx] if job_idx != 4 else 'học sinh'
     location_prompt = f', địa điểm: {location}' if turn > 1 else ''
-    
+    first_prompt = FIRST_PROMPT[turn > 1].format(criteria=LESSONS[lesson_idx]['cases'][case][1]) if turn > 1 else FIRST_PROMPT[turn > 1]
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
+    request_prompt = f"""{first_prompt}{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
 {{
-{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
+{first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
 npc_say: lời thoại của bạn
 }}
 Cả bạn và user đều sống ở Việt Nam"""
+    return system_prompt, request_prompt
 
 # Keep but not use.
 # EVENT_PROMPT = (
