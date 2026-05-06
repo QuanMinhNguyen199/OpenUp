@@ -22,7 +22,18 @@ EVENT_PROMPT = (
 )
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0):
+    if name_idx < 0 or name_idx >= len(NAMES):
+        return None, None
+    if job_idx < 0 or job_idx >= len(JOBS):
+        return None, None
+    if relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS):
+        return None, None
+    if lesson_idx < 0 or lesson_idx >= len(LESSONS):
+        return None, None
+    if case != 0 and case != 1:
+        return None, None
     
+    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {JOBS[job_idx]}"""
 
 # Keep but not use.
 # EVENT_PROMPT = (
