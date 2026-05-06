@@ -84,3 +84,5 @@ class SingleplayerRequest(BaseModel):
     event: bool
     history: List[ChatHistory]
     num: List[int]
+    turn: int
+    location: str
