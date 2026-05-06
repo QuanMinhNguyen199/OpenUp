@@ -3,7 +3,7 @@ NAMES = ["Tuấn", "Lan", "Hùng", "Hoa", "Cường", "Mai", "Dũng", "Linh", "H
 # JOBS = ["Giáo viên", "Bác sĩ", "Kỹ sư", "Lập trình viên", "Kế toán", "Luật sư", "Nhân viên bán hàng", "Công nhân", "Tài xế", "Đầu bếp", "Thợ điện", "Thợ xây", "Nhà báo", "Thiết kế đồ họa", "Marketing", "Nhân viên ngân hàng", "Hướng dẫn viên du lịch", "Nông dân", "Công an", "Bộ đội"]
 JOBS = ["Giáo viên", "Bác sĩ", "Y tá", "Dược sĩ", "Kỹ sư xây dựng", "Kỹ sư cơ khí", "Kỹ sư điện", "Lập trình viên", "Thiết kế web", "Thiết kế đồ họa", "Kế toán", "Kiểm toán", "Luật sư", "Nhân viên ngân hàng", "Nhân viên bảo hiểm", "Nhân viên kinh doanh", "Nhân viên bán hàng", "Marketing", "Chăm sóc khách hàng", "Lễ tân", "Phục vụ nhà hàng", "Pha chế", "Đầu bếp", "Phụ bếp", "Tài xế taxi", "Tài xế xe tải", "Shipper", "Giao hàng", "Bốc xếp", "Bảo vệ", "Công an", "Bộ đội", "Công nhân may", "Công nhân lắp ráp", "Công nhân sản xuất", "Thợ điện", "Thợ nước", "Thợ hàn", "Thợ mộc", "Thợ xây", "Phụ hồ", "Thợ sửa xe", "Thợ sửa điện lạnh", "Thợ may", "Thợ làm tóc", "Thợ nail", "Trang điểm", "Nhiếp ảnh gia", "Quay phim", "Biên tập viên", "Nhà báo", "Content writer", "Streamer", "YouTuber", "Nhân viên IT hỗ trợ", "Quản trị mạng", "Tester phần mềm", "Quản lý dự án", "Hướng dẫn viên du lịch", "Điều hành tour", "Lái xe du lịch", "Nông dân", "Chăn nuôi", "Nuôi trồng thủy sản", "Ngư dân", "Bán hàng online", "Chủ shop", "Tạp vụ", "Lao công", "Giúp việc gia đình", "Giữ trẻ", "Bảo mẫu", "Huấn luyện viên thể hình", "Giáo viên yoga", "Nhân viên spa", "Kỹ thuật viên massage", "Nhân viên khách sạn", "Quản lý khách sạn", "Thu ngân", "Thủ kho", "Xuất nhập khẩu", "Logistics", "Nhân sự (HR)", "Tuyển dụng", "Đào tạo", "Hành chính văn phòng", "Thư ký", "Trợ lý", "Phiên dịch", "Biên dịch", "Nhân viên in ấn", "Thợ quảng cáo", "Làm biển hiệu", "Sửa điện thoại", "Kỹ thuật viên máy tính"]
 
-RELATIONSHIPS = ["bạn", "bạn thân", "người quen", "đồng nghiệp", "bạn cùng lớp", "họ hàng", "hàng xóm", "người lạ"]
+RELATIONSHIPS = ["bạn bè", "bạn thân", "người quen", "đồng nghiệp", "bạn cùng lớp", "họ hàng", "hàng xóm", "người lạ"]
 
 LESSONS = [
     {
@@ -43,13 +43,15 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=LESSONS[lesson_idx]['cases'][case][1])
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{first_prompt}{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
 {{
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
 npc_say: lời thoại của bạn
 }}
 Cả bạn và user đều sống ở Việt Nam"""
     return system_prompt, request_prompt
+
+print(get_singleplayer_prompt(0, 0, 0, 0, True, 0, 1, ""))
 
 # Keep but not use.
 # EVENT_PROMPT = (
