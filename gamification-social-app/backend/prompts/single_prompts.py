@@ -35,7 +35,10 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     
     job = JOBS[job_idx] if job_idx != 4 else 'học sinh'
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f""""""
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
+{{
+{EVENT_PROMPT[event][1]}
+}}"""
 
 # Keep but not use.
 # EVENT_PROMPT = (
