@@ -162,7 +162,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
 
 
 # SINGLEPLAYER MODE
-async def gen_dialogue_singleplayer():
+async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str):
     pass
 
 
