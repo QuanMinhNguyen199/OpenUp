@@ -16,6 +16,7 @@ from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode
 from schemas import SingleplayerRequest, StoryModeRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
+from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -315,3 +316,4 @@ def read_root():
 @app.post("/singleplayer")
 async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
+    
