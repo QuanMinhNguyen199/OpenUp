@@ -21,7 +21,9 @@ EVENT_PROMPT = {
     False: ('', '')
 }
 
-def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0):
+TURN_PROMPT = "start_context: mô tả bối cảnh ban đầu để user nắm được,\n"
+
+def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1):
     if name_idx < 0 or name_idx >= len(NAMES):
         return None, None
     if job_idx < 0 or job_idx >= len(JOBS):
@@ -37,7 +39,8 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}. {LESSONS[lesson_idx]['describe']}"""
     request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
 {{
-{EVENT_PROMPT[event][1]}
+{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm của bạn,
+npc_say: lời thoại của bạn,
 }}"""
 
 # Keep but not use.
