@@ -6,6 +6,10 @@ LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.
 Mục tiêu của user là cần từ chối khi bị nhờ việc vô lý và đồng ý với việc chính đáng.''',
+        'cases': [
+            ('Lần này yêu cầu vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Lần này yêu cầu chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+        ]
     }
 ]
 
