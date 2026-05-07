@@ -23,7 +23,7 @@ EVENT_PROMPT = {
 
 FIRST_PROMPT = {
     True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
-    False: "score: chấm điểm câu trả lời trước đó của user (theo tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
+    False: "score: chấm điểm câu trả lời của user đối với câu nói gần nhất của bạn (theo tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
 }
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = ''):
@@ -45,7 +45,7 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
     request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
 {{
-{first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn (thứ mà user thấy được) theo ngôi thứ 3,
+{first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
 Cả bạn và user đều sống ở Việt Nam, chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
