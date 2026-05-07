@@ -320,3 +320,18 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
     elif data.turn == 1:
         name_idx = random.randint(0, len(NAMES) - 1)
+        job_idx = random.randint(0, len(JOBS) - 1)
+        relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
+        lesson_idx = random.randint(0, len(LESSONS) - 1)
+        case = random.randint(0, 1)
+        return await gen_dialogue_singleplayer(
+            name_idx=name_idx,
+            job_idx=job_idx,
+            relationship_idx=relationship_idx,
+            lesson_idx=lesson_idx,
+            event=data.event,
+            case=case,
+            turn=data.turn,
+            location=data.location,
+            history=data.history
+        )
