@@ -173,31 +173,22 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
         turn=turn,
         location=location
     )
-
     if system_prompt is None or request_prompt is None:
-        return {"error": "Không tìm thấy kịch bản cho tình huống này"}
+        return {"error": "Dữ liệu lỗi"}
 
-    # BƯỚC 1: Xây dựng Messages: System -> Lịch sử chat (6 phần tử cuối) -> Request
-    messages = [{"role": "system", "content": system_prompt}]
-
-    # Xử lý History an toàn (chỉ lấy 6 phần tử cuối)
+    messages = [{"role": "system", "content": system_prompt}]    
     valid_roles = ["assistant", "user"]
     for msg in history[-6:]:
-        role = getattr(msg, "role", None) or (msg.get("role") if isinstance(msg, dict) else "")
-        content = getattr(msg, "content", None) or (msg.get("content") if isinstance(msg, dict) else "")
-
+        role = getattr(msg, "role", '')
+        content = getattr(msg, "content", '')
         if role not in valid_roles:
             role = "user"
         if content:
             messages.append({"role": role, "content": content})
+    messages.append({"role": "user", "content": request_prompt})
 
-    # Chốt lệnh: request_prompt với role user
-    messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về kết quả dưới dạng JSON hợp lệ."})
-
-    # BƯỚC 2: Gọi API với retry tối đa 2 lần
     MAX_RETRIES = 2
     raw = ""
-
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
@@ -209,23 +200,21 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             raw = response.choices[0].message.content.strip()
 
         except Exception as e:
-            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗ Mạng/API OpenAI Singleplayer: {e}")
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Singleplayer: {e}")
             if attempt == MAX_RETRIES:
                 break
             await asyncio.sleep(1)
             continue
 
-        # Parse JSON – nếu lỗi thì không gọi lại API (tốn tiền)
         try:
             return json.loads(raw)
         except json.JSONDecodeError as e:
-            print(f"⚠ Lỗi Parse JSON Singleplayer (Dừng, không gọi lại API): {e}\nRaw: {raw}")
+            print(f"⚠ Lỗi Parse JSON Singleplayer: {e}\nRaw: {raw}")
             break
 
-    # BƯỚC 3: Fallback cứng
     return {
-        "npc_behavior": "đang suy nghĩ",
-        "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?"
+        "npc_behavior": "chớp mắt",
+        "npc_say": "Xin lỗi nãy tôi đang mải suy nghĩ, bạn có thể nói lại được không?"
     }
 
 
