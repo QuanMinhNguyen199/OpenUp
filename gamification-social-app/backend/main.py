@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
-from ai_service import gen_dialogue_story_mode
+from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer
 from schemas import SingleplayerRequest, StoryModeRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
@@ -316,4 +316,7 @@ def read_root():
 @app.post("/singleplayer")
 async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
-    
+    if data.turn < 1:
+        raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
+    elif data.turn == 1:
+        name_idx = random.randint(0, len(NAMES) - 1)
