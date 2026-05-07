@@ -324,7 +324,7 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
         lesson_idx = random.randint(0, len(LESSONS) - 1)
         case = random.randint(0, 1)
-        return await gen_dialogue_singleplayer(
+        result = await gen_dialogue_singleplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
@@ -335,6 +335,8 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
             location=data.location,
             history=data.history
         )
+        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx]
+        return result
     else:
         if len(data.num) != 4:
             raise HTTPException(status_code=400, detail="Data lỗi")
