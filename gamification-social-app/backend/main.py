@@ -323,13 +323,13 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         job_idx = random.randint(0, len(JOBS) - 1)
         relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
         lesson_idx = random.randint(0, len(LESSONS) - 1)
-        case = random.randint(0, 1)
+        case = random.randint(0, 3)
         result = await gen_dialogue_singleplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
             lesson_idx=lesson_idx,
-            event=data.event,
+            event=False,
             case=case,
             turn=data.turn,
             location=data.location,
@@ -343,13 +343,13 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         name_idx, job_idx, relationship_idx, lesson_idx = data.num
         if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or lesson_idx < 0 or lesson_idx >= len(LESSONS):
             raise HTTPException(status_code=400, detail="Data lỗi")
-        case = random.randint(0, 1)
+        case = random.randint(0, 3)
         return await gen_dialogue_singleplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
             lesson_idx=lesson_idx,
-            event=data.event,
+            event=False,
             case=case,
             turn=data.turn,
             location=data.location,
