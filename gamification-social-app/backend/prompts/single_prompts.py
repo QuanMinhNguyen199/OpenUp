@@ -7,11 +7,10 @@ RELATIONSHIPS = ["bạn bè", "bạn thân", "người quen", "đồng nghiệp"
 
 LESSONS = [
     {
-        'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.
-Mục tiêu của user là cần từ chối khi bị nhờ việc vô lý và đồng ý với việc chính đáng.''',
+        'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
         'cases': [
-            ('Lần này yêu cầu vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
-            ('Lần này yêu cầu chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+            ('Hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
         ]
     }
 ]
@@ -23,10 +22,12 @@ EVENT_PROMPT = {
 
 FIRST_PROMPT = {
     True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
-    False: "score: chấm điểm câu trả lời của user đối với câu nói gần nhất của bạn (theo tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
+    False: "score: chấm điểm lượt trả lời cuối của user, chỉ dựa vào lượt trò chuyện cuối (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
 }
 
-def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = ''):
+CASE2 = ('Bây giờ k nhờ vả, chỉ nói chuyện bình thường. ', 'tạo thiện cảm +10 điểm, k gây ấn tượng -5, làm mất thiện cảm -15')
+
+def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
         return None, None
     if job_idx < 0 or job_idx >= len(JOBS):
@@ -35,15 +36,17 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
         return None, None
     if lesson_idx < 0 or lesson_idx >= len(LESSONS):
         return None, None
-    if case != 0 and case != 1:
+    if case > 3 or case < 0:
         return None, None
     
+    case_desc = LESSONS[lesson_idx]['cases'][case][0] if case < 2 else CASE2[0]
+    case_crit = LESSONS[lesson_idx]['cases'][old_case][1] if old_case < 2 else CASE2[1]
     job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
     location_prompt = f', địa điểm: {location}' if turn > 1 else ''
-    first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=LESSONS[lesson_idx]['cases'][case][1])
+    first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=case_crit)
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{EVENT_PROMPT[event][0]}{LESSONS[lesson_idx]['cases'][case][0]}Trả về định dạng JSON sau:
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về định dạng JSON sau:
 {{
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
