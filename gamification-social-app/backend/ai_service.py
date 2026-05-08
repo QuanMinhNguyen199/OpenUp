@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
-# from prompts.single_prompts import get_single_prompt
+from prompts.single_prompts import get_singleplayer_prompt
 
 load_dotenv()
 
@@ -162,8 +162,62 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
 
 
 # SINGLEPLAYER MODE
-async def gen_dialogue_singleplayer():
-    pass
+async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0):
+    system_prompt, request_prompt = get_singleplayer_prompt(
+        name_idx=name_idx,
+        job_idx=job_idx,
+        relationship_idx=relationship_idx,
+        lesson_idx=lesson_idx,
+        event=event,
+        case=case,
+        turn=turn,
+        location=location,
+        old_case=old_case
+    )
+    if system_prompt is None or request_prompt is None:
+        return {"error": "Dữ liệu lỗi"}
+
+    messages = [{"role": "system", "content": system_prompt}]    
+    valid_roles = ["assistant", "user"]
+    for msg in history[-6:]:
+        role = getattr(msg, "role", '')
+        content = getattr(msg, "content", '')
+        if role not in valid_roles:
+            role = "user"
+        if content:
+            messages.append({"role": role, "content": content})
+    messages.append({"role": "user", "content": request_prompt})
+
+    MAX_RETRIES = 2
+    raw = ""
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.1,
+                response_format={"type": "json_object"}
+            )
+            raw = response.choices[0].message.content.strip()
+
+        except Exception as e:
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Singleplayer: {e}")
+            if attempt == MAX_RETRIES:
+                break
+            await asyncio.sleep(1)
+            continue
+
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as e:
+            print(f"⚠ Lỗi Parse JSON Singleplayer: {e}\nRaw: {raw}")
+            break
+
+    return {
+        "npc_behavior": "chớp mắt",
+        "npc_say": "Xin lỗi nãy tôi đang mải suy nghĩ, bạn có thể nói lại được không?"
+    }
+
 
 
 # --- TEST CODE ---

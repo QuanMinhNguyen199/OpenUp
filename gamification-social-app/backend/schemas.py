@@ -81,4 +81,8 @@ class ChatHistory(BaseModel):
 
 class SingleplayerRequest(BaseModel):
     user_id: int
+    event: bool
     history: List[ChatHistory]
+    num: List[int]
+    turn: int
+    location: str

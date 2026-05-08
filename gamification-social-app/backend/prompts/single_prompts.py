@@ -1,3 +1,60 @@
+NAMES = ["Tuấn", "Lan", "Hùng", "Hoa", "Cường", "Mai", "Dũng", "Linh", "Hoàng", "Ngọc", "Khánh", "Trang", "Phú", "Thảo", "Nam", "Yến", "Phúc", "Hương", "Quân", "Diễm"]
+
+# JOBS = ["Giáo viên", "Bác sĩ", "Kỹ sư", "Lập trình viên", "Kế toán", "Luật sư", "Nhân viên bán hàng", "Công nhân", "Tài xế", "Đầu bếp", "Thợ điện", "Thợ xây", "Nhà báo", "Thiết kế đồ họa", "Marketing", "Nhân viên ngân hàng", "Hướng dẫn viên du lịch", "Nông dân", "Công an", "Bộ đội"]
+JOBS = ["Giáo viên", "Bác sĩ", "Y tá", "Dược sĩ", "Kỹ sư xây dựng", "Kỹ sư cơ khí", "Kỹ sư điện", "Lập trình viên", "Thiết kế web", "Thiết kế đồ họa", "Kế toán", "Kiểm toán", "Luật sư", "Nhân viên ngân hàng", "Nhân viên bảo hiểm", "Nhân viên kinh doanh", "Nhân viên bán hàng", "Marketing", "Chăm sóc khách hàng", "Lễ tân", "Phục vụ nhà hàng", "Pha chế", "Đầu bếp", "Phụ bếp", "Tài xế taxi", "Tài xế xe tải", "Shipper", "Giao hàng", "Bốc xếp", "Bảo vệ", "Công an", "Bộ đội", "Công nhân may", "Công nhân lắp ráp", "Công nhân sản xuất", "Thợ điện", "Thợ nước", "Thợ hàn", "Thợ mộc", "Thợ xây", "Phụ hồ", "Thợ sửa xe", "Thợ sửa điện lạnh", "Thợ may", "Thợ làm tóc", "Thợ nail", "Trang điểm", "Nhiếp ảnh gia", "Quay phim", "Biên tập viên", "Nhà báo", "Content writer", "Streamer", "YouTuber", "Nhân viên IT hỗ trợ", "Quản trị mạng", "Tester phần mềm", "Quản lý dự án", "Hướng dẫn viên du lịch", "Điều hành tour", "Lái xe du lịch", "Nông dân", "Chăn nuôi", "Nuôi trồng thủy sản", "Ngư dân", "Bán hàng online", "Chủ shop", "Tạp vụ", "Lao công", "Giúp việc gia đình", "Giữ trẻ", "Bảo mẫu", "Huấn luyện viên thể hình", "Giáo viên yoga", "Nhân viên spa", "Kỹ thuật viên massage", "Nhân viên khách sạn", "Quản lý khách sạn", "Thu ngân", "Thủ kho", "Xuất nhập khẩu", "Logistics", "Nhân sự (HR)", "Tuyển dụng", "Đào tạo", "Hành chính văn phòng", "Thư ký", "Trợ lý", "Phiên dịch", "Biên dịch", "Nhân viên in ấn", "Thợ quảng cáo", "Làm biển hiệu", "Sửa điện thoại", "Kỹ thuật viên máy tính"]
+
+RELATIONSHIPS = ["bạn bè", "bạn thân", "người quen", "đồng nghiệp", "bạn cùng lớp", "họ hàng", "hàng xóm", "người lạ"]
+
+LESSONS = [
+    {
+        'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
+        'cases': [
+            ('Hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+        ]
+    }
+]
+
+EVENT_PROMPT = {
+    True: ('Thêm 1 sự cố khác tác động đến bạn và user. ', 'event: mô tả sự cố,\n'),
+    False: ('', '')
+}
+
+FIRST_PROMPT = {
+    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
+    False: "score: chấm điểm lượt trả lời cuối của user, chỉ dựa vào lượt trò chuyện cuối (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
+}
+
+CASE2 = ('Bây giờ k nhờ vả, chỉ nói chuyện bình thường. ', 'tạo thiện cảm +10 điểm, k gây ấn tượng -5, làm mất thiện cảm -15')
+
+def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
+    if name_idx < 0 or name_idx >= len(NAMES):
+        return None, None
+    if job_idx < 0 or job_idx >= len(JOBS):
+        return None, None
+    if relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS):
+        return None, None
+    if lesson_idx < 0 or lesson_idx >= len(LESSONS):
+        return None, None
+    if case > 3 or case < 0:
+        return None, None
+    
+    case_desc = LESSONS[lesson_idx]['cases'][case][0] if case < 2 else CASE2[0]
+    case_crit = LESSONS[lesson_idx]['cases'][old_case][1] if old_case < 2 else CASE2[1]
+    job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
+    location_prompt = f', địa điểm: {location}' if turn > 1 else ''
+    first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=case_crit)
+
+    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về định dạng JSON sau:
+{{
+{first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
+npc_say: lời thoại của bạn
+}}
+Cả bạn và user đều sống ở Việt Nam, chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+    return system_prompt, request_prompt
+
+
 # Keep but not use.
 # EVENT_PROMPT = (
 #     'Thêm 1 sự cố tác động đến bạn và user. ',
