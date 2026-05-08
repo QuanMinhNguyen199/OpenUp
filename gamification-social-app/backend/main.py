@@ -335,16 +335,17 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
             location=data.location,
             history=data.history
         )
-        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx]
+        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        result['name'] = NAMES[name_idx]
         return result
     else:
-        if len(data.num) != 4:
+        if len(data.num) != 5:
             raise HTTPException(status_code=400, detail="Data lỗi")
-        name_idx, job_idx, relationship_idx, lesson_idx = data.num
-        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or lesson_idx < 0 or lesson_idx >= len(LESSONS):
+        name_idx, job_idx, relationship_idx, lesson_idx, old_case = data.num
+        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or lesson_idx < 0 or lesson_idx >= len(LESSONS) or old_case < 0 or old_case > 3:
             raise HTTPException(status_code=400, detail="Data lỗi")
         case = random.randint(0, 3)
-        return await gen_dialogue_singleplayer(
+        result = await gen_dialogue_singleplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
@@ -353,6 +354,9 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
             case=case,
             turn=data.turn,
             location=data.location,
-            history=data.history
+            history=data.history,
+            old_case=old_case
         )
+        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        return result
         
