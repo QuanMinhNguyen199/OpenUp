@@ -162,7 +162,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
 
 
 # SINGLEPLAYER MODE
-async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object]):
+async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0):
     system_prompt, request_prompt = get_singleplayer_prompt(
         name_idx=name_idx,
         job_idx=job_idx,
@@ -171,7 +171,8 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
         event=event,
         case=case,
         turn=turn,
-        location=location
+        location=location,
+        old_case=old_case
     )
     if system_prompt is None or request_prompt is None:
         return {"error": "Dữ liệu lỗi"}
@@ -194,7 +195,7 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                temperature=0.8,
+                temperature=0.1,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
