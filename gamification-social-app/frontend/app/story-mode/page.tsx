@@ -139,7 +139,7 @@ export default function StoryModePage() {
 
                             <div className="space-y-6">
                                 <p className="text-lg md:text-xl font-medium text-gray-200 leading-relaxed italic">
-                                    Khám phá câu chuyện qua 7 cửa ải. Bạn cần trò chuyện và lựa chọn phản hồi khéo léo để đạt 100 điểm tình cảm. Ở ải cuối, một thử thách giải đố đang chờ đón bạn.
+                                    Khám phá câu chuyện qua 7 chapter. Bạn cần trò chuyện và lựa chọn phản hồi khéo léo để đạt 100 điểm tình cảm. Ở chapter cuối, một thử thách giải đố đang chờ đón bạn.
                                 </p>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 font-mono text-sm">
@@ -153,7 +153,7 @@ export default function StoryModePage() {
                                     </div>
                                     <div className="border border-white/10 p-3 bg-black/40 col-span-2 md:col-span-1">
                                         <p className="text-gray-300 uppercase text-sm mb-1">Phần thưởng</p>
-                                        <p className="text-[#00F0FF] font-bold">+150 XP / Ải</p>
+                                        <p className="text-[#00F0FF] font-bold">+150 XP / Chapter</p>
                                     </div>
                                 </div>
                             </div>
@@ -165,19 +165,19 @@ export default function StoryModePage() {
                         <h2 className="text-2xl font-black italic tracking-widest text-center text-white/50 uppercase mb-12">
                             --- Bản Đồ Cốt Truyện ---
                         </h2>
-                        
+
                         <div className="flex flex-wrap justify-center gap-6 relative">
                             {/* Connecting lines background */}
                             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -translate-y-1/2 z-0 hidden md:block"></div>
-                            
+
                             {CHAPTERS.map((chap) => {
                                 const isCompleted = chap.id < userData.chap;
                                 const isCurrent = chap.id === userData.chap;
                                 const isLocked = chap.id > userData.chap;
-                                
+
                                 let statusStyles = "";
                                 let iconStyles = "";
-                                
+
                                 if (isCompleted) {
                                     statusStyles = "border-[#39FF14]/50 bg-[#39FF14]/10 hover:bg-[#39FF14]/20 hover:border-[#39FF14] hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] cursor-pointer opacity-80";
                                     iconStyles = "text-[#39FF14]";
