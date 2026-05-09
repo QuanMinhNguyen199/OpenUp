@@ -9,8 +9,8 @@ LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
         'cases': [
-            ('Giờ tiếp tục nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
-            ('Giờ tiếp tục nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+            ('Giờ hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Giờ hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
         ]
     }
 ]
