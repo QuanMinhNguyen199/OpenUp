@@ -9,8 +9,8 @@ LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
         'cases': [
-            ('Hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
-            ('Hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+            ('Giờ tiếp tục nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Giờ tiếp tục nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
         ]
     }
 ]
@@ -22,7 +22,7 @@ EVENT_PROMPT = {
 
 FIRST_PROMPT = {
     True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
-    False: "score: chấm điểm lượt trả lời cuối của user, chỉ dựa vào lượt trò chuyện cuối (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do có điểm như vậy (theo ngôi 3),\n"
+    False: "score: chấm điểm lượt trả lời cuối của user (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n"
 }
 
 CASE2 = ('Bây giờ k nhờ vả, chỉ nói chuyện bình thường. ', 'tạo thiện cảm +10 điểm, k gây ấn tượng -5, làm mất thiện cảm -15')
