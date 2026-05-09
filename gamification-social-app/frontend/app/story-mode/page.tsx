@@ -162,7 +162,7 @@ export default function StoryModePage() {
 
                     {/* CHAPTER MAP */}
                     <div className="relative w-full">
-                        <h2 className="text-2xl font-black italic tracking-widest text-center text-white/50 uppercase mb-12">
+                        <h2 className="text-2xl font-black italic tracking-widest text-center text-white/80 uppercase mb-12">
                             --- Bản Đồ Cốt Truyện ---
                         </h2>
 
