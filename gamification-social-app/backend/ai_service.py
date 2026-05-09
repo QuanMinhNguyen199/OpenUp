@@ -178,8 +178,6 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
         return {"error": "Dữ liệu lỗi"}
 
     messages = [{"role": "system", "content": system_prompt}]    
-    
-    # Gộp 2 phần tử history (assistant và user) thành 1 message role assistant
     last_6 = history[-6:]
     for i in range(0, len(last_6), 2):
         if i + 1 < len(last_6):
@@ -187,10 +185,8 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             user_msg = last_6[i+1]
             asst_content = getattr(asst_msg, "content", '')
             user_content = getattr(user_msg, "content", '')
-            
             combined_content = f"Bạn nói: '{asst_content}'. User nói: '{user_content}'"
             messages.append({"role": "assistant", "content": combined_content})
-
     messages.append({"role": "user", "content": request_prompt})
 
     MAX_RETRIES = 2
