@@ -17,10 +17,22 @@ const CHAPTERS = [
     { id: 8, name: "Chapter Cuối", title: "Thử Thách Giải Đố" },
 ];
 
+const LESSONS: Record<number, string> = {
+    1: "Học cách từ chối khéo léo những yêu cầu vô lý và sẵn sàng giúp đỡ khi có lý do chính đáng. Sự cả nể không đúng chỗ sẽ làm hại bản thân.",
+    2: "Tôn trọng nguyên tắc và quy định. Đối mặt với người thi hành công vụ cần sự thành thật, lễ phép và kiên nhẫn giải thích thay vì chống đối hoặc dùng tiền bạc.",
+    3: "Lắng nghe là một nghệ thuật. Khi người khác mang tâm trạng tiêu cực, một cái gật đầu chân thành và lời khuyên bình tĩnh có sức mạnh to lớn hơn vạn lời trách móc.",
+    4: "Trong tập thể, lỗi lầm không quan trọng bằng cách chúng ta cùng nhau khắc phục nó. Sự khích lệ và đồng cảm sẽ gắn kết đồng đội vượt qua lúc khó khăn.",
+    5: "Đừng vô cảm trước nỗi vất vả của người lao động. Một hành động giúp đỡ nhỏ nhoi hay sự trung thực trả lại tiền thừa đều gieo mầm cho những giá trị tử tế trong xã hội.",
+    6: "Sự tập trung của mỗi người đều đáng quý. Biết nhận lỗi khi làm ồn và chủ động giúp đỡ người khác là biểu hiện của một văn hóa ứng xử văn minh.",
+    7: "Trí tuệ thực sự không chỉ nằm ở kiến thức mà còn ở cách ta đối nhân xử thế. Lựa chọn sự thật dù khó khăn và chăm chỉ từ những việc nhỏ bé nhất là cốt lõi của đạo làm người."
+};
+
 export default function StoryModePage() {
     const router = useRouter();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [popupOpen, setPopupOpen] = useState<'lesson' | 'puzzle' | null>(null);
+    const [selectedChapId, setSelectedChapId] = useState<number | null>(null);
 
     useEffect(() => {
         const userId = localStorage.getItem("user_id");
@@ -174,28 +186,42 @@ export default function StoryModePage() {
                                 const isCompleted = chap.id < userData.current_chap;
                                 const isCurrent = chap.id === userData.current_chap;
                                 const isLocked = chap.id > userData.current_chap;
+                                const isBoss = chap.id === 8;
 
                                 let statusStyles = "";
                                 let iconStyles = "";
+                                let displayTitle = chap.title;
 
                                 if (isCompleted) {
                                     statusStyles = "border-[#39FF14]/50 bg-[#39FF14]/10 hover:bg-[#39FF14]/20 hover:border-[#39FF14] hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] cursor-pointer opacity-80";
                                     iconStyles = "text-[#39FF14]";
+                                    displayTitle = "Bài học rút ra";
                                 } else if (isCurrent) {
                                     statusStyles = "border-[#00F0FF] bg-[#00F0FF]/10 shadow-[0_0_20px_rgba(0,240,255,0.3)] animate-pulse hover:bg-[#00F0FF]/20 cursor-pointer";
                                     iconStyles = "text-[#00F0FF]";
+                                    displayTitle = "???";
                                 } else {
-                                    statusStyles = "border-red-500/20 bg-red-500/5 opacity-50 cursor-not-allowed";
-                                    iconStyles = "text-red-500/50";
+                                    if (isBoss) {
+                                        statusStyles = "border-red-500/80 bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.5)] cursor-pointer hover:bg-red-500/30 hover:scale-105 opacity-90 animate-pulse";
+                                        iconStyles = "text-red-500";
+                                    } else {
+                                        statusStyles = "border-red-500/20 bg-red-500/5 opacity-50 cursor-not-allowed";
+                                        iconStyles = "text-red-500/50";
+                                        displayTitle = "???";
+                                    }
                                 }
 
                                 return (
                                     <button
                                         key={chap.id}
-                                        disabled={isLocked}
+                                        disabled={isLocked && !isBoss}
                                         onClick={() => {
-                                            if (chap.id === 8) {
-                                                router.push("/story-mode/boss");
+                                            if (isBoss) {
+                                                setSelectedChapId(8);
+                                                setPopupOpen('puzzle');
+                                            } else if (isCompleted) {
+                                                setSelectedChapId(chap.id);
+                                                setPopupOpen('lesson');
                                             } else {
                                                 router.push(`/story-mode/${chap.id}`);
                                             }
@@ -224,7 +250,7 @@ export default function StoryModePage() {
                                             {chap.name}
                                         </h4>
                                         <p className="text-sm font-medium text-white/80 text-center truncate w-full">
-                                            {chap.title}
+                                            {displayTitle}
                                         </p>
                                     </button>
                                 );
@@ -233,6 +259,93 @@ export default function StoryModePage() {
                     </div>
                 </div>
             </div>
+
+            {/* POPUPS */}
+            {popupOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    {/* Close Area */}
+                    <div className="absolute inset-0 cursor-pointer" onClick={() => setPopupOpen(null)}></div>
+                    
+                    {/* Lesson Popup */}
+                    {popupOpen === 'lesson' && selectedChapId && (
+                        <div className="relative z-10 w-full max-w-lg border-2 border-[#39FF14] bg-black p-8 rounded-xl shadow-[0_0_30px_rgba(57,255,20,0.3)]">
+                            <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-2 uppercase text-center drop-shadow-[0_0_5px_#39FF14]">
+                                Bạn đã vượt qua Chapter {selectedChapId}
+                            </h2>
+                            <div className="w-full h-[2px] bg-[#39FF14]/30 my-4" />
+                            <h3 className="text-xl font-bold text-white mb-4">Bài học rút ra:</h3>
+                            <p className="text-lg text-gray-300 leading-relaxed italic">
+                                {LESSONS[selectedChapId]}
+                            </p>
+                            <button 
+                                onClick={() => setPopupOpen(null)}
+                                className="mt-8 w-full border border-[#39FF14]/50 hover:bg-[#39FF14]/20 text-[#39FF14] py-3 font-bold uppercase tracking-widest transition-all"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Puzzle Popup */}
+                    {popupOpen === 'puzzle' && (
+                        <div className="relative z-10 w-full max-w-2xl border-2 border-[#00F0FF] bg-black p-6 rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.3)]">
+                            <h2 className="text-2xl font-black italic text-[#00F0FF] mb-6 uppercase text-center drop-shadow-[0_0_5px_#00F0FF]">
+                                Bản Đồ Mảnh Ghép
+                            </h2>
+                            <p className="text-center text-sm text-gray-400 mb-6">
+                                Hoàn thành các Chapter để thắp sáng các mảnh ghép tương ứng.
+                            </p>
+
+                            <div className="relative w-full aspect-square md:aspect-video bg-[#111] overflow-hidden border border-white/20">
+                                {/* The Background Image */}
+                                <div 
+                                    className="absolute inset-0 bg-cover bg-center opacity-80"
+                                    style={{ backgroundImage: "url('/puzzle.png')" }}
+                                />
+                                
+                                {/* The 3x3 Grid Overlay */}
+                                <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
+                                    {[...Array(9)].map((_, i) => {
+                                        const cellIndex = i + 1;
+                                        // Cells 8 & 9 are completely black
+                                        if (cellIndex === 8 || cellIndex === 9) {
+                                            return <div key={i} className="border border-white/10 bg-black/95"></div>;
+                                        }
+                                        
+                                        // Cells 1-7: if passed, fully transparent (reveals background). If not, dark overlay.
+                                        const isPassed = cellIndex < userData.current_chap;
+                                        return (
+                                            <div 
+                                                key={i} 
+                                                className={`border border-white/10 transition-all duration-500 ${isPassed ? 'bg-transparent shadow-[inset_0_0_20px_rgba(57,255,20,0.3)] border-[#39FF14]/50' : 'bg-black/90 backdrop-blur-sm'}`}
+                                            >
+                                                {!isPassed && (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <span className="text-white/20 font-mono text-2xl font-bold">{cellIndex}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => {
+                                    setPopupOpen(null);
+                                    // If actually unlocked, they can also go to the real game
+                                    if (userData.current_chap >= 8) {
+                                        router.push("/story-mode/boss");
+                                    }
+                                }}
+                                className="mt-8 w-full border border-[#00F0FF]/50 hover:bg-[#00F0FF]/20 text-[#00F0FF] py-3 font-bold uppercase tracking-widest transition-all"
+                            >
+                                {userData.current_chap >= 8 ? "Bắt đầu ghép hình" : "Đóng"}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
         </main>
     );
 }
