@@ -10,7 +10,7 @@ interface LessonPopupProps {
 
 export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupProps) {
     return (
-        <div className="relative z-10 w-full max-w-lg overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+        <div className="relative z-10 w-full max-w-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300">
             {/* Neon Border Glow Effect */}
             <div className="absolute inset-0 bg-[#39FF14]/5 blur-2xl rounded-xl"></div>
 
@@ -25,9 +25,9 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
                 <div className="flex flex-col items-center mb-8">
                     <p className="text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-4 italic">Mảnh ghép thu thập được:</p>
                     <div className="relative w-32 h-32 border-2 border-[#39FF14] shadow-[0_0_15px_#39FF14/30] overflow-hidden group">
-                        <div 
+                        <div
                             className="absolute inset-0 bg-cover bg-no-repeat transition-transform duration-500 group-hover:scale-110"
-                            style={{ 
+                            style={{
                                 backgroundImage: "url('/puzzle.webp')",
                                 backgroundSize: "300% 300%",
                                 backgroundPosition: (() => {
