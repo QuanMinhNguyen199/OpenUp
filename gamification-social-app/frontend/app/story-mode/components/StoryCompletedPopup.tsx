@@ -37,12 +37,12 @@ export default function StoryCompletedPopup({ onClose }: StoryCompletedPopupProp
                     Chúc mừng! Bạn đã giải xong thử thách cuối cùng và hoàn tất hành trình Story Mode.
                 </p> */}
 
-                <button
+                {/* <button
                     onClick={onClose}
                     className="w-full py-4 rounded-xl bg-[#39FF14]/10 border border-[#39FF14]/30 text-[#39FF14] font-black uppercase tracking-[0.2em] hover:bg-[#39FF14]/15 transition-all"
                 >
                     Đóng
-                </button>
+                </button> */}
             </div>
         </div>
     );
