@@ -33,9 +33,9 @@ export default function StoryCompletedPopup({ onClose }: StoryCompletedPopupProp
                     <div className="pointer-events-none absolute inset-0 rounded-[28px] ring-2 ring-[#39FF14]/40 animate-pulse" />
                 </div>
 
-                <p className="text-sm text-white/70 text-center leading-relaxed">
+                {/* <p className="text-sm text-white/70 text-center leading-relaxed">
                     Chúc mừng! Bạn đã giải xong thử thách cuối cùng và hoàn tất hành trình Story Mode.
-                </p>
+                </p> */}
 
                 <button
                     onClick={onClose}
