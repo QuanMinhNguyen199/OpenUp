@@ -18,10 +18,10 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
                 {/* Header Decoration */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39FF14] to-transparent shadow-[0_0_10px_#39FF14]"></div>
 
-                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-2 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
-                    Chapter {chapterId} Complete
+                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-10 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
+                    Đã xong Chapter {chapterId}
                 </h2>
-                <p className="text-center text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-8 italic">Memory Sequence Restored</p>
+                {/* <p className="text-center text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-8 italic">Memory Sequence Restored</p> */}
 
                 <div className="space-y-6">
                     <div>
