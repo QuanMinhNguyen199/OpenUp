@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 
@@ -122,9 +121,8 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
                 {/* Sliding Puzzle Grid or Completed Image */}
                 {isSolved ? (
                     <div className="relative w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden border-4 border-cyan-400/40 shadow-[0_0_40px_rgba(0,240,255,0.25)] mb-8">
-                        <div className="relative w-full h-full">
-                            <Image src="/puzzle.webp" alt="Ảnh puzzle hoàn chỉnh" fill className="object-cover" />
-                        </div>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/puzzle.webp" alt="Ảnh puzzle hoàn chỉnh" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 rounded-3xl ring-2 ring-cyan-400/40 animate-pulse pointer-events-none" />
                     </div>
                 ) : (
