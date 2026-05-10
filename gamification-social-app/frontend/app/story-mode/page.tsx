@@ -74,7 +74,7 @@ export default function StoryModePage() {
         if (level >= 5) return "Intermediate";
         return "Newbie";
     };
-    const rank = getRank(userData.level);
+    const rank = getRank(userData?.level || 1);
 
     // EXP Logic
     const level = userData.level;
