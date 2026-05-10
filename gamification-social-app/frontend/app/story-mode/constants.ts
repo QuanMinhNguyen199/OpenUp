@@ -18,5 +18,6 @@ export const LESSONS: Record<number, { title: string, content: string }> = {
     4: { title: "Tinh Thần Đồng Đội", content: "Trong tập thể, lỗi lầm không quan trọng bằng cách chúng ta cùng nhau khắc phục nó. Sự khích lệ và đồng cảm sẽ gắn kết đồng đội vượt qua lúc khó khăn." },
     5: { title: "Sự Sẻ Chia", content: "Đừng vô cảm trước nỗi vất vả của người lao động. Một hành động giúp đỡ nhỏ nhoi hay sự trung thực trả lại tiền thừa đều gieo mầm cho những giá trị tử tế trong xã hội." },
     6: { title: "Văn Hóa Ứng Xử", content: "Sự tập trung của mỗi người đều đáng quý. Biết nhận lỗi khi làm ồn và chủ động giúp đỡ người khác là biểu hiện của một văn hóa ứng xử văn minh." },
-    7: { title: "Sự Thông Thái", content: "Trí tuệ thực sự không chỉ nằm ở kiến thức mà còn ở cách ta đối nhân xử thế. Lựa chọn sự thật dù khó khăn và chăm chỉ từ những việc nhỏ bé nhất là cốt lõi của đạo làm người." }
+    7: { title: "Sự Thông Thái", content: "Trí tuệ thực sự không chỉ nằm ở kiến thức mà còn ở cách ta đối nhân xử thế. Lựa chọn sự thật dù khó khăn và chăm chỉ từ những việc nhỏ bé nhất là cốt lõi của đạo làm người." },
+    8: { title: "Thử thách giải đố", content: "" }
 };
