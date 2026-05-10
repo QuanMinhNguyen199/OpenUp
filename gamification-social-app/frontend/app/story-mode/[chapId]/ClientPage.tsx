@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import HomeButton from "../../components/HomeButton";
 import AdminWarning from "../../components/AdminWarning";
 import LessonPopup from "../components/LessonPopup";
+import BossPuzzle from "../components/BossPuzzle";
 import { CHAPTERS, LESSONS } from "../constants";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -82,8 +83,8 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                 const data = await res.json();
                 setUserData(data);
 
-                // Check: chapter must be unlocked and valid (1-7)
-                if (chapId < 1 || chapId > 7 || chapId > data.current_chap) {
+                // Check: chapter must be unlocked and valid (1-8)
+                if (chapId < 1 || chapId > 8 || chapId > data.current_chap) {
                     router.push("/story-mode");
                     return;
                 }
@@ -235,8 +236,31 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
 
     // ---------- Render guards ----------
     if (loading) return <Loading />;
-    if (!chapter || chapId < 1 || chapId > 7) return null;
+    if (!chapter || chapId < 1 || chapId > 8) return null;
     if (userData?.role === "ADMIN") return <AdminWarning modeName="Story Mode" />;
+
+    // BOSS MODE RENDER
+    if (chapId === 8) {
+        return (
+            <main className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-40"
+                    style={{ backgroundImage: `url('/bg_poster.jpg')` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
+                <div className="relative z-10">
+                    <div className="flex justify-between items-center p-6">
+                        <h1 className="text-xl font-bold tracking-widest text-cyan-400 uppercase">Chapter 8: The Mirror of Truth</h1>
+                        <HomeButton />
+                    </div>
+                    <BossPuzzle 
+                        userId={localStorage.getItem("user_id") || ""} 
+                        token={localStorage.getItem("token") || ""} 
+                    />
+                </div>
+            </main>
+        );
+    }
 
     const affinityPercent = Math.min(100, Math.max(0, affinity));
 
