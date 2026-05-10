@@ -17,14 +17,14 @@ const CHAPTERS = [
     { id: 8, name: "Chapter Cuối", title: "Thử Thách Giải Đố" },
 ];
 
-const LESSONS: Record<number, string> = {
-    1: "Học cách từ chối khéo léo những yêu cầu vô lý và sẵn sàng giúp đỡ khi có lý do chính đáng. Sự cả nể không đúng chỗ sẽ làm hại bản thân.",
-    2: "Tôn trọng nguyên tắc và quy định. Đối mặt với người thi hành công vụ cần sự thành thật, lễ phép và kiên nhẫn giải thích thay vì chống đối hoặc dùng tiền bạc.",
-    3: "Lắng nghe là một nghệ thuật. Khi người khác mang tâm trạng tiêu cực, một cái gật đầu chân thành và lời khuyên bình tĩnh có sức mạnh to lớn hơn vạn lời trách móc.",
-    4: "Trong tập thể, lỗi lầm không quan trọng bằng cách chúng ta cùng nhau khắc phục nó. Sự khích lệ và đồng cảm sẽ gắn kết đồng đội vượt qua lúc khó khăn.",
-    5: "Đừng vô cảm trước nỗi vất vả của người lao động. Một hành động giúp đỡ nhỏ nhoi hay sự trung thực trả lại tiền thừa đều gieo mầm cho những giá trị tử tế trong xã hội.",
-    6: "Sự tập trung của mỗi người đều đáng quý. Biết nhận lỗi khi làm ồn và chủ động giúp đỡ người khác là biểu hiện của một văn hóa ứng xử văn minh.",
-    7: "Trí tuệ thực sự không chỉ nằm ở kiến thức mà còn ở cách ta đối nhân xử thế. Lựa chọn sự thật dù khó khăn và chăm chỉ từ những việc nhỏ bé nhất là cốt lõi của đạo làm người."
+const LESSONS: Record<number, { title: string, content: string }> = {
+    1: { title: "Sự Khôn Khéo", content: "Học cách từ chối khéo léo những yêu cầu vô lý và sẵn sàng giúp đỡ khi có lý do chính đáng. Sự cả nể không đúng chỗ sẽ làm hại bản thân." },
+    2: { title: "Sự Tôn Trọng", content: "Tôn trọng nguyên tắc và quy định. Đối mặt với người thi hành công vụ cần sự thành thật, lễ phép và kiên nhẫn giải thích thay vì chống đối hoặc dùng tiền bạc." },
+    3: { title: "Sự Thấu Cảm", content: "Lắng nghe là một nghệ thuật. Khi người khác mang tâm trạng tiêu cực, một cái gật đầu chân thành và lời khuyên bình tĩnh có sức mạnh to lớn hơn vạn lời trách móc." },
+    4: { title: "Tinh Thần Đồng Đội", content: "Trong tập thể, lỗi lầm không quan trọng bằng cách chúng ta cùng nhau khắc phục nó. Sự khích lệ và đồng cảm sẽ gắn kết đồng đội vượt qua lúc khó khăn." },
+    5: { title: "Sự Sẻ Chia", content: "Đừng vô cảm trước nỗi vất vả của người lao động. Một hành động giúp đỡ nhỏ nhoi hay sự trung thực trả lại tiền thừa đều gieo mầm cho những giá trị tử tế trong xã hội." },
+    6: { title: "Văn Hóa Ứng Xử", content: "Sự tập trung của mỗi người đều đáng quý. Biết nhận lỗi khi làm ồn và chủ động giúp đỡ người khác là biểu hiện của một văn hóa ứng xử văn minh." },
+    7: { title: "Sự Thông Thái", content: "Trí tuệ thực sự không chỉ nằm ở kiến thức mà còn ở cách ta đối nhân xử thế. Lựa chọn sự thật dù khó khăn và chăm chỉ từ những việc nhỏ bé nhất là cốt lõi của đạo làm người." }
 };
 
 export default function StoryModePage() {
@@ -195,7 +195,7 @@ export default function StoryModePage() {
                                 if (isCompleted) {
                                     statusStyles = "border-[#39FF14]/50 bg-[#39FF14]/10 hover:bg-[#39FF14]/20 hover:border-[#39FF14] hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] cursor-pointer opacity-80";
                                     iconStyles = "text-[#39FF14]";
-                                    displayTitle = "Bài học rút ra";
+                                    displayTitle = LESSONS[chap.id]?.title || "Bài học rút ra";
                                 } else if (isCurrent) {
                                     statusStyles = "border-[#00F0FF] bg-[#00F0FF]/10 shadow-[0_0_20px_rgba(0,240,255,0.3)] animate-pulse hover:bg-[#00F0FF]/20 cursor-pointer";
                                     iconStyles = "text-[#00F0FF]";
@@ -262,86 +262,136 @@ export default function StoryModePage() {
 
             {/* POPUPS */}
             {popupOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    {/* Close Area */}
-                    <div className="absolute inset-0 cursor-pointer" onClick={() => setPopupOpen(null)}></div>
-                    
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    {/* Darkened glass background overlay */}
+                    <div
+                        className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300 cursor-pointer"
+                        onClick={() => setPopupOpen(null)}
+                    ></div>
+
                     {/* Lesson Popup */}
                     {popupOpen === 'lesson' && selectedChapId && (
-                        <div className="relative z-10 w-full max-w-lg border-2 border-[#39FF14] bg-black p-8 rounded-xl shadow-[0_0_30px_rgba(57,255,20,0.3)]">
-                            <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-2 uppercase text-center drop-shadow-[0_0_5px_#39FF14]">
-                                Bạn đã vượt qua Chapter {selectedChapId}
-                            </h2>
-                            <div className="w-full h-[2px] bg-[#39FF14]/30 my-4" />
-                            <h3 className="text-xl font-bold text-white mb-4">Bài học rút ra:</h3>
-                            <p className="text-lg text-gray-300 leading-relaxed italic">
-                                {LESSONS[selectedChapId]}
-                            </p>
-                            <button 
-                                onClick={() => setPopupOpen(null)}
-                                className="mt-8 w-full border border-[#39FF14]/50 hover:bg-[#39FF14]/20 text-[#39FF14] py-3 font-bold uppercase tracking-widest transition-all"
-                            >
-                                Đóng
-                            </button>
+                        <div className="relative z-10 w-full max-w-lg overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+                            {/* Neon Border Glow Effect */}
+                            <div className="absolute inset-0 bg-[#39FF14]/5 blur-2xl rounded-xl"></div>
+
+                            <div className="relative border-2 border-[#39FF14]/40 bg-black/90 p-8 md:p-10 rounded-xl backdrop-blur-xl">
+                                {/* Header Decoration */}
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39FF14] to-transparent shadow-[0_0_10px_#39FF14]"></div>
+
+                                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-2 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
+                                    Chapter {selectedChapId} Complete
+                                </h2>
+                                <p className="text-center text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-8 italic">Memory Sequence Restored</p>
+
+                                <div className="space-y-6">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-[#39FF14] uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <span className="w-6 h-[1px] bg-[#39FF14]/40"></span>
+                                            Bài học: {LESSONS[selectedChapId]?.title}
+                                        </h3>
+                                        <div className="relative p-6 border border-white/5 bg-white/[0.03] rounded-lg">
+                                            <p className="text-lg text-gray-200 leading-relaxed italic font-medium">
+                                                {LESSONS[selectedChapId]?.content}
+                                            </p>
+                                            {/* Decorative corners */}
+                                            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#39FF14]/30"></div>
+                                            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#39FF14]/30"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setPopupOpen(null)}
+                                    className="mt-10 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
+                                >
+                                    <div className="absolute inset-0 border border-[#39FF14]/30 group-hover:border-[#39FF14] transition-colors"></div>
+                                    <div className="absolute inset-0 bg-[#39FF14]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <span className="relative z-10 text-[#39FF14]">Xác nhận ghi nhớ</span>
+                                </button>
+                            </div>
                         </div>
                     )}
 
                     {/* Puzzle Popup */}
                     {popupOpen === 'puzzle' && (
-                        <div className="relative z-10 w-full max-w-2xl border-2 border-[#00F0FF] bg-black p-6 rounded-xl shadow-[0_0_30px_rgba(0,240,255,0.3)]">
-                            <h2 className="text-2xl font-black italic text-[#00F0FF] mb-6 uppercase text-center drop-shadow-[0_0_5px_#00F0FF]">
-                                Bản Đồ Mảnh Ghép
-                            </h2>
-                            <p className="text-center text-sm text-gray-400 mb-6">
-                                Hoàn thành các Chapter để thắp sáng các mảnh ghép tương ứng.
-                            </p>
+                        <div className="relative z-10 w-full max-w-md overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+                            <div className="absolute inset-0 bg-[#00F0FF]/5 blur-2xl rounded-xl"></div>
 
-                            <div className="relative w-full aspect-square md:aspect-video bg-[#111] overflow-hidden border border-white/20">
-                                {/* The Background Image */}
-                                <div 
-                                    className="absolute inset-0 bg-cover bg-center opacity-80"
-                                    style={{ backgroundImage: "url('/puzzle.png')" }}
-                                />
-                                
-                                {/* The 3x3 Grid Overlay */}
-                                <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
-                                    {[...Array(9)].map((_, i) => {
-                                        const cellIndex = i + 1;
-                                        // Cells 8 & 9 are completely black
-                                        if (cellIndex === 8 || cellIndex === 9) {
-                                            return <div key={i} className="border border-white/10 bg-black/95"></div>;
-                                        }
-                                        
-                                        // Cells 1-7: if passed, fully transparent (reveals background). If not, dark overlay.
-                                        const isPassed = cellIndex < userData.current_chap;
-                                        return (
-                                            <div 
-                                                key={i} 
-                                                className={`border border-white/10 transition-all duration-500 ${isPassed ? 'bg-transparent shadow-[inset_0_0_20px_rgba(57,255,20,0.3)] border-[#39FF14]/50' : 'bg-black/90 backdrop-blur-sm'}`}
-                                            >
-                                                {!isPassed && (
-                                                    <div className="w-full h-full flex items-center justify-center">
-                                                        <span className="text-white/20 font-mono text-2xl font-bold">{cellIndex}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
+                            <div className="relative border-2 border-[#00F0FF]/40 bg-black/95 p-6 md:p-8 rounded-xl backdrop-blur-xl flex flex-col items-center">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00F0FF] to-transparent shadow-[0_0_10px_#00F0FF]"></div>
+
+                                <div className="text-center mb-6">
+                                    <h2 className="text-2xl font-black italic text-[#00F0FF] uppercase drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
+                                        Bản Đồ Mảnh Ghép
+                                    </h2>
+                                    <p className="text-[10px] font-mono text-[#00F0FF]/60 uppercase tracking-[0.2em] mt-1">Data Reconstruction in Progress</p>
                                 </div>
-                            </div>
 
-                            <button 
-                                onClick={() => {
-                                    setPopupOpen(null);
-                                    // If actually unlocked, they can also go to the real game
-                                    if (userData.current_chap >= 8) {
-                                        router.push("/story-mode/boss");
-                                    }
-                                }}
-                                className="mt-8 w-full border border-[#00F0FF]/50 hover:bg-[#00F0FF]/20 text-[#00F0FF] py-3 font-bold uppercase tracking-widest transition-all"
-                            >
-                                {userData.current_chap >= 8 ? "Bắt đầu ghép hình" : "Đóng"}
-                            </button>
+                                <div className="relative w-full aspect-square bg-[#050505] overflow-hidden border-2 border-white/10 group">
+                                    {/* The Background Image */}
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+                                        style={{ backgroundImage: "url('/puzzle.png')" }}
+                                    />
+
+                                    {/* The 3x3 Grid Overlay */}
+                                    <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
+                                        {[...Array(9)].map((_, i) => {
+                                            const cellIndex = i + 1;
+                                            if (cellIndex === 8 || cellIndex === 9) {
+                                                return <div key={i} className="border border-white/5 bg-black/95"></div>;
+                                            }
+
+                                            const isPassed = cellIndex < userData.current_chap;
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className={`border border-white/10 transition-all duration-700 flex items-center justify-center ${isPassed
+                                                            ? 'bg-transparent shadow-[inset_0_0_40px_rgba(57,255,20,0.4)] border-[#39FF14]/40'
+                                                            : 'bg-black/90 backdrop-blur-sm'
+                                                        }`}
+                                                >
+                                                    {!isPassed && (
+                                                        <div className="text-white/10 font-mono text-3xl font-black select-none">
+                                                            {cellIndex}
+                                                        </div>
+                                                    )}
+                                                    {isPassed && (
+                                                        <div className="absolute inset-0 bg-[#39FF14]/5 animate-pulse"></div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Scanning line effect */}
+                                    <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+                                        <div className="w-full h-[2px] bg-[#00F0FF]/40 shadow-[0_0_15px_#00F0FF] absolute animate-[scan_3s_linear_infinite]"></div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 w-full p-4 bg-white/5 border border-white/10 rounded">
+                                    <p className="text-center text-[10px] text-gray-400 leading-relaxed uppercase tracking-widest">
+                                        Tiến độ thu thập: <span className="text-[#00F0FF] font-bold">{Math.min(7, userData.current_chap - 1)}/7</span> mảnh ghép.
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setPopupOpen(null);
+                                        if (userData.current_chap >= 8) {
+                                            router.push("/story-mode/boss");
+                                        }
+                                    }}
+                                    className="mt-6 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
+                                >
+                                    <div className={`absolute inset-0 border transition-colors ${userData.current_chap >= 8 ? 'border-[#39FF14] bg-[#39FF14]/10' : 'border-[#00F0FF]/30 group-hover:border-[#00F0FF]'}`}></div>
+                                    <span className={`relative z-10 ${userData.current_chap >= 8 ? 'text-[#39FF14]' : 'text-[#00F0FF]'}`}>
+                                        {userData.current_chap >= 8 ? "Bắt đầu giải đố ngay" : "Tiếp tục hành trình"}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
