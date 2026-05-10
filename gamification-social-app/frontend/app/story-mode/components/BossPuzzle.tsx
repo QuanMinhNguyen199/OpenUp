@@ -15,7 +15,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
     const router = useRouter();
     const [tiles, setTiles] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState("Cụ Phan: 'Cháu hãy sắp xếp lại các mảnh ghép để hoàn thiện bức tranh.'");
+    const [message, setMessage] = useState("'Cháu hãy sắp xếp lại các mảnh ghép để hoàn thiện bức tranh.'");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSolved, setIsSolved] = useState(false);
 
