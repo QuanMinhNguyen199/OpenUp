@@ -61,7 +61,7 @@ export default function StoryModePage() {
 
     if (loading) return <Loading />;
 
-    if (userData.role === "ADMIN") {
+    if (userData?.role === "ADMIN") {
         return <AdminWarning modeName="Story Mode" />;
     }
 
@@ -74,11 +74,11 @@ export default function StoryModePage() {
         if (level >= 5) return "Intermediate";
         return "Newbie";
     };
-    const rank = getRank(userData.level);
+    const rank = getRank(userData?.level || 1);
 
     // EXP Logic
-    const level = userData.level;
-    const totalXp = userData.total_xp;
+    const level = userData?.level || 1;
+    const totalXp = userData?.total_xp || 0;
     const xpAtCurrentLevel = 50 * (level * level - level);
     const maxExp = 100 * level;
     const currentExp = totalXp - xpAtCurrentLevel;
@@ -97,7 +97,7 @@ export default function StoryModePage() {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-4xl font-black italic tracking-tighter text-[#00F0FF] drop-shadow-[0_0_10px_#00F0FF]">
-                                {userData.username}
+                                {userData?.username}
                             </h1>
                             <span className="bg-[#39FF14] px-3 py-0.5 text-sm font-black text-black skew-x-[-15deg]">
                                 {rank.toUpperCase()}
@@ -106,7 +106,7 @@ export default function StoryModePage() {
                         <div className="mt-2 flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <span className="text-xs font-bold text-[#39FF14] uppercase tracking-widest opacity-70">Level</span>
-                                <span className="text-2xl font-black text-white italic">{userData.level}</span>
+                                <span className="text-2xl font-black text-white italic">{userData?.level}</span>
                             </div>
                             <div className="h-1.5 w-48 bg-white/15 overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-[#39FF14] to-[#00F0FF] shadow-[0_0_10px_#39FF14]" style={{ width: `${expPercentage}%` }} />
@@ -174,9 +174,9 @@ export default function StoryModePage() {
                             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -translate-y-1/2 z-0 hidden md:block"></div>
 
                             {CHAPTERS.map((chap) => {
-                                const isCompleted = chap.id < userData.current_chap;
-                                const isCurrent = chap.id === userData.current_chap;
-                                const isLocked = chap.id > userData.current_chap;
+                                const isCompleted = chap.id < (userData?.current_chap || 1);
+                                const isCurrent = chap.id === (userData?.current_chap || 1);
+                                const isLocked = chap.id > (userData?.current_chap || 1);
                                 const isBoss = chap.id === 8;
 
                                 let statusStyles = "";

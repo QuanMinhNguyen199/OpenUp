@@ -150,6 +150,16 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
         "current_chap": user.chap
     }
 
+
+@app.post("/api/logout/{user_id}")
+async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(user_id, db, x_token)
+    user.token = None
+    db.commit()
+
+    return {"status": "success", "message": "Đăng xuất thành công"}
+
+
 # --- ENDPOINTS GAMEPLAY ---
 
 @app.post("/story_mode")
