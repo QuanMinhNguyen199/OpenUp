@@ -147,7 +147,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
                     <button
                         onClick={initPuzzle}
                         disabled={isSubmitting || isSolved}
-                        className="flex-1 py-4 border border-white/10 rounded font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30"
+                        className="flex-[2] py-4 border border-white/10 rounded font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30"
                     >
                         XÁO TRỘN LẠI
                     </button>
