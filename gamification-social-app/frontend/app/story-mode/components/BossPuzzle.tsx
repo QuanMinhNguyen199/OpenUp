@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 
@@ -21,7 +22,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
 
     // Initial shuffle (must be solvable for a 3x3 sliding puzzle)
     const initPuzzle = useCallback(() => {
-        let newTiles = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        const newTiles = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
         // Simple shuffle: make 100 random valid moves from solved state
         let emptyIdx = 8;
@@ -88,7 +89,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
                     router.push("/story-mode");
                 }, 4000);
             }
-        } catch (error) {
+        } catch {
             setMessage("Lỗi kết nối. Vui lòng thử lại!");
         } finally {
             setIsSubmitting(false);
@@ -118,54 +119,65 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
                     </p>
                 </div>
 
-                {/* Sliding Puzzle Grid */}
-                <div className="grid grid-cols-3 gap-2 aspect-square w-full max-w-[400px] mx-auto bg-white/5 p-2 rounded-lg border border-white/10 mb-8">
-                    {tiles.map((targetIdx, currentIdx) => {
-                        if (targetIdx === 8) {
-                            return <div key={currentIdx} className="bg-black/40 rounded-sm"></div>;
-                        }
-                        return (
-                            <button
-                                key={currentIdx}
-                                onClick={() => handleTileClick(currentIdx)}
-                                className="relative aspect-square bg-cover bg-no-repeat rounded-sm border border-white/10 hover:border-cyan-400/50 transition-all duration-200 active:scale-95 group"
-                                style={{
-                                    backgroundImage: "url('/puzzle.webp')",
-                                    backgroundSize: "300% 300%",
-                                    backgroundPosition: `${(targetIdx % 3) * 50}% ${Math.floor(targetIdx / 3) * 50}%`,
-                                }}
-                            >
-                                <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-colors"></div>
-                                <div className="absolute top-1 right-1 text-[10px] font-bold text-white/20">{targetIdx + 1}</div>
-                            </button>
-                        );
-                    })}
-                </div>
+                {/* Sliding Puzzle Grid or Completed Image */}
+                {isSolved ? (
+                    <div className="relative w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden border-4 border-cyan-400/40 shadow-[0_0_40px_rgba(0,240,255,0.25)] mb-8">
+                        <div className="relative w-full h-full">
+                            <Image src="/puzzle.webp" alt="Ảnh puzzle hoàn chỉnh" fill className="object-cover" />
+                        </div>
+                        <div className="absolute inset-0 rounded-3xl ring-2 ring-cyan-400/40 animate-pulse pointer-events-none" />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 gap-2 aspect-square w-full max-w-[400px] mx-auto bg-white/5 p-2 rounded-lg border border-white/10 mb-8">
+                        {tiles.map((targetIdx, currentIdx) => {
+                            if (targetIdx === 8) {
+                                return <div key={currentIdx} className="bg-black/40 rounded-sm"></div>;
+                            }
+                            return (
+                                <button
+                                    key={currentIdx}
+                                    onClick={() => handleTileClick(currentIdx)}
+                                    className="relative aspect-square bg-cover bg-no-repeat rounded-sm border border-white/10 hover:border-cyan-400/50 transition-all duration-200 active:scale-95 group"
+                                    style={{
+                                        backgroundImage: "url('/puzzle.webp')",
+                                        backgroundSize: "300% 300%",
+                                        backgroundPosition: `${(targetIdx % 3) * 50}% ${Math.floor(targetIdx / 3) * 50}%`,
+                                    }}
+                                >
+                                    <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-colors"></div>
+                                    <div className="absolute top-1 right-1 text-[10px] font-bold text-white/20">{targetIdx + 1}</div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Actions */}
-                <div className="flex gap-4">
-                    <button
-                        onClick={initPuzzle}
-                        disabled={isSubmitting || isSolved}
-                        className="flex-[2] py-4 border border-white/10 rounded font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30"
-                    >
-                        XÁO TRỘN LẠI
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting || isSolved}
-                        className="flex-[2] py-4 bg-cyan-500 rounded font-black text-black hover:bg-cyan-400 shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all disabled:opacity-30 flex items-center justify-center gap-2"
-                    >
-                        {isSubmitting ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
-                                ĐANG KIỂM TRA...
-                            </>
-                        ) : (
-                            "GỬI ĐÁP ÁN"
-                        )}
-                    </button>
-                </div>
+                {!isSolved && (
+                    <div className="flex gap-4">
+                        <button
+                            onClick={initPuzzle}
+                            disabled={isSubmitting}
+                            className="flex-[2] py-4 border border-white/10 rounded font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30"
+                        >
+                            XÁO TRỘN LẠI
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            className="flex-[2] py-4 bg-cyan-500 rounded font-black text-black hover:bg-cyan-400 shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all disabled:opacity-30 flex items-center justify-center gap-2"
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                                    ĐANG KIỂM TRA...
+                                </>
+                            ) : (
+                                "GỬI ĐÁP ÁN"
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
