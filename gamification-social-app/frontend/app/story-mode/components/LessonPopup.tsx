@@ -14,7 +14,7 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
             {/* Neon Border Glow Effect */}
             <div className="absolute inset-0 bg-[#39FF14]/5 blur-2xl rounded-xl"></div>
 
-            <div className="relative border-2 border-[#39FF14]/40 bg-black/90 p-8 md:p-10 rounded-xl backdrop-blur-sm">
+            <div className="relative border-2 border-[#39FF14]/40 bg-black/90 p-4 md:p-6 rounded-xl backdrop-blur-sm">
                 {/* Header Decoration */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39FF14] to-transparent shadow-[0_0_10px_#39FF14]"></div>
 
