@@ -22,7 +22,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
     // Initial shuffle (must be solvable for a 3x3 sliding puzzle)
     const initPuzzle = useCallback(() => {
         let newTiles = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-        
+
         // Simple shuffle: make 100 random valid moves from solved state
         let emptyIdx = 8;
         for (let i = 0; i < 200; i++) {
@@ -31,7 +31,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
             [newTiles[emptyIdx], newTiles[moveIdx]] = [newTiles[moveIdx], newTiles[emptyIdx]];
             emptyIdx = moveIdx;
         }
-        
+
         setTiles(newTiles);
         setLoading(false);
     }, []);
@@ -162,7 +162,7 @@ export default function BossPuzzle({ userId, token }: BossPuzzleProps) {
                                 ĐANG KIỂM TRA...
                             </>
                         ) : (
-                            "XÁC NHẬN HOÀN THÀNH"
+                            "GỬI ĐÁP ÁN"
                         )}
                     </button>
                 </div>
