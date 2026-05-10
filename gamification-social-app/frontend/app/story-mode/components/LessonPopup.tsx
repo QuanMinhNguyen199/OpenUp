@@ -27,7 +27,7 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
                     <div>
                         <h3 className="text-sm font-bold text-[#39FF14] uppercase tracking-widest mb-3 flex items-center gap-2">
                             <span className="w-6 h-[1px] bg-[#39FF14]/40"></span>
-                            Bài học: {lesson.title}
+                            Bài học rút ra: {lesson.title}
                         </h3>
                         <div className="relative p-6 border border-white/5 bg-white/[0.03] rounded-lg">
                             <p className="text-lg text-gray-200 leading-relaxed italic font-medium">
