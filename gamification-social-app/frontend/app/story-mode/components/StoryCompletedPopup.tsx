@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import React from "react";
 
 interface StoryCompletedPopupProps {
@@ -25,11 +24,11 @@ export default function StoryCompletedPopup({ onClose }: StoryCompletedPopupProp
                 </div>
 
                 <div className="relative w-full aspect-square overflow-hidden rounded-[28px] border-2 border-[#39FF14]/30 shadow-[0_0_40px_rgba(57,255,20,0.18)]">
-                    <Image
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                         src="/puzzle.webp"
                         alt="Full completed story image"
-                        fill
-                        className="object-cover"
+                        className="w-full h-full object-cover"
                     />
                     <div className="pointer-events-none absolute inset-0 rounded-[28px] ring-2 ring-[#39FF14]/40 animate-pulse" />
                 </div>
