@@ -23,41 +23,35 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                 </div>
 
                 <div className="relative w-full aspect-square bg-[#050505] overflow-hidden border-2 border-white/10 group">
-                    {/* The 3x3 Grid */}
+                    {/* The Single Background Image */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+                        style={{ backgroundImage: "url('/puzzle.png')" }}
+                    />
+
+                    {/* The 3x3 Grid Overlay */}
                     <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
                         {[...Array(9)].map((_, i) => {
                             const cellIndex = i + 1;
                             
                             // Cells 8 & 9 are completely black
                             if (cellIndex === 8 || cellIndex === 9) {
-                                return <div key={i} className="bg-black border border-white/5"></div>;
+                                return <div key={i} className="bg-black z-30"></div>;
                             }
 
                             const isPassed = cellIndex < userData.current_chap;
-                            
-                            // Calculate background position for 3x3 grid
-                            const row = Math.floor(i / 3);
-                            const col = i % 3;
-                            const posX = col * 50; // 0, 50, 100
-                            const posY = row * 50; // 0, 50, 100
 
                             return (
                                 <div
                                     key={i}
-                                    className={`relative border border-white/10 overflow-hidden transition-all duration-700 flex items-center justify-center`}
+                                    className={`relative border border-white/10 transition-all duration-700 flex items-center justify-center ${
+                                        isPassed 
+                                        ? 'bg-transparent' // Opened: Purely transparent to reveal image
+                                        : 'backdrop-grayscale bg-black/20' // Locked: Grayscale effect + slight dim
+                                    }`}
                                 >
-                                    {/* Each cell has the background image clipped to its position */}
-                                    <div 
-                                        className={`absolute inset-0 bg-cover transition-all duration-700 ${isPassed ? 'grayscale-0 opacity-100' : 'grayscale opacity-40'}`}
-                                        style={{ 
-                                            backgroundImage: "url('/puzzle.png')",
-                                            backgroundSize: '300% 300%',
-                                            backgroundPosition: `${posX}% ${posY}%`
-                                        }}
-                                    />
-                                    
                                     {!isPassed && (
-                                        <div className="relative z-10 text-white/40 font-mono text-3xl font-black select-none drop-shadow-md">
+                                        <div className="relative z-10 text-white/60 font-mono text-3xl font-black select-none drop-shadow-lg">
                                             {cellIndex}
                                         </div>
                                     )}
