@@ -24,7 +24,7 @@ def run_setup():
             "current_turn": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS current_turn INTEGER DEFAULT 1;",
             "neutral_streak": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS neutral_streak INTEGER DEFAULT 0;",
             "affinity_score": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS affinity_score FLOAT DEFAULT 20.0;",
-            "is_waiting_for_reply": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS is_waiting_for_reply BOOLEAN DEFAULT FALSE;",
+            "is_waiting_for_reply": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS is_waiting_for_reply BOOLEAN DEFAULT false;",
             "game_mode": "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS game_mode TEXT DEFAULT 'story';",
             "target_idx": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS target_idx INTEGER;",
             "image_url": "ALTER TABLE collections ADD COLUMN IF NOT EXISTS image_url TEXT;"
@@ -59,15 +59,27 @@ def run_setup():
             db.flush() # Để lấy ID nếu là tạo mới
 
             # 2. Đồng bộ Mảnh ghép (Collection)
-            collection = db.query(models.Collection).filter_by(npc_id=npc_id).first()
+            collection = db.query(models.Collection).filter_by(id=npc_id).first()
             if not collection:
-                collection = models.Collection(npc_id=npc_id)
+                collection = models.Collection(id=npc_id, npc_id=npc_id) # Ép cứng ID
                 db.add(collection)
                 
             collection.name = data.get('item')
             collection.target_idx = data.get('idx')
             collection.description = f"Vật phẩm nhận được từ {npc.name}"
             collection.required_affinity = 100.0
+
+        # --- BỔ SUNG: SEED MẢNH GHÉP SỐ 8 (MẢNH CỐT LÕI) ---
+        core_piece = db.query(models.Collection).filter_by(id=8).first()
+        if not core_piece:
+            core_piece = models.Collection(
+                id=8, # Ép cứng ID = 8 để không đụng chạm với 7 mảnh trên
+                name="Mảnh Ghép Cốt Lõi",
+                description="Mảnh ghép của chính bạn. Tự động thức tỉnh khi thu thập đủ 7 phẩm chất.",
+                target_idx=7,
+                required_affinity=0.0
+            )
+            db.add(core_piece)
 
         # 3. Khởi tạo Admin (Quyền cao nhất để test game)
         default_admins = [

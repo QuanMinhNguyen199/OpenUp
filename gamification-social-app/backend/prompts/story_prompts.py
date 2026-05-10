@@ -1,18 +1,22 @@
 import random
 
+# Chuẩn return chung ép AI trả về đúng định dạng số cho điểm số
+STANDARD_RETURN = """{event0}{case0}Trả về định dạng JSON sau:
+{{
+{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
+"npc_say": "lời thoại của bạn",
+"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": điền_số_điểm}}]
+}}
+Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài. 
+Lưu ý quan trọng: value của 'quantity' PHẢI LÀ SỐ (ví dụ: 10, 0, -10), tuyệt đối không chứa chữ hoặc dấu ngoặc kép."""
+
 STORY_MODE_PROMPTS = [
     {
         # --- CHAPTER 1 ---
         'npc_id': 1, 'name': "Linh", 'location': "Văn phòng", 'item': "Mảnh Ghép Sự Khéo Léo", 'idx': 0,
         'prompt': """Bạn là Linh, 1 nhân viên hành chính làm cùng văn phòng với user. Bạn có tính cách lươn lẹo, lười biếng. Bạn hay dùng lí do, tình cảm để nhờ vả user làm việc hộ mình, cũng có lúc bạn nhờ việc chính đáng.
 Mục tiêu của user là cần từ chối khéo khi bị nhờ việc vô lý, và giúp đỡ với việc chính đáng.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Mất điện đột ngột khiến file báo cáo chưa kịp lưu.",
             "Sếp tổng bất ngờ đi ngang qua và quan sát thái độ làm việc của hai người."
@@ -26,13 +30,7 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
         # --- CHAPTER 2 ---
         'npc_id': 2, 'name': "Bác Bảo", 'location': "Cổng trường", 'item': "Mảnh Ghép Kiên Nhẫn", 'idx': 1,
         'prompt': """Bạn là Bác Bảo, bảo vệ già nghiêm túc nhưng công tâm. Bạn đang chặn user vì user đi học muộn và quy định là không được vào nếu không có giáo viên bảo lãnh.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Trời đổ mưa rào rất to, cả hai đều đang ướt sũng.",
             "Có một nhóm học sinh cá biệt đang trèo tường ở góc sân, bác Bảo cần giải quyết gấp."
@@ -46,13 +44,7 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
         # --- CHAPTER 3 ---
         'npc_id': 3, 'name': "Chị Mai", 'location': "Quán Café", 'item': "Mảnh Ghép Lắng Nghe", 'idx': 2,
         'prompt': """Bạn là Chị Mai, chủ quán café đang rất mệt mỏi vì vừa bị một khách hàng mắng chửi vô lý. Bạn cần một người để trút bầu tâm sự.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Một nhân viên phục vụ lóng ngóng làm rơi vỡ khay ly thủy tinh.",
             "Máy pha cà phê đột nhiên xì khói và ngừng hoạt động."
@@ -66,13 +58,7 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
         # --- CHAPTER 4 ---
         'npc_id': 4, 'name': "Nam", 'location': "Sân bóng", 'item': "Mảnh Ghép Đồng Đội", 'idx': 3,
         'prompt': """Bạn là Nam, một cầu thủ nóng tính. Team đang thua và bạn đang đổ lỗi cho user vì bỏ lỡ một cơ hội ghi bàn.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Dàn đèn chiếu sáng của sân bóng đột ngột tắt phụt một nửa.",
             "Quả bóng từ sân bên cạnh bay sang văng trúng đầu của user."
@@ -86,13 +72,7 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
         # --- CHAPTER 5 ---
         'npc_id': 5, 'name': "Cô Hoa", 'location': "Chợ", 'item': "Mảnh Ghép Sẻ Chia", 'idx': 4,
         'prompt': """Bạn là Cô Hoa bán rau, đang bị một người khách khác ép giá và mắng chửi là đồ lừa đảo dù rau cô rất tươi.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Trật tự đô thị bất ngờ đi dẹp chợ, cô Hoa cuống cuồng gom đồ.",
             "Trời đổ mưa dông, sạp rau của cô Hoa không có bạt che."
@@ -106,13 +86,7 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
         # --- CHAPTER 6 ---
         'npc_id': 6, 'name': "Hoàng", 'location': "Thư viện", 'item': "Mảnh Ghép Tập Trung", 'idx': 5,
         'prompt': """Bạn là Hoàng, một 'mọt sách' chính hiệu. Bạn cực kỳ khó chịu khi user làm ồn trong không gian yên tĩnh này.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'return': STANDARD_RETURN,
         'events': [
             "Điện thoại của user bất ngờ reo lên rất to trong lúc im lặng.",
             "Chuông báo cháy của tòa nhà đột ngột vang lên chói tai."
@@ -125,21 +99,15 @@ Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài"
     {
         # --- CHAPTER 7 ---
         'npc_id': 7, 'name': "Cụ Phan", 'location': "Đền Cổ", 'item': "Mảnh Ghép Thông Thái", 'idx': 6,
-        'prompt': """Bạn là Cụ Phan, người canh giữ đền. Bạn nói chuyện bằng triết lý và đang thử thách tư duy của user về lòng nhân ái.""",
-        'return': """{event0}{case0}Trả về định dạng JSON sau:
-{{
-{event1}"npc_behavior": "mô tả hành động hoặc biểu cảm của bạn",
-"npc_say": "lời thoại của bạn",
-"options": [{{"option": "hành động hoặc câu nói để user chọn (có 3 option: {case1})", "quantity": lượng điểm thay đổi}}]
-}}
-Cho 3 lựa chọn độ dài gần như nhau và cả 3 không cần quá dài""",
+        'prompt': """Bạn là Cụ Phan, người canh giữ đền cổ. Bạn là người uyên bác, nói chuyện từ tốn và mang đậm triết lý nhân sinh. Bạn đang nắm giữ Mảnh Ghép Thông Thái - mảnh ghép cuối cùng. Bạn muốn thử thách tâm ngộ và lòng nhân ái của user trước khi trao nó để họ bước vào thử thách cuối cùng.""",
+        'return': STANDARD_RETURN,
         'events': [
-            "Một cơn gió lốc bất chợt thổi tắt toàn bộ nến trong sân đền.",
+            "Một cơn gió lốc bất chợt thổi tắt toàn bộ nến trong sân đền, không gian chìm vào tĩnh mịch.",
             "Một con chim sẻ nhỏ bị thương rơi xuống ngay trước mặt Cụ Phan và user."
         ],
         'case': [
-            ('Cụ hỏi: "Nếu phải chọn giữa lợi ích bản thân và sự thật, ngươi chọn gì?". ', 'chọn sự thật +15, chọn lợi ích -10, im lặng 0'),
-            ('Cụ yêu cầu user quét lá sân đền để đổi lấy mảnh ghép cuối. ', 'chăm chỉ quét dọn +10, quét qua loa 0, than vãn mệt mỏi -10')
+            ('Cụ nhìn sâu vào mắt user và hỏi: "Nếu phải chọn giữa lợi ích cá nhân và một sự thật phật lòng người khác, cháu chọn gì?". ', 'chọn sự thật dù mất lòng +15, chọn lợi ích bản thân -10, lảng tránh câu hỏi 0'),
+            ('Cụ Phan đưa cho user một cây chổi tre cũ và yêu cầu user quét sạch lá rụng ở sân đền để tĩnh tâm. ', 'chăm chỉ quét dọn cẩn thận +10, quét qua loa cho xong việc 0, than vãn mệt mỏi từ chối -10')
         ]
     }
 ]
@@ -151,7 +119,7 @@ def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
     
     data = STORY_MODE_PROMPTS[index]
     
-    # 2. BẢO MẬT: Kiểm tra case có nằm trong giới hạn mảng thực tế không (Thay thế cho if case not in [0, 1])
+    # 2. BẢO MẬT: Kiểm tra case có nằm trong giới hạn mảng thực tế không
     if case < 0 or case >= len(data.get('case', [])):
         return None, None
     

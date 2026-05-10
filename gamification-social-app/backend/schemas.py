@@ -18,7 +18,7 @@ class StoryModeRequest(BaseModel):
 # Schema cho Options trả về từ AI
 class DialogOptionAI(BaseModel):
     option: str
-    quantity: int
+    quantity: float
 
 class StoryModeResponse(BaseModel):
     npc_behavior: str
@@ -30,7 +30,7 @@ class StoryModeResponse(BaseModel):
 
 class ChoiceRequest(BaseModel):
     npc_id: int
-    option_type: str # 'good', 'neutral', 'bad'
+    score_change: float # 'good', 'neutral', 'bad'
     user_id: int
 
 class ChoiceResponse(BaseModel):
@@ -42,6 +42,10 @@ class ChoiceResponse(BaseModel):
     next_chapter_id: Optional[int] = None
 
 # --- 3. SCHEMAS CHO BOSS (SLIDING PUZZLE) ---
+class PuzzleStateResponse(BaseModel):
+    lit_pieces: List[int]
+    is_ready_to_shuffle: bool
+    message: str
 
 class BossChallengeRequest(BaseModel):
     user_id: int
@@ -61,6 +65,7 @@ class UserStatusResponse(BaseModel):
     level: int
     total_xp: int
     is_winner: bool
+    role: str
 
 class CollectionItemResponse(BaseModel):
     id: int
