@@ -62,7 +62,7 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
 
                 <button
                     onClick={onClose}
-                    className="mt-10 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
+                    className="mt-3 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
                 >
                     <div className="absolute inset-0 border border-[#39FF14]/30 group-hover:border-[#39FF14] transition-colors"></div>
                     <div className="absolute inset-0 bg-[#39FF14]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
