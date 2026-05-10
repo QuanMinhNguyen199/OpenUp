@@ -18,9 +18,29 @@ export default function LessonPopup({ chapterId, lesson, onClose }: LessonPopupP
                 {/* Header Decoration */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39FF14] to-transparent shadow-[0_0_10px_#39FF14]"></div>
 
-                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-10 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
+                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-4 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
                     Đã xong Chapter {chapterId}
                 </h2>
+
+                <div className="flex flex-col items-center mb-8">
+                    <p className="text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-4 italic">Mảnh ghép thu thập được:</p>
+                    <div className="relative w-32 h-32 border-2 border-[#39FF14] shadow-[0_0_15px_#39FF14/30] overflow-hidden group">
+                        <div 
+                            className="absolute inset-0 bg-cover bg-no-repeat transition-transform duration-500 group-hover:scale-110"
+                            style={{ 
+                                backgroundImage: "url('/puzzle.webp')",
+                                backgroundSize: "300% 300%",
+                                backgroundPosition: (() => {
+                                    const idx = chapterId - 1;
+                                    const x = (idx % 3) * 50;
+                                    const y = Math.floor(idx / 3) * 50;
+                                    return `${x}% ${y}%`;
+                                })()
+                            }}
+                        />
+                        <div className="absolute inset-0 border border-white/10"></div>
+                    </div>
+                </div>
                 {/* <p className="text-center text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-8 italic">Memory Sequence Restored</p> */}
 
                 <div className="space-y-6">
