@@ -33,35 +33,40 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
                         {[...Array(9)].map((_, i) => {
                             const cellIndex = i + 1;
-
-                            // Cells 8 & 9 are completely black
-                            if (cellIndex === 8 || cellIndex === 9) {
-                                // Thêm border rõ nét cho các ô bí mật
-                                return <div key={i} className="bg-black z-30 border-[0.5px] border-[#00F0FF]/20"></div>;
-                            }
-
                             const isPassed = cellIndex < userData.current_chap;
+
+                            // Xử lý riêng cho ô 8 và 9
+                            if (cellIndex === 8 || cellIndex === 9) {
+                                return (
+                                    <div
+                                        key={i}
+                                        className={`bg-black z-30 border-t border-[#00F0FF]/30 
+                                            ${cellIndex === 8 ? 'border-l' : 'border-r'} 
+                                            /* Ô 8 xóa border bên phải, ô 9 xóa border bên trái để dính liền nhau */
+                                            ${cellIndex === 8 ? '' : ''} 
+                    `}
+                                        style={{
+                                            // Cách triệt để nhất: ô 8 không có border phải, ô 9 không có border trái
+                                            borderRightWidth: cellIndex === 8 ? '0px' : '1px',
+                                            borderLeftWidth: cellIndex === 9 ? '0px' : '1px',
+                                            borderBottomWidth: '1px'
+                                        }}
+                                    ></div>
+                                );
+                            }
 
                             return (
                                 <div
                                     key={i}
                                     className={`relative transition-all duration-700 flex items-center justify-center 
-                                        /* Tăng độ rõ của đường kẻ bằng border màu Cyan có opacity */
-                                        border-[1px] border-[#00F0FF]/30 
-                                        ${isPassed
-                                            ? 'bg-transparent'
-                                            : 'bg-black z-20'
-                                        }`}
+                    border-[1px] border-[#00F0FF]/30 
+                    ${isPassed ? 'bg-transparent' : 'bg-black z-20'}`}
                                 >
                                     {!isPassed && (
                                         <div className="relative z-30 text-white/40 font-mono text-3xl font-black select-none">
                                             {cellIndex}
                                         </div>
                                     )}
-
-                                    {/* Hiệu ứng trang trí góc (tùy chọn) để lưới trông hiện đại hơn */}
-                                    <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-[#00F0FF]/50"></div>
-                                    <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-[#00F0FF]/50"></div>
                                 </div>
                             );
                         })}
