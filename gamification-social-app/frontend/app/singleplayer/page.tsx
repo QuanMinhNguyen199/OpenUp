@@ -35,7 +35,7 @@ export default function SingleplayerPage() {
                 const data = await res.json();
                 setUserData(data);
                 setLoading(false);
-            } catch (error) {
+            } catch {
                 localStorage.removeItem("user_id");
                 localStorage.removeItem("token");
                 router.push("/");
