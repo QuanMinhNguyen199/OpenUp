@@ -39,6 +39,10 @@ function determineEmotion(chosenQuantity: number, allOptions: NpcOption[]): NpcE
     return "normal";
 }
 
+function shuffleOptions(options: NpcOption[]): NpcOption[] {
+    return [...options].sort(() => Math.random() - 0.5);
+}
+
 // ========== COMPONENT ==========
 
 export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) {
@@ -253,9 +257,9 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                         <h1 className="text-xl font-bold tracking-widest text-cyan-400 uppercase">Chapter 8: The Mirror of Truth</h1>
                         <HomeButton />
                     </div>
-                    <BossPuzzle 
-                        userId={localStorage.getItem("user_id") || ""} 
-                        token={localStorage.getItem("token") || ""} 
+                    <BossPuzzle
+                        userId={localStorage.getItem("user_id") || ""}
+                        token={localStorage.getItem("token") || ""}
                     />
                 </div>
             </main>
