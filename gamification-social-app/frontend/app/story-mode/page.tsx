@@ -7,13 +7,22 @@ import HomeButton from "../components/HomeButton";
 import AdminWarning from "../components/AdminWarning";
 import LessonPopup from "./components/LessonPopup";
 import PuzzlePopup from "./components/PuzzlePopup";
+import StoryCompletedPopup from "./components/StoryCompletedPopup";
 import { CHAPTERS, LESSONS } from "./constants";
+
+interface StoryModeUserData {
+    current_chap: number;
+    level: number;
+    username: string;
+    role: string;
+    total_xp: number;
+}
 
 export default function StoryModePage() {
     const router = useRouter();
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<StoryModeUserData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [popupOpen, setPopupOpen] = useState<'lesson' | 'puzzle' | null>(null);
+    const [popupOpen, setPopupOpen] = useState<'lesson' | 'puzzle' | 'completed' | null>(null);
     const [selectedChapId, setSelectedChapId] = useState<number | null>(null);
 
     useEffect(() => {
@@ -40,7 +49,7 @@ export default function StoryModePage() {
                 const data = await res.json();
                 setUserData(data);
                 setLoading(false);
-            } catch (error) {
+            } catch {
                 localStorage.removeItem("user_id");
                 localStorage.removeItem("token");
                 router.push("/");
@@ -200,7 +209,11 @@ export default function StoryModePage() {
                                         onClick={() => {
                                             if (isBoss) {
                                                 setSelectedChapId(8);
-                                                setPopupOpen('puzzle');
+                                                if (isCompleted) {
+                                                    setPopupOpen('completed');
+                                                } else {
+                                                    setPopupOpen('puzzle');
+                                                }
                                             } else if (isCompleted) {
                                                 setSelectedChapId(chap.id);
                                                 setPopupOpen('lesson');
@@ -264,6 +277,12 @@ export default function StoryModePage() {
                             userData={userData}
                             onClose={() => setPopupOpen(null)}
                             onStartGame={() => router.push("/story-mode/8")}
+                        />
+                    )}
+
+                    {popupOpen === 'completed' && (
+                        <StoryCompletedPopup
+                            onClose={() => setPopupOpen(null)}
                         />
                     )}
                 </div>
