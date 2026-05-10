@@ -78,7 +78,7 @@ export default function StoryModePage() {
 
     // EXP Logic
     const level = userData?.level || 1;
-    const totalXp = userData.total_xp;
+    const totalXp = userData?.total_xp || 0;
     const xpAtCurrentLevel = 50 * (level * level - level);
     const maxExp = 100 * level;
     const currentExp = totalXp - xpAtCurrentLevel;
