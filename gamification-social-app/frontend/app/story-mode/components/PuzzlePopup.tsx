@@ -20,37 +20,44 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     <h2 className="text-2xl font-black italic text-[#00F0FF] uppercase drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
                         Bản Đồ Mảnh Ghép
                     </h2>
-                    {/* <p className="text-[10px] font-mono text-[#00F0FF]/60 uppercase tracking-[0.2em] mt-1">Data Reconstruction in Progress</p> */}
                 </div>
 
                 <div className="relative w-full aspect-square bg-[#050505] overflow-hidden border-2 border-white/10 group">
-                    {/* The Background Image */}
-                    <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                        style={{ backgroundImage: "url('/puzzle.png')" }}
-                    />
-
-                    {/* The 3x3 Grid Overlay */}
+                    {/* The 3x3 Grid */}
                     <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
                         {[...Array(9)].map((_, i) => {
                             const cellIndex = i + 1;
-
-                            // Cells 8 & 9 are completely black with no effects
+                            
+                            // Cells 8 & 9 are completely black
                             if (cellIndex === 8 || cellIndex === 9) {
-                                return <div key={i} className="bg-black"></div>;
+                                return <div key={i} className="bg-black border border-white/5"></div>;
                             }
 
                             const isPassed = cellIndex < userData.current_chap;
+                            
+                            // Calculate background position for 3x3 grid
+                            const row = Math.floor(i / 3);
+                            const col = i % 3;
+                            const posX = col * 50; // 0, 50, 100
+                            const posY = row * 50; // 0, 50, 100
+
                             return (
                                 <div
                                     key={i}
-                                    className={`border border-white/10 transition-all duration-700 flex items-center justify-center ${isPassed
-                                        ? 'bg-transparent border-white/5' // Clean reveal
-                                        : 'bg-black/90' // Darkened
-                                        }`}
+                                    className={`relative border border-white/10 overflow-hidden transition-all duration-700 flex items-center justify-center`}
                                 >
+                                    {/* Each cell has the background image clipped to its position */}
+                                    <div 
+                                        className={`absolute inset-0 bg-cover transition-all duration-700 ${isPassed ? 'grayscale-0 opacity-100' : 'grayscale opacity-40'}`}
+                                        style={{ 
+                                            backgroundImage: "url('/puzzle.png')",
+                                            backgroundSize: '300% 300%',
+                                            backgroundPosition: `${posX}% ${posY}%`
+                                        }}
+                                    />
+                                    
                                     {!isPassed && (
-                                        <div className="text-white/10 font-mono text-3xl font-black select-none">
+                                        <div className="relative z-10 text-white/40 font-mono text-3xl font-black select-none drop-shadow-md">
                                             {cellIndex}
                                         </div>
                                     )}
@@ -65,14 +72,12 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     </div>
                 </div>
 
-                {/* Progress text removed as requested */}
-
                 <button
                     onClick={onClose}
                     className="mt-8 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
                 >
                     <div className={`absolute inset-0 border transition-colors ${userData.current_chap >= 8 ? 'border-[#39FF14] bg-[#39FF14]/10' : 'border-[#00F0FF]/30 group-hover:border-[#00F0FF]'}`}></div>
-                    <span
+                    <span 
                         onClick={(e) => {
                             if (userData.current_chap >= 8) {
                                 e.stopPropagation();
