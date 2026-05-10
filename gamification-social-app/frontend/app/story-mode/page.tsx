@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Loading from "../components/Loading";
 import HomeButton from "../components/HomeButton";
 import AdminWarning from "../components/AdminWarning";
+import LessonPopup from "./components/LessonPopup";
+import PuzzlePopup from "./components/PuzzlePopup";
 
 const CHAPTERS = [
     { id: 1, name: "Chapter 1", title: "Linh - Kẻ Lươn Lẹo" },
@@ -263,136 +265,26 @@ export default function StoryModePage() {
             {/* POPUPS */}
             {popupOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    {/* Darkened glass background overlay */}
+                    {/* Simplified background overlay for better performance */}
                     <div
-                        className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300 cursor-pointer"
+                        className="absolute inset-0 bg-black/70 animate-in fade-in duration-200 cursor-pointer"
                         onClick={() => setPopupOpen(null)}
                     ></div>
 
-                    {/* Lesson Popup */}
                     {popupOpen === 'lesson' && selectedChapId && (
-                        <div className="relative z-10 w-full max-w-lg overflow-hidden animate-in zoom-in-95 fade-in duration-300">
-                            {/* Neon Border Glow Effect */}
-                            <div className="absolute inset-0 bg-[#39FF14]/5 blur-2xl rounded-xl"></div>
-
-                            <div className="relative border-2 border-[#39FF14]/40 bg-black/90 p-8 md:p-10 rounded-xl backdrop-blur-xl">
-                                {/* Header Decoration */}
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39FF14] to-transparent shadow-[0_0_10px_#39FF14]"></div>
-
-                                <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] mb-2 uppercase text-center drop-shadow-[0_0_8px_rgba(57,255,20,0.6)]">
-                                    Chapter {selectedChapId} Complete
-                                </h2>
-                                <p className="text-center text-[#39FF14]/70 font-mono text-[10px] tracking-[0.3em] uppercase mb-8 italic">Memory Sequence Restored</p>
-
-                                <div className="space-y-6">
-                                    <div>
-                                        <h3 className="text-sm font-bold text-[#39FF14] uppercase tracking-widest mb-3 flex items-center gap-2">
-                                            <span className="w-6 h-[1px] bg-[#39FF14]/40"></span>
-                                            Bài học: {LESSONS[selectedChapId]?.title}
-                                        </h3>
-                                        <div className="relative p-6 border border-white/5 bg-white/[0.03] rounded-lg">
-                                            <p className="text-lg text-gray-200 leading-relaxed italic font-medium">
-                                                {LESSONS[selectedChapId]?.content}
-                                            </p>
-                                            {/* Decorative corners */}
-                                            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#39FF14]/30"></div>
-                                            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#39FF14]/30"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={() => setPopupOpen(null)}
-                                    className="mt-10 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
-                                >
-                                    <div className="absolute inset-0 border border-[#39FF14]/30 group-hover:border-[#39FF14] transition-colors"></div>
-                                    <div className="absolute inset-0 bg-[#39FF14]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    <span className="relative z-10 text-[#39FF14]">Xác nhận ghi nhớ</span>
-                                </button>
-                            </div>
-                        </div>
+                        <LessonPopup
+                            chapterId={selectedChapId}
+                            lesson={LESSONS[selectedChapId]}
+                            onClose={() => setPopupOpen(null)}
+                        />
                     )}
 
-                    {/* Puzzle Popup */}
                     {popupOpen === 'puzzle' && (
-                        <div className="relative z-10 w-full max-w-md overflow-hidden animate-in zoom-in-95 fade-in duration-300">
-                            <div className="absolute inset-0 bg-[#00F0FF]/5 blur-2xl rounded-xl"></div>
-
-                            <div className="relative border-2 border-[#00F0FF]/40 bg-black/95 p-6 md:p-8 rounded-xl backdrop-blur-xl flex flex-col items-center">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00F0FF] to-transparent shadow-[0_0_10px_#00F0FF]"></div>
-
-                                <div className="text-center mb-6">
-                                    <h2 className="text-2xl font-black italic text-[#00F0FF] uppercase drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
-                                        Bản Đồ Mảnh Ghép
-                                    </h2>
-                                    <p className="text-[10px] font-mono text-[#00F0FF]/60 uppercase tracking-[0.2em] mt-1">Data Reconstruction in Progress</p>
-                                </div>
-
-                                <div className="relative w-full aspect-square bg-[#050505] overflow-hidden border-2 border-white/10 group">
-                                    {/* The Background Image */}
-                                    <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                                        style={{ backgroundImage: "url('/puzzle.png')" }}
-                                    />
-
-                                    {/* The 3x3 Grid Overlay */}
-                                    <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
-                                        {[...Array(9)].map((_, i) => {
-                                            const cellIndex = i + 1;
-                                            if (cellIndex === 8 || cellIndex === 9) {
-                                                return <div key={i} className="border border-white/5 bg-black/95"></div>;
-                                            }
-
-                                            const isPassed = cellIndex < userData.current_chap;
-                                            return (
-                                                <div
-                                                    key={i}
-                                                    className={`border border-white/10 transition-all duration-700 flex items-center justify-center ${isPassed
-                                                            ? 'bg-transparent shadow-[inset_0_0_40px_rgba(57,255,20,0.4)] border-[#39FF14]/40'
-                                                            : 'bg-black/90 backdrop-blur-sm'
-                                                        }`}
-                                                >
-                                                    {!isPassed && (
-                                                        <div className="text-white/10 font-mono text-3xl font-black select-none">
-                                                            {cellIndex}
-                                                        </div>
-                                                    )}
-                                                    {isPassed && (
-                                                        <div className="absolute inset-0 bg-[#39FF14]/5 animate-pulse"></div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Scanning line effect */}
-                                    <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-                                        <div className="w-full h-[2px] bg-[#00F0FF]/40 shadow-[0_0_15px_#00F0FF] absolute animate-[scan_3s_linear_infinite]"></div>
-                                    </div>
-                                </div>
-
-                                <div className="mt-6 w-full p-4 bg-white/5 border border-white/10 rounded">
-                                    <p className="text-center text-[10px] text-gray-400 leading-relaxed uppercase tracking-widest">
-                                        Tiến độ thu thập: <span className="text-[#00F0FF] font-bold">{Math.min(7, userData.current_chap - 1)}/7</span> mảnh ghép.
-                                    </p>
-                                </div>
-
-                                <button
-                                    onClick={() => {
-                                        setPopupOpen(null);
-                                        if (userData.current_chap >= 8) {
-                                            router.push("/story-mode/boss");
-                                        }
-                                    }}
-                                    className="mt-6 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
-                                >
-                                    <div className={`absolute inset-0 border transition-colors ${userData.current_chap >= 8 ? 'border-[#39FF14] bg-[#39FF14]/10' : 'border-[#00F0FF]/30 group-hover:border-[#00F0FF]'}`}></div>
-                                    <span className={`relative z-10 ${userData.current_chap >= 8 ? 'text-[#39FF14]' : 'text-[#00F0FF]'}`}>
-                                        {userData.current_chap >= 8 ? "Bắt đầu giải đố ngay" : "Tiếp tục hành trình"}
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
+                        <PuzzlePopup
+                            userData={userData}
+                            onClose={() => setPopupOpen(null)}
+                            onStartGame={() => router.push("/story-mode/boss")}
+                        />
                     )}
                 </div>
             )}
