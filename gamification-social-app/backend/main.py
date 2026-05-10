@@ -271,6 +271,30 @@ def choose_option(
         "message": message
     }
 
+@app.get("/game/puzzle-state")
+def get_puzzle_state(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(user_id, db, x_token)
+    
+    # 1. Quét DB tìm các NPC (từ 1-7) mà user đã đạt 100 điểm
+    completed_convs = db.query(models.Conversation).filter(
+        models.Conversation.user_id == user_id,
+        models.Conversation.game_mode == "story",
+        models.Conversation.affinity_score >= 100
+    ).all()
+    
+    completed_npc_ids = [conv.npc_id for conv in completed_convs if conv.npc_id in range(1, 8)]
+    
+    # 2. Logic cấp mảnh thứ 8 (Mảnh trung tâm)
+    is_ready = len(completed_npc_ids) == 7
+    if is_ready:
+        completed_npc_ids.append(8) 
+        
+    return {
+        "lit_pieces": completed_npc_ids, # FE sẽ dùng mảng này để thắp sáng hình (VD: [1,2,3,4,5,6,7,8])
+        "is_ready_to_shuffle": is_ready, # FE check = True thì mới bắt đầu xáo trộn Sliding Puzzle
+        "message": "Bảo vật đã hiển lộ, sẵn sàng ghép hình!" if is_ready else f"Đã thu thập {len(completed_npc_ids)}/7 mảnh."
+    }
+
 @app.post("/game/boss-challenge")
 async def boss_challenge(
     user_id: int, 

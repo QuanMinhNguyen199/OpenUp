@@ -4,36 +4,36 @@ import random
 # Danh sách chuẩn là các target_idx theo đúng thứ tự 0 -> 8
 CORRECT_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
+# Đã thay đổi: Phản hồi từ Bảo Vật / Hệ Thống thay vì Cụ Phan
 BOSS_DIALOGS = {
-    "welcome": "Cụ Phan vuốt râu: 'Bức tranh nhân sinh đã vỡ nát. Cháu hãy dùng 7 mảnh ghép thu thập được để khôi phục lại trật tự vốn có của nó.'",
+    "welcome": "Bảo vật Ký ức đang chờ được hợp nhất. Hãy trượt các mảnh ghép về đúng vị trí để hoàn thiện bức tranh nhân sinh.",
     
     "hints": [
-        "Cụ Phan lắc đầu: 'Sự Thấu Cảm phải đi trước Sự Điềm Tĩnh, hãy nhìn kỹ lại xem.'",
-        "Cụ Phan nhíu mày: 'Các mối quan hệ vẫn còn lộn xộn lắm, đừng vội vàng.'",
-        "Cụ Phan thở dài: 'Có những mảnh đã đúng chỗ, nhưng tổng thể thì chưa khớp. Hãy kiên nhẫn trượt lại.'",
-        "Cụ Phan gõ gậy: 'Lắng nghe là nền tảng, đừng đặt nó ở quá xa sự Chân thành!'"
+        "Các mảnh ghép chưa thực sự cộng hưởng với nhau. Hãy nhìn kỹ lại.",
+        "Một vài ký ức vẫn còn đặt sai chỗ, đừng vội vàng.",
+        "Sự kết nối vẫn còn đứt gãy. Hãy kiên nhẫn sắp xếp lại.",
+        "Ánh sáng đang le lói nhưng chưa thể hòa làm một. Hãy tiếp tục trượt."
     ],
     
-    "almost_there": "Cụ Phan mỉm cười khích lệ: 'Rất gần rồi cháu! Chỉ còn sai lệch một chút nữa thôi, bức tranh sắp hoàn thiện rồi!'",
+    "almost_there": "Bảo vật đang rung lên và tỏa sáng rực rỡ! Chỉ còn sai lệch một chút nữa thôi, bức tranh sắp hoàn thiện rồi!",
     
-    "success": "Cụ Phan gật đầu mãn nguyện, bức tranh sáng bừng lên: 'Tuyệt vời... Sự hỗn mang đã được sắp xếp lại. Cháu không chỉ ghép được tranh, mà đã thực sự kết nối được những tâm hồn. Chào mừng cháu đến với thế giới của OpenUp!'"
+    "success": "BÙM! Bức tranh bừng sáng rực rỡ. Tuyệt vời! Sự hỗn mang đã được sắp xếp lại. Bạn không chỉ ghép được tranh, mà đã thực sự kết nối được những tâm hồn. Chúc mừng bạn đã phá đảo OpenUp!"
 }
 
 def check_boss_sequence(user_tile_sequence: list):
     """
     user_tile_sequence: List các target_idx (từ 0-8) theo thứ tự người chơi đang xếp trên lưới 3x3.
-    Ví dụ Frontend gửi lên: [3, 0, 1, 4, 8, 2, 6, 7, 5]
     """
-    # 1. Kiểm tra số lượng mảnh ghép (Lưới 3x3 phải có đúng 9 ô, tính cả ô trống số 8)
+    # 1. Kiểm tra số lượng mảnh ghép
     if len(user_tile_sequence) != len(CORRECT_ORDER) or len(set(user_tile_sequence)) != 9:
         return {
             "is_correct": False,
-            "message": "Cụ Phan: 'Khung tranh này có 9 ô cơ mà, cháu mang thiếu hoặc mang nhầm mảnh ghép rồi!'",
+            "message": "Hệ thống: Khung tranh này yêu cầu 9 ô, dữ liệu mảng bị sai lệch!",
             "status": "RETRY",
             "correct_count": 0
         }
 
-    # 2. Đếm số ô đã đặt đúng vị trí bằng hàm zip
+    # 2. Đếm số ô đã đặt đúng vị trí
     correct_count = sum(1 for u, d in zip(user_tile_sequence, CORRECT_ORDER) if u == d)
 
     # 3. Kiểm tra kết quả
@@ -45,7 +45,7 @@ def check_boss_sequence(user_tile_sequence: list):
             "correct_count": correct_count
         }
     else:
-        # Lựa chọn lời thoại dựa trên tiến độ (Tạo cảm giác Boss biết người chơi đang làm gì)
+        # Phản hồi theo tiến độ
         if correct_count >= 6:
             message = BOSS_DIALOGS["almost_there"]
         else:
