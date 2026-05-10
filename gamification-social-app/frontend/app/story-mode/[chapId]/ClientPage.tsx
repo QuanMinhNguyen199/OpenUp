@@ -162,10 +162,10 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
 
     // ---------- Initial Load ----------
     useEffect(() => {
-        if (!loading && userData) {
+        if (!loading && userData && chapId !== 8) {
             fetchDialog([]);
         }
-    }, [loading, userData, fetchDialog]);
+    }, [loading, userData, fetchDialog, chapId]);
 
     // ---------- Choose Option ----------
     const handleChooseOption = async (option: NpcOption) => {
