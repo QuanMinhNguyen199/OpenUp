@@ -88,7 +88,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                 setUserData(data);
 
                 // Check: chapter must be unlocked and valid (1-8)
-                if (chapId < 1 || chapId > 8 || chapId > data.current_chap) {
+                if (chapId < 1 || chapId > 8 || chapId !== data.current_chap) {
                     router.push("/story-mode");
                     return;
                 }
