@@ -16,7 +16,7 @@ export default function StoryCompletedPopup({ onClose }: StoryCompletedPopupProp
 
                 <div className="text-center">
                     <h2 className="text-2xl md:text-3xl font-black italic text-[#39FF14] uppercase drop-shadow-[0_0_10px_rgba(57,255,20,0.65)]">
-                        Đã hoàn thành Story mode
+                        Phá đảo Story mode
                     </h2>
                     {/* <p className="text-sm text-white/60 mt-2">
                         Giờ bạn có thể quay về và xem lại phần thử thách cuối cùng.
