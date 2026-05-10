@@ -34,9 +34,10 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                         {[...Array(9)].map((_, i) => {
                             const cellIndex = i + 1;
 
-                            // Cells 8 & 9 are always completely black (no numbers)
+                            // Cells 8 & 9 are completely black
                             if (cellIndex === 8 || cellIndex === 9) {
-                                return <div key={i} className="bg-black z-30 border border-white/5"></div>;
+                                // Thêm border rõ nét cho các ô bí mật
+                                return <div key={i} className="bg-black z-30 border-[0.5px] border-[#00F0FF]/20"></div>;
                             }
 
                             const isPassed = cellIndex < userData.current_chap;
@@ -44,16 +45,23 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                             return (
                                 <div
                                     key={i}
-                                    className={`relative border border-white/10 transition-all duration-700 flex items-center justify-center ${isPassed
-                                            ? 'bg-transparent' // Ô đã mở: Trong suốt hoàn toàn để hiện ảnh
-                                            : 'bg-black z-20'    // Ô chưa mở: Đen đặc để che sạch ảnh
+                                    className={`relative transition-all duration-700 flex items-center justify-center 
+                                        /* Tăng độ rõ của đường kẻ bằng border màu Cyan có opacity */
+                                        border-[1px] border-[#00F0FF]/30 
+                                        ${isPassed
+                                            ? 'bg-transparent'
+                                            : 'bg-black z-20'
                                         }`}
                                 >
                                     {!isPassed && (
-                                        <div className="relative z-30 text-white/40 font-mono text-3xl font-black select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                                        <div className="relative z-30 text-white/40 font-mono text-3xl font-black select-none">
                                             {cellIndex}
                                         </div>
                                     )}
+
+                                    {/* Hiệu ứng trang trí góc (tùy chọn) để lưới trông hiện đại hơn */}
+                                    <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-[#00F0FF]/50"></div>
+                                    <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-[#00F0FF]/50"></div>
                                 </div>
                             );
                         })}
