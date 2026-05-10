@@ -9,6 +9,7 @@ export function generateStaticParams() {
         { chapId: '5' },
         { chapId: '6' },
         { chapId: '7' },
+        { chapId: '8' },
     ];
 }
 
