@@ -26,7 +26,7 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     {/* The Single Background Image */}
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                        style={{ backgroundImage: "url('/puzzle.jpg')" }}
+                        style={{ backgroundImage: "url('/puzzle.webp')" }}
                     />
 
                     {/* The 3x3 Grid Overlay */}
