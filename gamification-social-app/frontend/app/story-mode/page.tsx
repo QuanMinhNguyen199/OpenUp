@@ -263,7 +263,7 @@ export default function StoryModePage() {
                         <PuzzlePopup
                             userData={userData}
                             onClose={() => setPopupOpen(null)}
-                            onStartGame={() => router.push("/story-mode/boss")}
+                            onStartGame={() => router.push("/story-mode/8")}
                         />
                     )}
                 </div>
