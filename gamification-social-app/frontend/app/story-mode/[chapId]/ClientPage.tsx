@@ -258,7 +258,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                     src={`/npc${chapId}-${npcEmotion}.png`}
                     alt={chapter.npcName}
                     className="h-[90vh] md:h-[98vh] object-contain drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all duration-500"
-                    style={{ filter: isThinking ? "brightness(0.6)" : "brightness(1)" }}
+                    style={{ filter: isThinking ? "brightness(0.8)" : "brightness(1)" }}
                 />
             </div>
 
