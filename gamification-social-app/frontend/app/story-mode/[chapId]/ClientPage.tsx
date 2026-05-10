@@ -257,7 +257,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                 <img
                     src={`/npc${chapId}-${npcEmotion}.png`}
                     alt={chapter.npcName}
-                    className="h-[55vh] md:h-[65vh] object-contain drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all duration-500"
+                    className="h-[90vh] md:h-[98vh] object-contain drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-all duration-500"
                     style={{ filter: isThinking ? "brightness(0.6)" : "brightness(1)" }}
                 />
             </div>
@@ -310,8 +310,8 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                             />
                         </div>
                         <span className={`text-sm font-black tabular-nums min-w-[3ch] text-right ${affinityPercent >= 80 ? "text-[#39FF14]"
-                                : affinityPercent >= 40 ? "text-[#00F0FF]"
-                                    : "text-red-400"
+                            : affinityPercent >= 40 ? "text-[#00F0FF]"
+                                : "text-red-400"
                             }`}>
                             {affinity}
                         </span>
@@ -381,14 +381,14 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                                     disabled={optionLocked}
                                     onClick={() => handleChooseOption(opt)}
                                     className={`group relative w-full text-left p-4 border rounded-lg transition-all duration-200 ${optionLocked
-                                            ? "border-white/5 bg-white/5 opacity-50 cursor-not-allowed"
-                                            : "border-[#00F0FF]/20 bg-black/60 backdrop-blur-sm hover:border-[#00F0FF]/60 hover:bg-[#00F0FF]/10 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] cursor-pointer"
+                                        ? "border-white/5 bg-white/5 opacity-50 cursor-not-allowed"
+                                        : "border-[#00F0FF]/20 bg-black/60 backdrop-blur-sm hover:border-[#00F0FF]/60 hover:bg-[#00F0FF]/10 hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] cursor-pointer"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
                                         <span className={`flex-shrink-0 w-7 h-7 flex items-center justify-center border rounded-full text-xs font-black transition-colors ${optionLocked
-                                                ? "border-white/20 text-white/30"
-                                                : "border-[#00F0FF]/40 text-[#00F0FF] group-hover:border-[#00F0FF] group-hover:bg-[#00F0FF]/20"
+                                            ? "border-white/20 text-white/30"
+                                            : "border-[#00F0FF]/40 text-[#00F0FF] group-hover:border-[#00F0FF] group-hover:bg-[#00F0FF]/20"
                                             }`}>
                                             {String.fromCharCode(65 + idx)}
                                         </span>
