@@ -97,7 +97,7 @@ export default function StoryModePage() {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-4xl font-black italic tracking-tighter text-[#00F0FF] drop-shadow-[0_0_10px_#00F0FF]">
-                                {userData.username}
+                                {userData?.username}
                             </h1>
                             <span className="bg-[#39FF14] px-3 py-0.5 text-sm font-black text-black skew-x-[-15deg]">
                                 {rank.toUpperCase()}
