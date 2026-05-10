@@ -137,6 +137,9 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
             }
 
             const data: NpcDialogData = await res.json();
+            if (data.options) {
+                data.options = shuffleOptions(data.options);
+            }
             setNpcData(data);
             setOptionLocked(false);
         } catch (error: any) {
