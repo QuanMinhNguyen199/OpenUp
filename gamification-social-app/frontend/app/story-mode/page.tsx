@@ -175,7 +175,7 @@ export default function StoryModePage() {
 
                             {CHAPTERS.map((chap) => {
                                 const isCompleted = chap.id < (userData?.current_chap || 1);
-                                const isCurrent = chap.id === userData.current_chap;
+                                const isCurrent = chap.id === (userData?.current_chap || 1);
                                 const isLocked = chap.id > userData.current_chap;
                                 const isBoss = chap.id === 8;
 
