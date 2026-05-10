@@ -61,7 +61,7 @@ export default function StoryModePage() {
 
     if (loading) return <Loading />;
 
-    if (userData.role === "ADMIN") {
+    if (userData?.role === "ADMIN") {
         return <AdminWarning modeName="Story Mode" />;
     }
 
