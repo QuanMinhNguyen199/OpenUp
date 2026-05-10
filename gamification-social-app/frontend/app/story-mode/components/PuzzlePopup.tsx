@@ -26,17 +26,17 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     {/* The Single Background Image */}
                     <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                        style={{ backgroundImage: "url('/puzzle.png')" }}
+                        style={{ backgroundImage: "url('/puzzle.jpg')" }}
                     />
 
                     {/* The 3x3 Grid Overlay */}
                     <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
                         {[...Array(9)].map((_, i) => {
                             const cellIndex = i + 1;
-                            
-                            // Cells 8 & 9 are completely black
+
+                            // Cells 8 & 9 are always completely black (no numbers)
                             if (cellIndex === 8 || cellIndex === 9) {
-                                return <div key={i} className="bg-black z-30"></div>;
+                                return <div key={i} className="bg-black z-30 border border-white/5"></div>;
                             }
 
                             const isPassed = cellIndex < userData.current_chap;
@@ -44,14 +44,13 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                             return (
                                 <div
                                     key={i}
-                                    className={`relative border border-white/10 transition-all duration-700 flex items-center justify-center ${
-                                        isPassed 
-                                        ? 'bg-transparent' // Opened: Purely transparent to reveal image
-                                        : 'backdrop-grayscale bg-black/20' // Locked: Grayscale effect + slight dim
-                                    }`}
+                                    className={`relative border border-white/10 transition-all duration-700 flex items-center justify-center ${isPassed
+                                            ? 'bg-transparent' // Ô đã mở: Trong suốt hoàn toàn để hiện ảnh
+                                            : 'bg-black z-20'    // Ô chưa mở: Đen đặc để che sạch ảnh
+                                        }`}
                                 >
                                     {!isPassed && (
-                                        <div className="relative z-10 text-white/60 font-mono text-3xl font-black select-none drop-shadow-lg">
+                                        <div className="relative z-30 text-white/40 font-mono text-3xl font-black select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
                                             {cellIndex}
                                         </div>
                                     )}
@@ -71,7 +70,7 @@ export default function PuzzlePopup({ userData, onClose, onStartGame }: PuzzlePo
                     className="mt-8 w-full relative group overflow-hidden py-4 rounded font-black uppercase tracking-widest transition-all"
                 >
                     <div className={`absolute inset-0 border transition-colors ${userData.current_chap >= 8 ? 'border-[#39FF14] bg-[#39FF14]/10' : 'border-[#00F0FF]/30 group-hover:border-[#00F0FF]'}`}></div>
-                    <span 
+                    <span
                         onClick={(e) => {
                             if (userData.current_chap >= 8) {
                                 e.stopPropagation();
