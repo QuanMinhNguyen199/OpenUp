@@ -274,7 +274,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                                 {chapter.name}
                             </span>
                             <span className="text-xs text-white/40">•</span>
-                            <span className="text-xs text-white/60 italic">{chapter.location}</span>
+                            <span className="text-xs font-bold text-white/80 italic">{chapter.location}</span>
                         </div>
                         <h1 className="text-xl md:text-2xl font-black italic text-white tracking-tight">
                             {chapter.npcName}
