@@ -1,3 +1,4 @@
+import re
 import os
 import json
 import asyncio
@@ -46,17 +47,22 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         if content: 
             messages.append({"role": role, "content": content})
 
-    # BƯỚC 3: Bẻ lái kịch bản nếu đã có lịch sử chat (Chống lỗi lặp kịch bản)
+    # BƯỚC 3: Bẻ lái kịch bản nếu đã có lịch sử chat (ĐÃ FIX: ÉP ĐIỂM CÂN BẰNG & LỜI THOẠI)
     if len(history) > 0:
         request_prompt = (
-            "Dựa vào câu nói/hành động vừa rồi của user, hãy thể hiện cảm xúc và phản ứng lại. "
-            "Tự nghĩ ra diễn biến tiếp theo và đưa ra 3 lựa chọn mới cho user (kèm điểm quantity từ -20 đến +20). "
+            "Dựa vào câu nói của user, hãy thể hiện cảm xúc và phản ứng lại. "
+            "TUYỆT ĐỐI KHÔNG để lộ số điểm (quantity) vào trong lời thoại (npc_say). "
+            "Đưa ra 3 CÂU NÓI (đóng trong ngoặc kép, KHÔNG dùng hành động) để user đáp lại. "
+            "3 câu nói phải đại diện cho 3 thái độ: 1 Tích cực (từ +10 đến +20), 1 Trung lập (0 đến +5), 1 Tiêu cực (từ -10 đến -20). "
+            "KHÔNG lặp lại các lựa chọn cũ. "
             "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
             "{\n"
             '  "npc_behavior": "mô tả hành động",\n'
             '  "npc_say": "lời thoại phản hồi",\n'
             '  "options": [\n'
-            '    {"option": "lựa chọn 1", "quantity": điểm}\n'
+            '    {"option": "câu nói 1", "quantity": điểm},\n'
+            '    {"option": "câu nói 2", "quantity": điểm},\n'
+            '    {"option": "câu nói 3", "quantity": điểm}\n'
             "  ]\n"
             "}"
         )
@@ -68,31 +74,38 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     raw = ""
     
     for attempt in range(1, MAX_RETRIES + 1):
-        # BƯỚC 1: Gọi API (Chỉ retry nếu lỗi đường truyền hoặc lỗi từ phía máy chủ OpenAI)
+        # BƯỚC 1: Gọi API
         try:
             response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                temperature=0.7, # Thấp hơn để AI bám sát kịch bản cứng
-                response_format={ "type": "json_object" } # Ép GPT trả về JSON
+                temperature=0.7, 
+                response_format={ "type": "json_object" } 
             )
             raw = response.choices[0].message.content.strip()
             
         except Exception as e:
             print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Mạng/API OpenAI Story Mode: {e}")
             if attempt == MAX_RETRIES:
-                break  # Hết lượt cứu chữa, thoát vòng lặp để xuống dùng Fallback
+                break  
             await asyncio.sleep(1)
-            continue # Gọi lại API lần nữa
+            continue 
             
-        # BƯỚC 2: Parse JSON (Nếu gọi API thành công nhưng AI nhả JSON lỗi -> Thoát luôn, KHÔNG gọi lại API gây tốn tiền)
+        # BƯỚC 2: Parse JSON & Lọc Rác AI (ĐÃ FIX: DÙNG REGEX RỬA SẠCH LỜI THOẠI)
         try:
-            return json.loads(raw)
+            result = json.loads(raw)
+            
+            # Quét và xóa sạch các chuỗi thừa (vd: "(+10 điểm)", "-15", v.v.) khỏi npc_say
+            if "npc_say" in result:
+                result["npc_say"] = re.sub(r'[\[\(]?[+-]\d+\s*(điểm|points)?[\]\)]?', '', result["npc_say"]).strip()
+                
+            return result
+            
         except json.JSONDecodeError as e:
             print(f"⚠ Lỗi Parse JSON (Dừng, không gọi lại API): {e}\nRaw: {raw}")
             break # Thoát vòng lặp ngay lập tức để xuống dùng Fallback
 
-    # BƯỚC 3: Fallback cứng (Chỉ chạy đến đây nếu API sập cả 2 lần hoặc JSON bị rác)
+    # BƯỚC 3: Fallback cứng 
     return {
         "npc_behavior": "đang suy nghĩ",
         "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?",
