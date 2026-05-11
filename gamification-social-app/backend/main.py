@@ -214,6 +214,8 @@ def choose_option(
     if score_change > 30.0 or score_change < -30.0:
         raise HTTPException(status_code=400, detail="Hệ thống phát hiện điểm số bất thường (Nghi vấn Hack)!")
 
+    score_change = max(-15.0, min(15.0, score_change))
+
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id, game_mode="story").first()
     
     # 2. KIỂM TRA KHÓA CHÉO (Phải gọi story_mode trước)
