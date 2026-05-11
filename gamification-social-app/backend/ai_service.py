@@ -51,20 +51,21 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     if len(history) > 0:
         request_prompt = (
             "Hãy đọc kỹ lịch sử chat ở trên. Dựa vào câu nói vừa rồi của user, hãy phản ứng lại. "
-            "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại vòng lặp hội thoại cũ. Nếu user trả lời sai/hời hợt, hãy ÁP DỤNG QUY TẮC LEO THANG (trách móc, kể bí mật, đe dọa bỏ đi, v.v.). "
-            "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
-            "Hãy tạo ra 3 lựa chọn MỚI HOÀN TOÀN để user đáp lại (để user tự xưng là 'Tôi' hoặc đại từ phù hợp). LƯU Ý VỀ CÁCH CHẤM ĐIỂM: "
-            "- Điểm CỘNG (+10 đến +15): Lựa chọn THỂ HIỆN ĐÚNG MỤC TIÊU BÀI HỌC (Ví dụ Chap 1 là biết TỪ CHỐI khéo léo. Không phải cứ mù quáng đồng ý giúp NPC là được cộng điểm!). "
-            "- Điểm TRUNG LẬP (0 đến +5): Lựa chọn hời hợt, hoặc đồng ý giúp một cách miễn cưỡng/nhu nhược. "
-            "- Điểm TRỪ (-10 đến -15): Lựa chọn ĐI NGƯỢC LẠI BÀI HỌC (Ví dụ: vô tâm, cãi láo, hoặc để bị NPC thao túng). "
+            "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại vòng lặp hội thoại cũ. ÁP DỤNG QUY TẮC LEO THANG (trách móc, kể bí mật, đe dọa, v.v.). "
+            "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity). "
+            "LỆNH CẤM 3 (QUAN TRỌNG NHẤT): KHÔNG viết các lựa chọn quá dễ đoán. Cả 3 lựa chọn PHẢI nghe rất hợp lý, lịch sự. "
+            "TRỌNG TÂM LỰA CHỌN: Tạo ra 3 CÁCH XỬ LÝ MỚI cho tình huống hiện tại. LƯU Ý VỀ CÁCH CHẤM ĐIỂM (CỰC KỲ QUAN TRỌNG): "
+            "- Điểm CỘNG MẠNH (+20 đến +30) [Sự Thấu Cảm Đích Thực]: Câu trả lời chạm đúng 'Tử huyệt tâm lý', THỂ HIỆN ĐÚNG BÀI HỌC. "
+            "- Điểm TRỪ NHẸ (-10 đến -15) [Cái Bẫy Sự Tử Tế / Ngụy Biện]: Lựa chọn nghe có vẻ TỐT/LOGIC nhưng lại SAI BÀI HỌC (Ví dụ: Cho lời khuyên khi người ta cần khóc, hoặc nhu nhược làm hộ việc). "
+            "- Điểm TRỪ NẶNG (-20 đến -30) [Game Over / Né tránh]: Câu trả lời vô tâm, né tránh trách nhiệm hoặc lặp lại lỗi sai. Người chơi sẽ gần như thất bại ngay lập tức. "
             "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
             "{\n"
             '  "npc_behavior": "mô tả hành động",\n'
             '  "npc_say": "lời thoại MỚI, KHÔNG LẶP LẠI",\n'
             '  "options": [\n'
-            '    {"option": "câu nói 1", "quantity": điểm},\n'
-            '    {"option": "câu nói 2", "quantity": điểm},\n'
-            '    {"option": "câu nói 3", "quantity": điểm}\n'
+            '    {"option": "câu trả lời hack não 1", "quantity": điểm},\n'
+            '    {"option": "câu trả lời hack não 2", "quantity": điểm},\n'
+            '    {"option": "câu trả lời hack não 3", "quantity": điểm}\n'
             "  ]\n"
             "}"
         )
