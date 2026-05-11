@@ -371,7 +371,7 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         )
         result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
         result['name'] = NAMES[name_idx]
-        result['job'] = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
+        result['job'] = JOBS[job_idx] if relationship_idx != 4 else 'Học sinh'
         result['relationship'] = RELATIONSHIPS[relationship_idx]
         return result
     else:
