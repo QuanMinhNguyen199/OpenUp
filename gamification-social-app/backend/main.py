@@ -243,33 +243,77 @@ def choose_option(
     is_failed = False
     is_completed = False
 
-    # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA
-    if potential_score <= 0:
-        is_failed = True
-        conv.affinity_score = 20.0 # Hồi sinh cho 20 điểm làm vốn
-        conv.current_turn = 1
-        message = "NPC thất vọng hoàn toàn. Bạn đã làm hỏng cuộc trò chuyện, hãy làm lại từ đầu!"
-        
-    elif conv.neutral_streak >= 3:
-        is_failed = True
-        conv.affinity_score = max(0, conv.affinity_score - 10)
-        conv.current_turn = 1
-        message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
-        
-    else:
-        conv.affinity_score = min(100.0, potential_score) # Tối đa là 100 điểm
-        
-        # NẾU ĐẦY CÂY TÌNH CẢM -> THẮNG CHAPTER
-        if conv.affinity_score >= 100 and user.chap == npc_id:
-            user.chap += 1
-            user.total_xp += 150
-            # update_leaderboard(user.username, user.total_xp) # Tạm cmt nếu Redis đang lỗi
-            user.level = calculate_level(user.total_xp)
+    # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA (CÓ TWIST & ĐA KẾT CỤC)
+    if npc_id == 7:
+        # ---------------------------------------------------------
+        # 🎭 LUẬT CHƠI ĐẢO NGƯỢC (CHỈ DÀNH CHO CHAPTER 7 - CỤ PHAN)
+        # ---------------------------------------------------------
+        if potential_score <= 0:
+            # THẮNG: Chấp nhận sự thật mất lòng để được giải thoát
+            conv.affinity_score = 0.0
+            if user.chap == 7:
+                user.chap += 1
+                user.total_xp += 200 # Thưởng kinh nghiệm cao hơn vì vòng khó
+                user.level = calculate_level(user.total_xp)
             is_completed = True
-            message = f"Tuyệt vời! Bạn đã mở khóa Chapter {user.chap}!"
+            message = "Cụ Phan mỉm cười: 'Con đã hiểu được giá trị của sự thật và buông bỏ. Bức tranh nhân sinh đã sẵn sàng.' Bạn đã vượt qua bài test cuối cùng!"
+            
+        elif potential_score >= 100:
+            # THUA: Nịnh nọt, nói dối để vừa lòng người khác
+            is_failed = True
+            conv.affinity_score = 20.0
+            conv.current_turn = 1
+            message = "Cụ Phan lắc đầu: 'Những lời mật ngọt giả dối không thể cứu rỗi tâm hồn.' Hãy thử lại bằng sự chân thật!"
+            
+        elif conv.neutral_streak >= 3:
+            # THUA: Trả lời hời hợt
+            is_failed = True
+            conv.affinity_score = 20.0
+            conv.current_turn = 1
+            message = "Cụ Phan nhắm mắt dưỡng thần, không muốn tiếp chuyện kẻ thiếu thành tâm."
+            
         else:
+            # TIẾP TỤC TRÒ CHUYỆN (Đảo ngược UI: Điểm tụt xuống 0 mới là tốt)
+            conv.affinity_score = max(0.0, min(100.0, potential_score))
             conv.current_turn += 1
-            message = f"NPC phản ứng lại. Điểm tình cảm: {conv.affinity_score}/100"
+            message = f"Cụ Phan gật gù. Hãy tiếp tục bảo vệ quan điểm của bạn! Tâm ngộ: {100 - int(conv.affinity_score)}/100"
+            
+    else:
+        # ---------------------------------------------------------
+        # 🎮 LUẬT CHƠI BÌNH THƯỜNG (DÀNH CHO CHAPTER 1 ĐẾN CHAPTER 6)
+        # ---------------------------------------------------------
+        if potential_score <= 0:
+            is_failed = True
+            conv.affinity_score = 20.0 # Hồi sinh cho 20 điểm làm vốn
+            conv.current_turn = 1
+            message = "NPC thất vọng hoàn toàn. Bạn đã làm hỏng cuộc trò chuyện, hãy làm lại từ đầu!"
+            
+        elif conv.neutral_streak >= 3:
+            is_failed = True
+            conv.affinity_score = max(0, conv.affinity_score - 10)
+            conv.current_turn = 1
+            message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
+            
+        else:
+            conv.affinity_score = min(100.0, potential_score) # Tối đa là 100 điểm
+            
+            # NẾU ĐẦY CÂY TÌNH CẢM -> THẮNG CHAPTER
+            if conv.affinity_score >= 100:
+                if user.chap == npc_id:
+                    user.chap += 1
+                    user.total_xp += 150
+                    user.level = calculate_level(user.total_xp)
+                
+                is_completed = True
+                
+                # ĐA KẾT CỤC: Dựa vào số lượt chat để đánh giá trình độ
+                if conv.current_turn <= 6:
+                    message = f"Hoàn hảo! Bằng sự thấu cảm tuyệt vời, bạn đã xoa dịu NPC rất nhanh. Mở khóa Chapter {user.chap}!"
+                else:
+                    message = f"Dù mất khá nhiều thời gian để thấu hiểu nhau, nhưng cuối cùng bạn cũng làm được! Mở khóa Chapter {user.chap}!"
+            else:
+                conv.current_turn += 1
+                message = f"NPC phản ứng lại. Điểm tình cảm: {conv.affinity_score}/100"
 
     # 7. Đóng khóa chéo: Phải gọi story_mode lại mới được chọn tiếp
     conv.is_waiting_for_reply = False 

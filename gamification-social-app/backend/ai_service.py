@@ -52,8 +52,9 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         request_prompt = (
             "Dựa vào câu nói của user, hãy thể hiện cảm xúc và phản ứng lại. "
             "TUYỆT ĐỐI KHÔNG để lộ số điểm (quantity) vào trong lời thoại (npc_say). "
+            "HÃY THÚC ĐẨY CỐT TRUYỆN: Không lặp lại vòng lặp hội thoại cũ. Tùy theo thái độ của user, NPC hãy chuyển biến tâm lý (ví dụ: từ tức giận sang tủi thân, từ xin xỏ sang mặc cả/trách móc, hoặc tiết lộ thêm góc khuất). "
             "Đưa ra 3 CÂU NÓI (đóng trong ngoặc kép, KHÔNG dùng hành động) để user đáp lại. "
-            "3 câu nói phải đại diện cho 3 thái độ: 1 Tích cực (từ +10 đến +20), 1 Trung lập (0 đến +5), 1 Tiêu cực (từ -10 đến -20). "
+            "3 câu nói phải đại diện cho 3 thái độ: 1 Tích cực (từ +10 đến +15), 1 Trung lập (0 đến +5), 1 Tiêu cực (từ -10 đến -15). "
             "KHÔNG lặp lại các lựa chọn cũ. "
             "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
             "{\n"
