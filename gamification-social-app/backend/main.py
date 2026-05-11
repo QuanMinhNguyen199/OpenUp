@@ -251,10 +251,15 @@ def choose_option(
         if potential_score <= 0:
             # THẮNG: Chấp nhận sự thật mất lòng để được giải thoát
             conv.affinity_score = 0.0
+            
+            # Xử lý phần thưởng
             if user.chap == 7:
                 user.chap += 1
-                user.total_xp += 200 # Thưởng kinh nghiệm cao hơn vì vòng khó
-                user.level = calculate_level(user.total_xp)
+                user.total_xp += 200 # Thưởng kinh nghiệm lần đầu
+            else:
+                user.total_xp += 50  # FIX BUG 1: Thưởng nhỏ cho việc chơi lại màn cũ
+                
+            user.level = calculate_level(user.total_xp)
             is_completed = True
             message = "Cụ Phan mỉm cười: 'Con đã hiểu được giá trị của sự thật và buông bỏ. Bức tranh nhân sinh đã sẵn sàng.' Bạn đã vượt qua bài test cuối cùng!"
             
@@ -263,6 +268,7 @@ def choose_option(
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
+            conv.neutral_streak = 0 # FIX BUG 2: Reset lại streak hời hợt
             message = "Cụ Phan lắc đầu: 'Những lời mật ngọt giả dối không thể cứu rỗi tâm hồn.' Hãy thử lại bằng sự chân thật!"
             
         elif conv.neutral_streak >= 3:
@@ -270,6 +276,7 @@ def choose_option(
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
+            conv.neutral_streak = 0 # FIX BUG 2: Reset lại streak hời hợt
             message = "Cụ Phan nhắm mắt dưỡng thần, không muốn tiếp chuyện kẻ thiếu thành tâm."
             
         else:
@@ -284,36 +291,41 @@ def choose_option(
         # ---------------------------------------------------------
         if potential_score <= 0:
             is_failed = True
-            conv.affinity_score = 20.0 # Hồi sinh cho 20 điểm làm vốn
+            conv.affinity_score = 20.0 
             conv.current_turn = 1
+            conv.neutral_streak = 0 # FIX BUG 2
             message = "NPC thất vọng hoàn toàn. Bạn đã làm hỏng cuộc trò chuyện, hãy làm lại từ đầu!"
             
         elif conv.neutral_streak >= 3:
             is_failed = True
             conv.affinity_score = max(0, conv.affinity_score - 10)
             conv.current_turn = 1
+            conv.neutral_streak = 0 # FIX BUG 2
             message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
             
         else:
-            conv.affinity_score = min(100.0, potential_score) # Tối đa là 100 điểm
+            conv.affinity_score = min(100.0, potential_score) 
             
             # NẾU ĐẦY CÂY TÌNH CẢM -> THẮNG CHAPTER
             if conv.affinity_score >= 100:
+                # Xử lý phần thưởng
                 if user.chap == npc_id:
                     user.chap += 1
                     user.total_xp += 150
-                    user.level = calculate_level(user.total_xp)
-                
+                else:
+                    user.total_xp += 30 # FIX BUG 1: Thưởng cày lại cho các Chap 1-6
+                    
+                user.level = calculate_level(user.total_xp)
                 is_completed = True
                 
-                # ĐA KẾT CỤC: Dựa vào số lượt chat để đánh giá trình độ
+                # ĐA KẾT CỤC
                 if conv.current_turn <= 6:
                     message = f"Hoàn hảo! Bằng sự thấu cảm tuyệt vời, bạn đã xoa dịu NPC rất nhanh. Mở khóa Chapter {user.chap}!"
                 else:
                     message = f"Dù mất khá nhiều thời gian để thấu hiểu nhau, nhưng cuối cùng bạn cũng làm được! Mở khóa Chapter {user.chap}!"
             else:
                 conv.current_turn += 1
-                message = f"NPC phản ứng lại. Điểm tình cảm: {conv.affinity_score}/100"
+                message = f"NPC phản ứng lại. Điểm tình cảm: {int(conv.affinity_score)}/100"
 
     # 7. Đóng khóa chéo: Phải gọi story_mode lại mới được chọn tiếp
     conv.is_waiting_for_reply = False 
