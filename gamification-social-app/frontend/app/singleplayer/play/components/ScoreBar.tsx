@@ -12,6 +12,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
 
   useEffect(() => {
     if (displayScore !== score) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPulse(true);
       const timer = setTimeout(() => {
         setDisplayScore(score);
