@@ -211,10 +211,10 @@ def choose_option(
         raise HTTPException(status_code=403, detail="Màn Boss yêu cầu giải đố, không thể chat!")
 
     # BẢO MẬT: Chống Hacker dùng Postman gửi bừa điểm ảo (Giới hạn mỗi lượt chỉ được cộng/trừ max 30 điểm)
-    if score_change > 30.0 or score_change < -30.0:
+    if score_change > 50.0 or score_change < -50.0:
         raise HTTPException(status_code=400, detail="Hệ thống phát hiện điểm số bất thường (Nghi vấn Hack)!")
 
-    score_change = max(-15.0, min(15.0, score_change))
+    score_change = max(-30.0, min(25.0, score_change))
 
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id, game_mode="story").first()
     
