@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePresence } from "../components/PresenceProvider";
 import Loading from "../components/Loading";
+import AdminWarning from "../components/AdminWarning";
 
 export default function LobbyPage() {
     const router = useRouter();
@@ -61,16 +62,7 @@ export default function LobbyPage() {
     }
 
     if (userData?.role === "ADMIN") {
-        return (
-            <main className="relative min-h-screen w-full bg-[#050505] flex flex-col items-center justify-center font-sans text-white">
-                <div className="text-[#00F0FF] text-3xl font-black italic tracking-widest drop-shadow-[0_0_10px_rgba(0,240,255,0.7)]">
-                    Hãy dùng tài khoản player
-                </div>
-                <button onClick={handleLogout} className="mt-8 text-[#39FF14] underline hover:text-[#00F0FF] transition-colors">
-                    Đăng xuất
-                </button>
-            </main>
-        );
+        return <AdminWarning modeName="Lobby" onLogout={handleLogout} />;
     }
 
     const menuItems = [
@@ -165,7 +157,10 @@ export default function LobbyPage() {
                     {menuItems.map((item, idx) => (
                         <button 
                             key={idx} 
-                            onClick={() => item.name === "Singleplayer" && router.push("/singleplayer")}
+                            onClick={() => {
+                                if (item.name === "Singleplayer") router.push("/singleplayer");
+                                else if (item.name === "Story Mode") router.push("/story-mode");
+                            }}
                             className="group relative text-right transition-transform hover:scale-110 cursor-pointer"
                         >
                             <span className="block text-sm font-bold uppercase tracking-[0.3em] text-[#39FF14] opacity-80">
