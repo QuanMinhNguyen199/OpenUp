@@ -95,15 +95,19 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         try:
             result = json.loads(raw)
             
-            # Quét và xóa sạch các chuỗi thừa (vd: "(+10 điểm)", "-15", v.v.) khỏi npc_say
             if "npc_say" in result:
-                result["npc_say"] = re.sub(r'[\[\(]?[+-]\d+\s*(điểm|points)?[\]\)]?', '', result["npc_say"]).strip()
+                # REGEX AN TOÀN HƠN: Chỉ xóa nếu có ngoặc, hoặc có chữ "điểm/points"
+                safe_regex = r'([\[\(][+-]\d+\s*(điểm|points)?[\]\)])|([+-]\d+\s*(điểm|points))'
+                result["npc_say"] = re.sub(safe_regex, '', result["npc_say"], flags=re.IGNORECASE).strip()
                 
             return result
             
         except json.JSONDecodeError as e:
-            print(f"⚠ Lỗi Parse JSON (Dừng, không gọi lại API): {e}\nRaw: {raw}")
-            break # Thoát vòng lặp ngay lập tức để xuống dùng Fallback
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Parse JSON: {e}\nRaw: {raw}")
+            if attempt == MAX_RETRIES:
+                break # Nếu thử lại lần 2 vẫn lỗi thì mới thoát hẳn
+            await asyncio.sleep(1)
+            continue
 
     # BƯỚC 3: Fallback cứng 
     return {
