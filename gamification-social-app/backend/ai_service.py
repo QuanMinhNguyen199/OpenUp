@@ -50,16 +50,17 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     # BƯỚC 3: Bẻ lái kịch bản nếu đã có lịch sử chat (ĐÃ FIX: ÉP ĐIỂM CÂN BẰNG & LỜI THOẠI)
     if len(history) > 0:
         request_prompt = (
-            "Dựa vào câu nói của user, hãy thể hiện cảm xúc và phản ứng lại. "
-            "TUYỆT ĐỐI KHÔNG để lộ số điểm (quantity) vào trong lời thoại (npc_say). "
-            "HÃY THÚC ĐẨY CỐT TRUYỆN: Không lặp lại vòng lặp hội thoại cũ. Tùy theo thái độ của user, NPC hãy chuyển biến tâm lý (ví dụ: từ tức giận sang tủi thân, từ xin xỏ sang mặc cả/trách móc, hoặc tiết lộ thêm góc khuất). "
-            "Đưa ra 3 CÂU NÓI (đóng trong ngoặc kép, KHÔNG dùng hành động) để user đáp lại. "
-            "3 câu nói phải đại diện cho 3 thái độ: 1 Tích cực (từ +10 đến +15), 1 Trung lập (0 đến +5), 1 Tiêu cực (từ -10 đến -15). "
-            "KHÔNG lặp lại các lựa chọn cũ. "
+            "Hãy đọc kỹ lịch sử chat ở trên. Dựa vào câu nói vừa rồi của user, hãy phản ứng lại. "
+            "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại vòng lặp hội thoại cũ. Nếu user trả lời sai/hời hợt, hãy ÁP DỤNG QUY TẮC LEO THANG (trách móc, kể bí mật, đe dọa bỏ đi, v.v.). "
+            "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
+            "Hãy tạo ra 3 lựa chọn MỚI HOÀN TOÀN để user đáp lại (để user tự xưng là 'Tôi' hoặc đại từ phù hợp). LƯU Ý VỀ CÁCH CHẤM ĐIỂM: "
+            "- Điểm CỘNG (+10 đến +15): Lựa chọn THỂ HIỆN ĐÚNG MỤC TIÊU BÀI HỌC (Ví dụ Chap 1 là biết TỪ CHỐI khéo léo. Không phải cứ mù quáng đồng ý giúp NPC là được cộng điểm!). "
+            "- Điểm TRUNG LẬP (0 đến +5): Lựa chọn hời hợt, hoặc đồng ý giúp một cách miễn cưỡng/nhu nhược. "
+            "- Điểm TRỪ (-10 đến -15): Lựa chọn ĐI NGƯỢC LẠI BÀI HỌC (Ví dụ: vô tâm, cãi láo, hoặc để bị NPC thao túng). "
             "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
             "{\n"
             '  "npc_behavior": "mô tả hành động",\n'
-            '  "npc_say": "lời thoại phản hồi",\n'
+            '  "npc_say": "lời thoại MỚI, KHÔNG LẶP LẠI",\n'
             '  "options": [\n'
             '    {"option": "câu nói 1", "quantity": điểm},\n'
             '    {"option": "câu nói 2", "quantity": điểm},\n'
