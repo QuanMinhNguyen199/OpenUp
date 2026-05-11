@@ -291,7 +291,7 @@ export default function ClientPage() {
         />
 
         {/* --- RIGHT PANEL: HOME + SCORE --- */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-8">
           <HomeButton />
           <ScoreBar score={gameState.score} />
         </div>
