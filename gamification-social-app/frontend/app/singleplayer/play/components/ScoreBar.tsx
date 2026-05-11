@@ -31,7 +31,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
         <div className={`text-4xl font-black text-[#39FF14] transition-all duration-300 ${pulse ? "scale-110" : "scale-100"}`}>
           {displayScore}
         </div>
-        <div className="text-xs text-[#00F0FF]/60 mt-2">Khởi đầu: 20</div>
+        {/* <div className="text-xs text-[#00F0FF]/60 mt-2">Khởi đầu: 20</div> */}
 
         {/* Score Bar Visualization */}
         <div className="mt-4 bg-black/50 rounded-full h-1 overflow-hidden border border-[#39FF14]/20">
