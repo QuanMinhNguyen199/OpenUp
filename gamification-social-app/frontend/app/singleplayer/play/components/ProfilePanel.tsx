@@ -19,7 +19,7 @@ export default function ProfilePanel({
 }: ProfilePanelProps) {
   // Determine gender from first num (even = male, odd = female)
   const isMale = num.length > 0 ? num[0] % 2 === 0 : true;
-  const genderEmoji = isMale ? "👨" : "👩";
+  const genderEmoji = isMale ? "🧑🏻" : "👩🏻";
 
   return (
     <div className="w-72 bg-gradient-to-b from-black/70 to-black/60 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-md h-fit sticky top-6">
