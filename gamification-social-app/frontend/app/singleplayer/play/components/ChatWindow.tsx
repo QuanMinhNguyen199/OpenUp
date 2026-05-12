@@ -198,7 +198,7 @@ export default function ChatWindow({
         <button
           onClick={handleSend}
           disabled={gameLoading || !inputValue.trim()}
-          className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black font-bold px-4 py-2 rounded-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 h-fit self-end"
+          className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black font-bold px-4 py-2 rounded-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
         >
           {gameLoading ? "..." : "Gửi"}
         </button>
