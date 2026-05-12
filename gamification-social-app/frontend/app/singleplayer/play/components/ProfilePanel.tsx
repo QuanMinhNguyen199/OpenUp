@@ -7,6 +7,7 @@ interface ProfilePanelProps {
   npcJob: string;
   relationship: string;
   location: string;
+  num: number[];
 }
 
 export default function ProfilePanel({
@@ -14,15 +15,20 @@ export default function ProfilePanel({
   npcJob,
   relationship,
   location,
+  num,
 }: ProfilePanelProps) {
+  // Determine gender from first num (even = male, odd = female)
+  const isMale = num.length > 0 ? num[0] % 2 === 0 : true;
+  const genderEmoji = isMale ? "👨" : "👩";
+
   return (
-    <div className="w-72 bg-gradient-to-b from-black/40 to-black/20 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-md h-fit sticky top-6">
+    <div className="w-72 bg-gradient-to-b from-black/70 to-black/60 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-md h-fit sticky top-6">
       {/* Profile Header */}
       <div className="flex flex-col gap-4">
         {/* Avatar Circle */}
         <div className="flex justify-center">
           <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#39FF14]/30 to-[#00F0FF]/30 border-2 border-[#39FF14] flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.4)]">
-            <span className="text-4xl">😊</span>
+            <span className="text-4xl">{genderEmoji}</span>
           </div>
         </div>
 
