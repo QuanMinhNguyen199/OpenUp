@@ -23,7 +23,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
   }, [score, displayScore]);
 
   return (
-    <div className="w-40 bg-gradient-to-b from-black/40 to-black/20 border border-[#39FF14]/30 rounded-lg p-4 backdrop-blur-md">
+    <div className="w-40 bg-white/5 border border-[#39FF14]/30 rounded-lg p-4">
       <div className="text-center">
         <p className="text-xs font-bold uppercase tracking-widest text-[#39FF14]/70 mb-2">
           Điểm Số
