@@ -228,16 +228,24 @@ export default function ClientPage() {
       const score = data.score !== undefined ? data.score : 0;
       const reason = data.reason || "";
 
-      // Add NPC message with score
+      // Update user message with score feedback (inject into last user message)
+      const userMessageWithScore = [...newMessages];
+      if (userMessageWithScore.length > 0) {
+        userMessageWithScore[userMessageWithScore.length - 1] = {
+          ...userMessageWithScore[userMessageWithScore.length - 1],
+          score_delta: score,
+          reason,
+        };
+      }
+
+      // Add NPC message (without score)
       const updatedMessages = [
-        ...newMessages,
+        ...userMessageWithScore,
         {
           role: "npc" as const,
           content: npcSay,
           type: "normal" as const,
           npc_behavior: npcBehavior,
-          score_delta: score,
-          reason,
         },
       ];
 
@@ -260,7 +268,7 @@ export default function ClientPage() {
     }
   };
 
-  if (pageLoading) return <Loading />;
+  if (pageLoading || gameState.messages.length === 0) return <Loading />;
 
   if (userData?.role === "ADMIN") {
     return <AdminWarning modeName="Singleplayer" />;
@@ -280,6 +288,7 @@ export default function ClientPage() {
           npcJob={gameState.npcJob}
           relationship={gameState.relationship}
           location={gameState.location}
+          num={gameState.num}
         />
 
         {/* --- CENTER PANEL: CHAT WINDOW --- */}
