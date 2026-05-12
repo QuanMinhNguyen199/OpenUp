@@ -30,15 +30,24 @@ export default function ChatWindow({
 
   // Calculate mood from last message
   const calculateMood = () => {
-    const lastMessage = messages[messages.length - 1];
-    if (
-      lastMessage?.role === "npc" &&
-      lastMessage?.score_delta !== undefined
-    ) {
-      if (lastMessage.score_delta > 5) {
-        return "happy";
-      } else if (lastMessage.score_delta < -5) {
-        return "sad";
+    // const lastMessage = messages[messages.length - 1];
+    // if (
+    //   lastMessage?.role === "npc" &&
+    //   lastMessage?.score_delta !== undefined
+    // ) {
+    //   if (lastMessage.score_delta > 5) {
+    //     return "happy";
+    //   } else if (lastMessage.score_delta < -5) {
+    //     return "sad";
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i];
+      if (msg.role === "user" && msg.score_delta !== undefined) {
+        if (msg.score_delta > 5) {
+          return "happy";
+        } else if (msg.score_delta < -5) {
+          return "sad";
+        }
+        return "neutral";
       }
     }
     return "neutral";
@@ -131,7 +140,7 @@ export default function ChatWindow({
               )}
 
               {/* Score feedback */}
-              {msg.score_delta !== undefined && msg.role === "npc" && (
+              {msg.score_delta !== undefined && msg.role === "user" && (
                 <div className="mt-2 pt-2 border-t border-[#00F0FF]/20">
                   <div
                     className={`text-xs font-bold flex items-center gap-1 ${
