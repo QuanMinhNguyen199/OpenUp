@@ -75,7 +75,7 @@ export default function ChatWindow({
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 bg-gradient-to-b from-black/40 to-black/20 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-md">
+    <div className="flex-1 flex flex-col gap-4 bg-white/5 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-xs">
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
           width: 6px;
