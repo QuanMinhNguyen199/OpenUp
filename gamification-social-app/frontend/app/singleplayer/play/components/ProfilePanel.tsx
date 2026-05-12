@@ -22,7 +22,7 @@ export default function ProfilePanel({
   const genderEmoji = isMale ? "🧑🏻" : "👩🏻";
 
   return (
-    <div className="w-72 bg-gradient-to-b from-black/70 to-black/60 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-md h-fit sticky top-6">
+    <div className="w-72 bg-white/5 border border-[#00F0FF]/20 rounded-lg p-6 h-fit sticky top-6">
       {/* Profile Header */}
       <div className="flex flex-col gap-4">
         {/* Avatar Circle */}
