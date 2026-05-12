@@ -52,20 +52,18 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         request_prompt = (
             "Hãy đọc kỹ lịch sử chat ở trên. Dựa vào câu nói vừa rồi của user, hãy phản ứng lại. "
             "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại vòng lặp hội thoại cũ. ÁP DỤNG QUY TẮC LEO THANG (trách móc, kể bí mật, đe dọa, v.v.). "
-            "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity). "
-            "LỆNH CẤM 3 (QUAN TRỌNG NHẤT): KHÔNG viết các lựa chọn quá dễ đoán. Cả 3 lựa chọn PHẢI nghe rất hợp lý, lịch sự. "
-            "TRỌNG TÂM LỰA CHỌN: Tạo ra 3 CÁCH XỬ LÝ MỚI cho tình huống hiện tại. LƯU Ý VỀ CÁCH CHẤM ĐIỂM (CỰC KỲ QUAN TRỌNG): "
-            "- Điểm CỘNG MẠNH (+20 đến +30) [Sự Thấu Cảm Đích Thực]: Câu trả lời chạm đúng 'Tử huyệt tâm lý', THỂ HIỆN ĐÚNG BÀI HỌC. "
-            "- Điểm TRỪ NHẸ (-10 đến -15) [Cái Bẫy Sự Tử Tế / Ngụy Biện]: Lựa chọn nghe có vẻ TỐT/LOGIC nhưng lại SAI BÀI HỌC (Ví dụ: Cho lời khuyên khi người ta cần khóc, hoặc nhu nhược làm hộ việc). "
-            "- Điểm TRỪ NẶNG (-20 đến -30) [Game Over / Né tránh]: Câu trả lời vô tâm, né tránh trách nhiệm hoặc lặp lại lỗi sai. Người chơi sẽ gần như thất bại ngay lập tức. "
-            "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU:\n"
+            "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
+            "LỆNH CẤM 3 (ĐỘ KHÓ): CẢ 3 LỰA CHỌN PHẢI LÀ CÁC CÂU NÓI CỰC KỲ LỊCH SỰ, HỢP LÝ VÀ ĐỜI THƯỜNG. Tuyệt đối không dùng từ ngữ chửi bới hay đóng vai ác lộ liễu. Phải làm cho người chơi rất khó phân biệt đâu là lựa chọn đúng! "
+            "LỆNH CẤM 4 (CHUẨN XƯNG HÔ): BẮT BUỘC dùng đúng đại từ xưng hô cho user dựa theo tuổi tác/vai vế của NPC quy định trong kịch bản. Đại từ này PHẢI ĐỒNG NHẤT 100% ở cả 3 lựa chọn. "
+            "QUY TẮC CHẤM ĐIỂM BẮT BUỘC: Bạn KHÔNG ĐƯỢC cho cả 3 lựa chọn đều là điểm cộng. Bắt buộc phải chia làm 3 mốc điểm rõ ràng như sau: (Lưu ý: 'quantity' PHẢI LÀ SỐ). "
+            "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU (Tuyệt đối chỉ ghi câu thoại của user vào 'option', KHÔNG ghi chú thêm bất cứ từ khóa nào khác):\n"
             "{\n"
             '  "npc_behavior": "mô tả hành động",\n'
             '  "npc_say": "lời thoại MỚI, KHÔNG LẶP LẠI",\n'
             '  "options": [\n'
-            '    {"option": "câu trả lời hack não 1", "quantity": điểm},\n'
-            '    {"option": "câu trả lời hack não 2", "quantity": điểm},\n'
-            '    {"option": "câu trả lời hack não 3", "quantity": điểm}\n'
+            '    {"option": "<Viết câu thoại GIẢI PHÁP ĐÚNG vào đây: Thể hiện sự thấu cảm, chạm đúng tâm lý NPC>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ 20 ĐẾN 30>},\n'
+            '    {"option": "<Viết câu thoại BẪY TỬ TẾ vào đây: Nghe rất lịch sự, logic nhưng SAI BÀI HỌC, phớt lờ cảm xúc>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ -15 ĐẾN -5>},\n'
+            '    {"option": "<Viết câu thoại BẪY ĐỘC HẠI NGẦM vào đây: Lời nói nhẹ nhàng nhưng thực chất là đùn đẩy trách nhiệm, đổ lỗi ngược>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ -30 ĐẾN -20>}\n'
             "  ]\n"
             "}"
         )
