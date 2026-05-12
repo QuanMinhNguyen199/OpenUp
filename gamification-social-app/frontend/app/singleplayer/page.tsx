@@ -157,7 +157,7 @@ export default function SingleplayerPage() {
 
                             {/* Start Button */}
                             <div className="mt-12 flex justify-center">
-                                <button className="relative px-12 py-5 group/btn overflow-hidden cursor-pointer">
+                                <button className="relative px-12 py-5 group/btn overflow-hidden cursor-pointer" onClick={() => router.push('/singleplayer/play')}>
                                     {/* Button Background & Animation */}
                                     <div className="absolute inset-0 bg-[#39FF14] skew-x-[-15deg] translate-x-0 group-hover/btn:translate-x-full transition-transform duration-500 ease-out" />
                                     <div className="absolute inset-0 border-2 border-[#39FF14] skew-x-[-15deg]" />
