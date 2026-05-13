@@ -195,7 +195,7 @@ export default function ClientPage() {
 
     try {
       // Convert messages to backend format
-      const history = newMessages.slice(1)
+      const history = newMessages.slice(1).slice(-6)
         .filter((m) => m.role === "npc" || m.role === "user")
         .map((m) => ({
           role: m.role === "npc" ? "assistant" : "user",
