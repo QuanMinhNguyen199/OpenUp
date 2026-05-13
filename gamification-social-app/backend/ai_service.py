@@ -89,7 +89,7 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4.1",
+                model="gpt-4o",
                 messages=messages,
                 temperature=0.6,
                 max_tokens=450,
