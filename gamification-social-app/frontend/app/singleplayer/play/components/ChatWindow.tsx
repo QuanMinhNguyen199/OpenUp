@@ -122,7 +122,7 @@ export default function ChatWindow({
             >
               {/* Start Context */}
               {msg.type === "start_context" && (
-                <div className="text-xs italic text-[#00F0FF]/120 mb-2 pb-2 border-b border-[#00F0FF]/30">
+                <div className="text-md italic text-[#00F0FF]/120 mb-2 pb-2 border-b border-[#00F0FF]/30">
                   📍 {msg.content}
                 </div>
               )}
@@ -131,11 +131,11 @@ export default function ChatWindow({
               {msg.type === "normal" && (
                 <>
                   {msg.npc_behavior && msg.role === "npc" && (
-                    <div className="text-xs text-[#39FF14]/100 italic mb-1">
+                    <div className="text-md text-[#39FF14]/100 italic mb-1">
                       *{msg.npc_behavior}*
                     </div>
                   )}
-                  <p className="text-sm text-white leading-relaxed">
+                  <p className="text-md text-white leading-relaxed">
                     {msg.content}
                   </p>
                 </>
@@ -145,7 +145,7 @@ export default function ChatWindow({
               {msg.score_delta !== undefined && msg.role === "user" && (
                 <div className="mt-2 pt-2 border-t border-[#00F0FF]/20">
                   <div
-                    className={`text-xs font-bold flex items-center gap-1 ${
+                    className={`text-md font-bold flex items-center gap-1 ${
                       msg.score_delta > 0
                         ? "text-[#39FF14]"
                         : msg.score_delta < 0
@@ -158,7 +158,7 @@ export default function ChatWindow({
                     {msg.score_delta} điểm
                   </div>
                   {msg.reason && (
-                    <p className="text-xs text-[#00F0FF]/90 mt-1">
+                    <p className="text-md text-[#00F0FF]/90 mt-1">
                       Lý do: {msg.reason}
                     </p>
                   )}
