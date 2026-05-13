@@ -122,7 +122,7 @@ export default function ChatWindow({
             >
               {/* Start Context */}
               {msg.type === "start_context" && (
-                <div className="text-xs italic text-[#00F0FF]/80 mb-2 pb-2 border-b border-[#00F0FF]/30">
+                <div className="text-xs italic text-[#00F0FF]/120 mb-2 pb-2 border-b border-[#00F0FF]/30">
                   📍 {msg.content}
                 </div>
               )}
