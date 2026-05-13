@@ -59,13 +59,13 @@ export default function ChatWindow({
   // Auto scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    inputRef.current?.focus();
   }, [messages]);
 
   const handleSend = () => {
     if (inputValue.trim()) {
       onSendMessage(inputValue);
       setInputValue("");
-      inputRef.current?.focus();
     }
   };
 
