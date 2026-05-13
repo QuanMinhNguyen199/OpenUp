@@ -158,7 +158,7 @@ export default function ChatWindow({
                     {msg.score_delta} điểm
                   </div>
                   {msg.reason && (
-                    <p className="text-xs text-[#00F0FF]/60 mt-1">
+                    <p className="text-xs text-[#00F0FF]/90 mt-1">
                       Lý do: {msg.reason}
                     </p>
                   )}
