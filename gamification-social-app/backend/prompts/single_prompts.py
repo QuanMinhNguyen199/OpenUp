@@ -12,7 +12,21 @@ LESSONS = [
             ('Giờ hãy nhờ 1 việc k có lợi/ảnh hưởng gì cho user. ', 'từ chối hợp lý, lịch sự +10 điểm, từ chối thô -5, đồng ý giúp -15'),
             ('Giờ hãy nhờ 1 việc có lợi/ảnh hưởng tới user. ', 'đồng ý giúp +10 điểm, từ chối hợp lý, lịch sự -5, từ chối thô -15')
         ]
-    }
+    },
+    {
+        'describe': '''Bạn hay kể về xui xẻo, mất mát, chuyện k may của bản thân.''',
+        'cases': [
+            ('Giờ hãy kể cho user 1 chuyện buồn do hoàn cảnh tác động. ', 'an ủi, đồng cảm +10 điểm, khích lệ cho có -5, xem thường -15'),
+            ('Giờ hãy kể cho user 1 chuyện buồn do bạn gây ra. ', 'giải thích lý do chủ quan, khuyên nhủ +10 điểm, an ủi, đồng cảm -5, xem thường -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay tò mò, tọc mạch, thích can thiệp vào chuyện của người khác.''',
+        'cases': [
+            ('Giờ hãy hỏi về chuyện đời tư cá nhân của user. ', 'trả lời chung chung, từ chối khéo +10 điểm, từ chối thẳng -5, nói hẳn ra, phản ứng gay gắt -15'),
+            ('Giờ hãy hỏi user về kiến thức, trải nghiệm chung chung mà k đi sâu vào đời tư. ', 'chia sẻ thẳng thắn, thật lòng +10 điểm, trả lời chung chung, từ chối khéo -5, từ chối thẳng -15')
+        ]
+    },
 ]
 
 EVENT_PROMPT = {
