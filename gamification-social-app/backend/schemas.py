@@ -91,3 +91,12 @@ class SingleplayerRequest(BaseModel):
     num: List[int]
     turn: int
     location: str
+
+class CheckSingleplayerRequest(BaseModel):
+    user_id: int
+    history: List[ChatHistory]
+    num: List[int]
+    turn: int
+    name: str
+    relationship: str
+    score: int
