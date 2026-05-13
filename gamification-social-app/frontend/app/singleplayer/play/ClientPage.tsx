@@ -50,6 +50,8 @@ export default function ClientPage() {
   // Auth & Fetch User
   useEffect(() => {
     if (initRequestedRef.current) return;
+    initRequestedRef.current = true;
+
     const userId = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
 
