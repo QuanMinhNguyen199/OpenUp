@@ -24,29 +24,32 @@ openai_client = OpenAI(
 
 # --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1):
-    """
-    Xử lý hội thoại Story Mode bằng GPT-4o-mini.
-    Hệ thống lấy kịch bản từ story_prompts.py và AI xào nấu lại dựa trên lịch sử.
-    """
-    system_prompt, request_prompt = get_story_mode_prompt(index=index, event=event, case=case)
+    system_prompt, request_prompt, pronoun = get_story_mode_prompt(index=index, event=event, case=case)
     
     if system_prompt is None or request_prompt is None:
         return {"error": "Không tìm thấy kịch bản cho Chapter này"}
 
-    messages = [{"role": "system", "content": system_prompt}]
-    
-    # BƯỚC 2: Xử lý History an toàn
+    # Tạo rule xưng hô cứng từ pronoun data
+    npc_calls = pronoun.get('npc', 'Tôi')
+    user_calls = pronoun.get('user', 'Bạn')
+    pronoun_rule = (
+        f"QUY TẮC XƯNG HÔ TUYỆT ĐỐI (KHÔNG ĐƯỢC VI PHẠM): "
+        f"NPC xưng '{npc_calls}', gọi user là '{user_calls}'. "
+        f"User trong các options PHẢI xưng '{user_calls}', gọi NPC là '{npc_calls}'. "
+        f"ĐỒNG NHẤT 100% trong cả npc_say lẫn 3 options. Vi phạm = kết quả bị loại.\n\n"
+    )
+
+    messages = [{"role": "system", "content": pronoun_rule + system_prompt}]  # Inject vào system
+
     valid_roles = ["system", "assistant", "user"]
     for msg in history[-6:]:
         role = getattr(msg, "role", None) or (msg.get("role") if isinstance(msg, dict) else "")
         content = getattr(msg, "content", None) or (msg.get("content") if isinstance(msg, dict) else "")
-        
-        if role not in valid_roles: 
+        if role not in valid_roles:
             role = "user"
-        if content: 
+        if content:
             messages.append({"role": role, "content": content})
 
-    # BƯỚC 3: Bẻ lái kịch bản nếu đã có lịch sử chat
     if len(history) > 0:
         turn_stages = {
             1: "Mở đầu: NPC vừa nêu vấn đề lần đầu, cảm xúc còn nhẹ.",
@@ -60,63 +63,64 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         request_prompt = (
             f"GIAI ĐOẠN HIỆN TẠI (Lượt {current_turn}): {stage}\n"
             f"KỊCH BẢN GỐC CẦN BÁM SÁT: {request_prompt}\n\n"
+            f"NHẮC LẠI XƯNG HÔ: NPC='{npc_calls}', User trong options='{user_calls}'. ĐỒNG NHẤT 100%.\n"
             "Hãy đọc kỹ lịch sử chat ở trên. Dựa vào câu nói vừa rồi của user và giai đoạn hiện tại, hãy phản ứng lại. "
             "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại tình huống, cảm xúc, hay lời thoại đã xuất hiện ở các lượt trước. ÁP DỤNG QUY TẮC LEO THANG đúng với giai đoạn. "
             "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
-            "LỆNH CẤM 3 (ĐỘ KHÓ): CẢ 3 LỰA CHỌN PHẢI LÀ CÁC CÂU NÓI CỰC KỲ LỊCH SỰ, HỢP LÝ VÀ ĐỜI THƯỜNG. Tuyệt đối không dùng từ ngữ chửi bới hay đóng vai ác lộ liễu. Phải làm cho người chơi rất khó phân biệt đâu là lựa chọn đúng! "
-            "LỆNH CẤM 4 (CHUẨN XƯNG HÔ): BẮT BUỘC dùng đúng đại từ xưng hô cho user dựa theo tuổi tác/vai vế của NPC quy định trong kịch bản. Đại từ này PHẢI ĐỒNG NHẤT 100% ở cả 3 lựa chọn. "
-            "QUY TẮC CHẤM ĐIỂM BẮT BUỘC: Bạn KHÔNG ĐƯỢC cho cả 3 lựa chọn đều là điểm cộng. Bắt buộc phải chia làm 3 mốc điểm rõ ràng như sau: (Lưu ý: 'quantity' PHẢI LÀ SỐ). "
-            "TRẢ VỀ KẾT QUẢ BẰNG ĐỊNH DẠNG JSON NHƯ SAU (Tuyệt đối chỉ ghi câu thoại của user vào 'option', KHÔNG ghi chú thêm bất cứ từ khóa nào khác):\n"
+            "LỆNH CẤM 3 (ĐỘ KHÓ): CẢ 3 LỰA CHỌN PHẢI LÀ CÁC CÂU NÓI CỰC KỲ LỊCH SỰ, HỢP LÝ VÀ ĐỜI THƯỜNG. Phải làm cho người chơi rất khó phân biệt đâu là lựa chọn đúng! "
+            "QUY TẮC CHẤM ĐIỂM BẮT BUỘC: Bắt buộc phải chia làm 3 mốc điểm rõ ràng. 'quantity' PHẢI LÀ SỐ. "
+            "TRẢ VỀ JSON HỢP LỆ:\n"
             "{\n"
-            '  "npc_behavior": "Mô tả hành động BẮT BUỘC Ở NGÔI THỨ 3 (Ví dụ: \'Nam cau mày\', \'Cô Hoa rơm rớm nước mắt\'). KHÔNG xưng Tôi, KHÔNG gọi user là đại từ (ông/cháu/em) trong phần này. Nếu cần, dùng cụm từ \'người đối diện\'.",\n'
-            '  "npc_say": "lời thoại MỚI, KHÔNG LẶP LẠI, PHÙ HỢP VỚI GIAI ĐOẠN",\n'
+            '  "npc_behavior": "Mô tả hành động ngôi thứ 3, dùng tên NPC",\n'
+            '  "npc_say": "Lời thoại mới, không lặp lại, phù hợp giai đoạn",\n'
             '  "options": [\n'
-            '    {"option": "<Viết câu thoại GIẢI PHÁP ĐÚNG vào đây: Thể hiện sự thấu cảm, chạm đúng tâm lý NPC>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ 20 ĐẾN 30>},\n'
-            '    {"option": "<Viết câu thoại BẪY TỬ TẾ vào đây: Nghe rất lịch sự, logic nhưng SAI BÀI HỌC, phớt lờ cảm xúc>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ -15 ĐẾN -5>},\n'
-            '    {"option": "<Viết câu thoại BẪY ĐỘC HẠI NGẦM vào đây: Lời nói nhẹ nhàng nhưng thực chất là đùn đẩy trách nhiệm, đổ lỗi ngược>", "quantity": <CHỈ ĐIỀN 1 SỐ TỪ -30 ĐẾN -20>}\n'
+            '    {"option": "<Thấu cảm đúng tâm lý>", "quantity": <20 đến 25>},\n'
+            '    {"option": "<Lịch sự nhưng sai bài học>", "quantity": <-15 đến -5>},\n'
+            '    {"option": "<Nhẹ nhàng nhưng đùn đẩy trách nhiệm>", "quantity": <-25 đến -20>}\n'
             "  ]\n"
             "}"
         )
 
-    # BƯỚC 4: Chốt lệnh
-    messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về kết quả dưới dạng JSON hợp lệ."})
+    messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về JSON hợp lệ."})
 
     MAX_RETRIES = 2
     raw = ""
-    
+
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-5.5",
+                model="gpt-5-mini",
                 messages=messages,
-                temperature=0.7, 
-                max_tokens=450,  # Tăng từ 250 để tránh JSON bị cắt
-                response_format={ "type": "json_object" } 
+                temperature=0.65,
+                max_tokens=450,
+                response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
-            
+
         except Exception as e:
             print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Mạng/API OpenAI Story Mode: {e}")
             if attempt == MAX_RETRIES:
-                break  
+                break
             await asyncio.sleep(1)
-            continue 
-            
+            continue
+
         try:
             result = json.loads(raw)
-            
+
             safe_regex = r'([\[\(]?\s*[+-]\d+\s*(điểm|points|đ)?\s*[\]\)]?)'
-            
             if "npc_say" in result:
                 result["npc_say"] = re.sub(safe_regex, '', result["npc_say"], flags=re.IGNORECASE).strip()
-                
             if "options" in result and isinstance(result["options"], list):
                 for opt in result["options"]:
                     if "option" in opt:
                         opt["option"] = re.sub(safe_regex, '', opt["option"], flags=re.IGNORECASE).strip()
-                        
+                    # CLAMP quantity: chặn AI trả giá trị vượt range
+                    if "quantity" in opt:
+                        q = float(opt["quantity"])
+                        opt["quantity"] = min(25.0, q) if q > 0 else max(-25.0, q)
+
             return result
-            
+
         except json.JSONDecodeError as e:
             print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Parse JSON: {e}\nRaw: {raw}")
             if attempt == MAX_RETRIES:
