@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 import HomeButton from "../../components/HomeButton";
@@ -52,6 +52,8 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
     // Auth & user state
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const authRequestedRef = useRef(false);
+    const dialogRequestedRef = useRef(false);
 
     // Game state
     const [npcData, setNpcData] = useState<NpcDialogData | null>(null);
@@ -70,6 +72,9 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
 
     // ---------- Auth ----------
     useEffect(() => {
+        if (authRequestedRef.current) return;
+        authRequestedRef.current = true;
+
         const userId = localStorage.getItem("user_id");
         const token = localStorage.getItem("token");
 
@@ -162,7 +167,8 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
 
     // ---------- Initial Load ----------
     useEffect(() => {
-        if (!loading && userData && chapId !== 8) {
+        if (!loading && userData && chapId !== 8 && !dialogRequestedRef.current) {
+            dialogRequestedRef.current = true;
             fetchDialog([]);
         }
     }, [loading, userData, fetchDialog, chapId]);
