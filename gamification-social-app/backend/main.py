@@ -170,28 +170,29 @@ async def story_mode(
 ):
     user = verify_token(data.user_id, db, x_token)
     
-    # Bảo mật: Chặn nhảy chap
     if data.index < 0 or data.index >= len(STORY_MODE_PROMPTS):
         raise HTTPException(status_code=400, detail="Màn này không có cốt truyện !")
     elif data.index + 1 > user.chap:
         raise HTTPException(status_code=403, detail="Chưa mở khóa chương này !")
 
-    # Gọi AI sinh kịch bản
-    result = await gen_dialogue_story_mode(
-        index=data.index,
-        event=data.event,
-        case=data.case,
-        history=data.history
-    )
-    
-    # KHÓA CHÉO: Đánh dấu đang chờ trả lời cho NPC này
+    # Query DB TRƯỚC để lấy current_turn
     npc_id = data.index + 1
     conv = db.query(models.Conversation).filter_by(user_id=user.id, npc_id=npc_id, game_mode="story").first()
     if not conv:
         conv = models.Conversation(user_id=user.id, npc_id=npc_id, affinity_score=20.0)
         db.add(conv)
+        db.commit()
+
+    # Gọi AI với current_turn từ DB
+    result = await gen_dialogue_story_mode(
+        index=data.index,
+        event=data.event,
+        case=data.case,
+        history=data.history,
+        current_turn=conv.current_turn  # <-- thêm
+    )
     
-    conv.is_waiting_for_reply = True # Mở khóa cho hàm choose_option
+    conv.is_waiting_for_reply = True
     db.commit()
     
     return result
