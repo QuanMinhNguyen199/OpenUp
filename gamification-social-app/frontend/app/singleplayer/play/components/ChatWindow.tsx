@@ -131,7 +131,7 @@ export default function ChatWindow({
               {msg.type === "normal" && (
                 <>
                   {msg.npc_behavior && msg.role === "npc" && (
-                    <div className="text-xs text-[#39FF14]/70 italic mb-1">
+                    <div className="text-xs text-[#39FF14]/100 italic mb-1">
                       *{msg.npc_behavior}*
                     </div>
                   )}
