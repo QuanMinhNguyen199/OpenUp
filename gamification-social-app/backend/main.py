@@ -232,8 +232,12 @@ def choose_option(
     conv.last_interaction = now
 
     # 4. TÍNH ĐIỂM MỚI (Lấy điểm cũ cộng với số điểm Frontend truyền lên)
-    potential_score = conv.affinity_score + score_change
-    
+    if conv.current_turn == 1:
+        base_score = 20.0
+    else:
+        base_score = float(conv.affinity_score)
+    potential_score = base_score + score_change
+
     # 5. Xử lý Neutral Streak (Vì không còn chữ "neutral", ta quy định điểm từ -3 đến +3 là hời hợt)
     if -3.0 <= score_change <= 3.0:
         conv.neutral_streak += 1
