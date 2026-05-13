@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer
-from schemas import SingleplayerRequest, StoryModeRequest
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
 # Khởi tạo Database
@@ -462,3 +462,7 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
         return result
         
+@app.post("/check_singleplayer")
+def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+    
