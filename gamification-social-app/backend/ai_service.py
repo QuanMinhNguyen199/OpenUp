@@ -87,7 +87,7 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-5.5",
                 messages=messages,
                 temperature=0.7, 
                 max_tokens=450,  # Tăng từ 250 để tránh JSON bị cắt
