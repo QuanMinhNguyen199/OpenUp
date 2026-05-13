@@ -175,23 +175,39 @@ async def story_mode(
     elif data.index + 1 > user.chap:
         raise HTTPException(status_code=403, detail="Chưa mở khóa chương này !")
 
-    # Query DB TRƯỚC để lấy current_turn
     npc_id = data.index + 1
     conv = db.query(models.Conversation).filter_by(user_id=user.id, npc_id=npc_id, game_mode="story").first()
+    
     if not conv:
-        conv = models.Conversation(user_id=user.id, npc_id=npc_id, affinity_score=20.0)
+        # TRƯỜNG HỢP 1: Lần đầu tiên chơi Chapter này
+        conv = models.Conversation(
+            user_id=user.id, 
+            npc_id=npc_id, 
+            affinity_score=20.0, 
+            current_turn=1,
+            neutral_streak=0
+        )
         db.add(conv)
         db.commit()
+    else:
+        # TRƯỜNG HỢP 2: Đã từng chơi và đang CHƠI LẠI (Replay)
+        # Bắt Bug: Nếu history rỗng -> Tức là vừa bấm vào màn -> Bắt buộc Reset điểm cũ
+        if len(data.history) == 0:
+            conv.affinity_score = 20.0
+            conv.current_turn = 1
+            conv.neutral_streak = 0
+            db.commit()
 
-    # Gọi AI với current_turn từ DB
+    # Gọi AI sinh thoại
     result = await gen_dialogue_story_mode(
         index=data.index,
         event=data.event,
         case=data.case,
         history=data.history,
-        current_turn=conv.current_turn  # <-- thêm
+        current_turn=conv.current_turn  
     )
     
+    # Khóa luồng: Buộc user phải chọn đáp án mới được đi tiếp
     conv.is_waiting_for_reply = True
     db.commit()
     
@@ -200,7 +216,7 @@ async def story_mode(
 @app.post("/game/choose-option")
 def choose_option(
     npc_id: int, 
-    score_change: float,  # NHẬN THẲNG ĐIỂM SỐ (quantity) TỪ FRONTEND
+    score_change: float,  # Điểm quantity gửi từ FE
     user_id: int, 
     db: Session = Depends(get_db), 
     x_token: str = Header(None)
@@ -211,15 +227,17 @@ def choose_option(
     if npc_id == 8:
         raise HTTPException(status_code=403, detail="Màn Boss yêu cầu giải đố, không thể chat!")
 
-    # BẢO MẬT: Chống Hacker dùng Postman gửi bừa điểm ảo (Giới hạn mỗi lượt chỉ được cộng/trừ max 30 điểm)
+    # BẢO MẬT: Giới hạn mỗi lượt chỉ được cộng/trừ max 30 điểm
     if score_change > 50.0 or score_change < -50.0:
         raise HTTPException(status_code=400, detail="Hệ thống phát hiện điểm số bất thường (Nghi vấn Hack)!")
-
+    
+    # Ép kiểu và giới hạn biên độ an toàn
+    score_change = float(score_change)
     score_change = max(-30.0, min(25.0, score_change))
 
     conv = db.query(models.Conversation).filter_by(user_id=user_id, npc_id=npc_id, game_mode="story").first()
     
-    # 2. KIỂM TRA KHÓA CHÉO (Phải gọi story_mode trước)
+    # 2. KIỂM TRA KHÓA CHÉO
     if not conv or not getattr(conv, 'is_waiting_for_reply', True):
         raise HTTPException(status_code=403, detail="Bạn phải đọc kịch bản trước khi chọn!")
 
@@ -231,14 +249,12 @@ def choose_option(
     
     conv.last_interaction = now
 
-    # 4. TÍNH ĐIỂM MỚI (Lấy điểm cũ cộng với số điểm Frontend truyền lên)
-    if conv.current_turn == 1:
-        base_score = 20.0
-    else:
-        base_score = float(conv.affinity_score)
+    # 4. TÍNH ĐIỂM MỚI CHUẨN XÁC
+    # Luôn lấy điểm hiện tại đang lưu trong DB (sau khi đã được reset an toàn ở API story_mode)
+    base_score = float(conv.affinity_score)
     potential_score = base_score + score_change
-
-    # 5. Xử lý Neutral Streak (Vì không còn chữ "neutral", ta quy định điểm từ -3 đến +3 là hời hợt)
+    
+    # 5. Xử lý Neutral Streak (Điểm hời hợt)
     if -3.0 <= score_change <= 3.0:
         conv.neutral_streak += 1
     else:
@@ -248,82 +264,69 @@ def choose_option(
     is_failed = False
     is_completed = False
 
-    # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA (CÓ TWIST & ĐA KẾT CỤC)
+    # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA
     if npc_id == 7:
-        # ---------------------------------------------------------
-        # 🎭 LUẬT CHƠI ĐẢO NGƯỢC (CHỈ DÀNH CHO CHAPTER 7 - CỤ PHAN)
-        # ---------------------------------------------------------
+        # --- LUẬT CHƠI ĐẢO NGƯỢC (CHAPTER 7 - CỤ PHAN) ---
         if potential_score <= 0:
-            # THẮNG: Chấp nhận sự thật mất lòng để được giải thoát
             conv.affinity_score = 0.0
-            
-            # Xử lý phần thưởng
             if user.chap == 7:
                 user.chap += 1
-                user.total_xp += 200 # Thưởng kinh nghiệm lần đầu
+                user.total_xp += 200 
             else:
-                user.total_xp += 50  # FIX BUG 1: Thưởng nhỏ cho việc chơi lại màn cũ
+                user.total_xp += 50  
                 
             user.level = calculate_level(user.total_xp)
             is_completed = True
             message = "Cụ Phan mỉm cười: 'Con đã hiểu được giá trị của sự thật và buông bỏ. Bức tranh nhân sinh đã sẵn sàng.' Bạn đã vượt qua bài test cuối cùng!"
             
         elif potential_score >= 100:
-            # THUA: Nịnh nọt, nói dối để vừa lòng người khác
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
-            conv.neutral_streak = 0 # FIX BUG 2: Reset lại streak hời hợt
+            conv.neutral_streak = 0 
             message = "Cụ Phan lắc đầu: 'Những lời mật ngọt giả dối không thể cứu rỗi tâm hồn.' Hãy thử lại bằng sự chân thật!"
             
         elif conv.neutral_streak >= 3:
-            # THUA: Trả lời hời hợt
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
-            conv.neutral_streak = 0 # FIX BUG 2: Reset lại streak hời hợt
+            conv.neutral_streak = 0 
             message = "Cụ Phan nhắm mắt dưỡng thần, không muốn tiếp chuyện kẻ thiếu thành tâm."
             
         else:
-            # TIẾP TỤC TRÒ CHUYỆN (Đảo ngược UI: Điểm tụt xuống 0 mới là tốt)
             conv.affinity_score = max(0.0, min(100.0, potential_score))
             conv.current_turn += 1
             message = f"Cụ Phan gật gù. Hãy tiếp tục bảo vệ quan điểm của bạn! Tâm ngộ: {100 - int(conv.affinity_score)}/100"
             
     else:
-        # ---------------------------------------------------------
-        # 🎮 LUẬT CHƠI BÌNH THƯỜNG (DÀNH CHO CHAPTER 1 ĐẾN CHAPTER 6)
-        # ---------------------------------------------------------
+        # --- LUẬT CHƠI BÌNH THƯỜNG (CHAPTER 1-6) ---
         if potential_score <= 0:
             is_failed = True
             conv.affinity_score = 20.0 
             conv.current_turn = 1
-            conv.neutral_streak = 0 # FIX BUG 2
+            conv.neutral_streak = 0 
             message = "NPC thất vọng hoàn toàn. Bạn đã làm hỏng cuộc trò chuyện, hãy làm lại từ đầu!"
             
         elif conv.neutral_streak >= 3:
             is_failed = True
             conv.affinity_score = max(0, conv.affinity_score - 10)
             conv.current_turn = 1
-            conv.neutral_streak = 0 # FIX BUG 2
+            conv.neutral_streak = 0 
             message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
             
         else:
             conv.affinity_score = min(100.0, potential_score) 
             
-            # NẾU ĐẦY CÂY TÌNH CẢM -> THẮNG CHAPTER
             if conv.affinity_score >= 100:
-                # Xử lý phần thưởng
                 if user.chap == npc_id:
                     user.chap += 1
                     user.total_xp += 150
                 else:
-                    user.total_xp += 30 # FIX BUG 1: Thưởng cày lại cho các Chap 1-6
+                    user.total_xp += 30 
                     
                 user.level = calculate_level(user.total_xp)
                 is_completed = True
                 
-                # ĐA KẾT CỤC
                 if conv.current_turn <= 6:
                     message = f"Hoàn hảo! Bằng sự thấu cảm tuyệt vời, bạn đã xoa dịu NPC rất nhanh. Mở khóa Chapter {user.chap}!"
                 else:
@@ -332,7 +335,7 @@ def choose_option(
                 conv.current_turn += 1
                 message = f"NPC phản ứng lại. Điểm tình cảm: {int(conv.affinity_score)}/100"
 
-    # 7. Đóng khóa chéo: Phải gọi story_mode lại mới được chọn tiếp
+    # 7. Đóng khóa chéo: Chờ User đọc thoại AI lượt tiếp theo
     conv.is_waiting_for_reply = False 
     db.commit()
 
