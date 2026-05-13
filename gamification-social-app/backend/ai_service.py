@@ -203,7 +203,7 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             asst_content = getattr(asst_msg, "content", '')
             user_content = getattr(user_msg, "content", '')
             combined_content = f"Bạn nói: '{asst_content}'. User nói: '{user_content}'"
-            messages.append({"role": "assistant", "content": combined_content})
+            messages.append({"role": "user", "content": combined_content})
     messages.append({"role": "user", "content": request_prompt})
 
     MAX_RETRIES = 2
