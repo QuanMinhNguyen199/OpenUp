@@ -26,6 +26,7 @@ export default function ChatWindow({
   onSendMessage,
 }: ChatWindowProps) {
   const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Calculate mood from last message
@@ -64,6 +65,7 @@ export default function ChatWindow({
     if (inputValue.trim()) {
       onSendMessage(inputValue);
       setInputValue("");
+      inputRef.current?.focus();
     }
   };
 
@@ -187,6 +189,7 @@ export default function ChatWindow({
       {/* Input Area */}
       <div className="border-t border-[#39FF14]/30 pt-4 flex gap-2">
         <textarea
+          ref={inputRef}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
