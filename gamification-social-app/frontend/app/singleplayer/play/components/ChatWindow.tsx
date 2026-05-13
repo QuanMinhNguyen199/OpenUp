@@ -62,6 +62,8 @@ export default function ChatWindow({
     inputRef.current?.focus();
   }, [messages]);
 
+  const charCount = inputValue.length;
+
   const handleSend = () => {
     if (inputValue.trim()) {
       onSendMessage(inputValue);
@@ -187,24 +189,29 @@ export default function ChatWindow({
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-[#39FF14]/30 pt-4 flex gap-2">
-        <textarea
-          ref={inputRef}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Nhập câu trả lời của bạn..."
-          disabled={gameLoading}
-          rows={2}
-          className="flex-1 bg-black/40 border border-[#39FF14]/30 rounded-lg px-3 py-2 text-sm text-white placeholder-[#39FF14]/50 focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <button
-          onClick={handleSend}
-          disabled={gameLoading || !inputValue.trim()}
-          className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black font-bold px-4 py-2 rounded-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-        >
-          {gameLoading ? "..." : "Gửi"}
-        </button>
+      <div className="border-t border-[#39FF14]/30 pt-4 flex flex-col gap-2">
+        <div className="flex gap-2">
+          <textarea
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value.slice(0, 300))}
+            onKeyPress={handleKeyPress}
+            placeholder="Nhập câu trả lời của bạn..."
+            disabled={gameLoading}
+            rows={2}
+            className="flex-1 bg-black/40 border border-[#39FF14]/30 rounded-lg px-3 py-2 text-sm text-white placeholder-[#39FF14]/50 focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <button
+            onClick={handleSend}
+            disabled={gameLoading || !inputValue.trim()}
+            className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black font-bold px-4 py-2 rounded-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            {gameLoading ? "..." : "Gửi"}
+          </button>
+        </div>
+        <div className="text-left text-xs text-[#00F0FF]/70">
+          {charCount}/300
+        </div>
       </div>
     </div>
   );
