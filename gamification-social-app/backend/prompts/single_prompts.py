@@ -9,8 +9,8 @@ LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
         'cases': [
-            ('Giờ hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
-            ('Giờ hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+            ('Giờ hãy nhờ 1 việc k có lợi/ảnh hưởng gì cho user. ', 'từ chối hợp lý, lịch sự +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Giờ hãy nhờ 1 việc có lợi/ảnh hưởng tới user. ', 'đồng ý giúp +10 điểm, từ chối hợp lý, lịch sự -5, từ chối thô -15')
         ]
     }
 ]
@@ -25,7 +25,7 @@ FIRST_PROMPT = {
     False: "score: chấm điểm lượt trả lời cuối của user (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n"
 }
 
-CASE2 = ('Bây giờ k nhờ vả, chỉ nói chuyện bình thường. ', 'tạo thiện cảm +10 điểm, k gây ấn tượng -5, làm mất thiện cảm -15')
+CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường (cần tiếp diễn cuộc hội thoại). ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
