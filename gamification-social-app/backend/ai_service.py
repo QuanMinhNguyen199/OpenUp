@@ -89,9 +89,9 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-5-mini",
+                model="gpt-4.1",
                 messages=messages,
-                temperature=0.65,
+                temperature=0.6,
                 max_tokens=450,
                 response_format={"type": "json_object"}
             )
@@ -116,8 +116,11 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                         opt["option"] = re.sub(safe_regex, '', opt["option"], flags=re.IGNORECASE).strip()
                     # CLAMP quantity: chặn AI trả giá trị vượt range
                     if "quantity" in opt:
-                        q = float(opt["quantity"])
-                        opt["quantity"] = min(25.0, q) if q > 0 else max(-25.0, q)
+                        try:
+                            q = float(opt["quantity"])
+                            opt["quantity"] = min(25.0, q) if q > 0 else max(-25.0, q)
+                        except (ValueError, TypeError):
+                            opt["quantity"] = 0.0
 
             return result
 
