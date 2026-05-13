@@ -213,7 +213,7 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             response = openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                temperature=0.1,
+                temperature=0.5,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
