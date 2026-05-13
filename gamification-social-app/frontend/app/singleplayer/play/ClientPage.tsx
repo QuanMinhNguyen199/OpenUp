@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 import HomeButton from "../../components/HomeButton";
@@ -45,9 +45,11 @@ export default function ClientPage() {
     loading: false,
   });
   const [pageLoading, setPageLoading] = useState(true);
+  const initRequestedRef = useRef(false);
 
   // Auth & Fetch User
   useEffect(() => {
+    if (initRequestedRef.current) return;
     const userId = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
 
@@ -76,6 +78,7 @@ export default function ClientPage() {
         setPageLoading(false);
 
         // Initialize game - Turn 1
+        initRequestedRef.current = true;
         await initializeGame(userId, token);
       } catch {
         localStorage.removeItem("user_id");
