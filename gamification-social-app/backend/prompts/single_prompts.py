@@ -9,10 +9,24 @@ LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
         'cases': [
-            ('Giờ hãy nhờ vả vô lý. ', 'từ chối hợp lý +10 điểm, từ chối thô -5, đồng ý giúp -15'),
-            ('Giờ hãy nhờ vả chính đáng. ', 'đồng ý giúp +10 điểm, từ chối hợp lý -5, từ chối thô -15')
+            ('Giờ hãy nhờ 1 việc k có lợi/ảnh hưởng gì cho user. ', 'từ chối hợp lý, lịch sự +10 điểm, từ chối thô -5, đồng ý giúp -15'),
+            ('Giờ hãy nhờ 1 việc có lợi/ảnh hưởng tới user. ', 'đồng ý giúp +10 điểm, từ chối hợp lý, lịch sự -5, từ chối thô -15')
         ]
-    }
+    },
+    {
+        'describe': '''Bạn hay kể về xui xẻo, mất mát, chuyện k may của bản thân.''',
+        'cases': [
+            ('Giờ hãy kể cho user 1 chuyện buồn do hoàn cảnh tác động. ', 'an ủi, đồng cảm +10 điểm, khích lệ cho có -5, xem thường -15'),
+            ('Giờ hãy kể cho user 1 chuyện buồn do bạn gây ra. ', 'giải thích lý do chủ quan, khuyên nhủ +10 điểm, an ủi, đồng cảm -5, xem thường -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay tò mò, tọc mạch, thích can thiệp vào chuyện của người khác.''',
+        'cases': [
+            ('Giờ hãy hỏi về chuyện đời tư cá nhân của user. ', 'trả lời chung chung, từ chối khéo +10 điểm, từ chối thẳng -5, nói hẳn ra, phản ứng gay gắt -15'),
+            ('Giờ hãy hỏi user về kiến thức, trải nghiệm chung chung mà k đi sâu vào đời tư. ', 'chia sẻ thẳng thắn, thật lòng +10 điểm, trả lời chung chung, từ chối khéo -5, từ chối thẳng -15')
+        ]
+    },
 ]
 
 EVENT_PROMPT = {
@@ -25,7 +39,7 @@ FIRST_PROMPT = {
     False: "score: chấm điểm lượt trả lời cuối của user (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n"
 }
 
-CASE2 = ('Bây giờ k nhờ vả, chỉ nói chuyện bình thường. ', 'tạo thiện cảm +10 điểm, k gây ấn tượng -5, làm mất thiện cảm -15')
+CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường (cần tiếp diễn cuộc hội thoại). ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
