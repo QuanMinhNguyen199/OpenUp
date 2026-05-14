@@ -171,7 +171,14 @@ export default function ClientPage() {
     }
   };
 
-  const checkSingleplayerWin = async () => {
+  const checkSingleplayerWin = async (payload: {
+    history: { role: string; content: string }[];
+    num: number[];
+    turn: number;
+    name: string;
+    relationship: string;
+    score: number;
+  }) => {
     const userId = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
 
@@ -188,6 +195,12 @@ export default function ClientPage() {
           },
           body: JSON.stringify({
             user_id: parseInt(userId),
+            history: payload.history,
+            num: payload.num,
+            turn: payload.turn,
+            name: payload.name,
+            relationship: payload.relationship,
+            score: payload.score,
           }),
         }
       );
@@ -197,6 +210,28 @@ export default function ClientPage() {
       }
     } catch (error) {
       console.error("Error checking singleplayer win:", error);
+    }
+  };
+
+  const handleReplay = () => {
+    setGameState({
+      turn: 1,
+      npcName: "",
+      npcJob: "",
+      relationship: "",
+      location: "",
+      score: 20,
+      messages: [],
+      num: [],
+      loading: false,
+    });
+    setGameResult(null);
+    initRequestedRef.current = false;
+
+    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+    if (userId && token) {
+      initializeGame(userId, token);
     }
   };
 
@@ -298,8 +333,22 @@ export default function ClientPage() {
 
       // Check win/lose conditions
       if (newScore >= 100) {
-        // Win: call /check_singleplayer first
-        await checkSingleplayerWin();
+        const historyPayload = updatedMessages
+          .filter((msg) => msg.role === "npc" || msg.role === "user")
+          .slice(-6)
+          .map((msg) => ({
+            role: msg.role === "npc" ? "assistant" : "user",
+            content: msg.content,
+          }));
+
+        await checkSingleplayerWin({
+          history: historyPayload,
+          num: data.num || gameState.num,
+          turn: gameState.turn + 1,
+          name: gameState.npcName,
+          relationship: gameState.relationship,
+          score: 100,
+        });
         setGameResult("win");
       } else if (newScore <= 0) {
         // Lose
@@ -321,7 +370,7 @@ export default function ClientPage() {
   }
 
   if (gameResult) {
-    return <SingleplayerResultPopup mode={gameResult} replayLink="/singleplayer/play" />;
+    return <SingleplayerResultPopup mode={gameResult} onReplay={handleReplay} />;
   }
 
   return (
