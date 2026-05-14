@@ -351,8 +351,10 @@ export default function ClientPage() {
         });
         setGameResult("win");
       } else if (newScore <= 0) {
-        // Lose
-        setGameResult("lose");
+        // Lose - delay 0.5s before showing popup
+        setTimeout(() => {
+          setGameResult("lose");
+        }, 1000);
       }
     } catch (error) {
       console.error("Error sending message:", error);
