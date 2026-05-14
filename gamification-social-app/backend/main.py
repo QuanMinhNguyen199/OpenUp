@@ -470,4 +470,4 @@ def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), 
     user.total_xp += 10
     user.level = calculate_level(user.total_xp)
     db.commit()
-    return {'status': 'success', 'message': 'Hoàn thành màn chơi'}
+    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
