@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 import HomeButton from "../../components/HomeButton";
 import AdminWarning from "../../components/AdminWarning";
+import SingleplayerResultPopup from "../../components/SingleplayerResultPopup";
 import ChatWindow from "./components/ChatWindow";
 import ProfilePanel from "./components/ProfilePanel";
 import ScoreBar from "./components/ScoreBar";
@@ -46,6 +47,7 @@ export default function ClientPage() {
   });
   const [pageLoading, setPageLoading] = useState(true);
   const initRequestedRef = useRef(false);
+  const [gameResult, setGameResult] = useState<"win" | "lose" | null>(null);
 
   // Auth & Fetch User
   useEffect(() => {
@@ -169,6 +171,35 @@ export default function ClientPage() {
     }
   };
 
+  const checkSingleplayerWin = async () => {
+    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/check_singleplayer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": token,
+          },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Failed to check singleplayer win");
+      }
+    } catch (error) {
+      console.error("Error checking singleplayer win:", error);
+    }
+  };
+
   const handleSendMessage = async (userMessage: string) => {
     if (!userMessage.trim() || gameState.loading) return;
 
@@ -264,6 +295,16 @@ export default function ClientPage() {
         loading: false,
         num: data.num || prev.num,
       }));
+
+      // Check win/lose conditions
+      if (newScore >= 100) {
+        // Win: call /check_singleplayer first
+        await checkSingleplayerWin();
+        setGameResult("win");
+      } else if (newScore <= 0) {
+        // Lose
+        setGameResult("lose");
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       setGameState((prev) => ({
@@ -277,6 +318,10 @@ export default function ClientPage() {
 
   if (userData?.role === "ADMIN") {
     return <AdminWarning modeName="Singleplayer" />;
+  }
+
+  if (gameResult) {
+    return <SingleplayerResultPopup mode={gameResult} replayLink="/singleplayer/play" />;
   }
 
   return (
