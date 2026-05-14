@@ -79,108 +79,127 @@ export default function ChatWindow({
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 bg-white/5 border border-[#00F0FF]/20 rounded-lg p-4 backdrop-blur-xs">
+    <div className="flex-1 flex flex-col gap-4 bg-black/40 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-xl relative overflow-hidden group">
+      {/* Background Tech Decor */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#00F0FF]/5 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#39FF14]/5 blur-[100px] pointer-events-none" />
+
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          width: 4px;
         }
         .chat-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+          background: rgba(255, 255, 255, 0.02);
         }
         .chat-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(0, 240, 255, 0.3);
-          border-radius: 3px;
-        }
-        .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(0, 240, 255, 0.5);
+          background: linear-gradient(to bottom, #39FF14, #00F0FF);
+          border-radius: 2px;
         }
       `}</style>
 
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#39FF14]/30 pb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between border-b border-white/10 pb-6 relative">
+        <div className="flex items-center gap-4">
           <Avatar mood={moodState} size="md" isNpc />
-          <div>
-            <h2 className="text-lg font-bold text-[#39FF14]">{npcName}</h2>
-            <p className="text-xs text-[#00F0FF]/70">Đang trò chuyện...</p>
+          <div className="space-y-0.5">
+            <h2 className="text-xl font-black italic tracking-tighter text-white uppercase flex items-center gap-2">
+              <span className="text-[#39FF14]">{npcName}</span>
+              <span className="inline-block w-2 h-2 bg-[#00F0FF] animate-pulse rounded-full" />
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-[#00F0FF]/60 uppercase tracking-widest">Connection: Optimal</span>
+              <span className="text-[10px] text-white/20">|</span>
+              <span className="text-[10px] font-bold text-[#39FF14]/60 uppercase tracking-widest">Neural Link: Active</span>
+            </div>
           </div>
+        </div>
+
+        {/* Tech Accents */}
+        <div className="hidden md:flex flex-col items-end gap-1 opacity-20">
+          <div className="w-16 h-[2px] bg-[#00F0FF]" />
+          <div className="w-8 h-[2px] bg-[#39FF14]" />
         </div>
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto space-y-4 pr-2 chat-scrollbar">
+      <div className="flex-1 overflow-y-auto space-y-6 pr-4 chat-scrollbar py-4">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            {msg.role === "npc" && (
-              <Avatar mood={moodState} size="sm" isNpc />
-            )}
-
-            <div
-              className={`max-w-xs lg:max-w-md ${
-                msg.role === "user"
-                  ? "bg-gradient-to-r from-[#39FF14]/20 to-[#39FF14]/10 border border-[#39FF14]/40"
-                  : "bg-gradient-to-r from-[#00F0FF]/20 to-[#00F0FF]/10 border border-[#00F0FF]/40"
-              } rounded-lg p-3 backdrop-blur-sm`}
-            >
-              {/* Start Context */}
-              {msg.type === "start_context" && (
-                <div className="text-md italic text-[#00F0FF]/120 mb-2 pb-2 border-b border-[#00F0FF]/30">
-                  📍 {msg.content}
-                </div>
-              )}
-
-              {/* Normal message */}
-              {msg.type === "normal" && (
-                <>
-                  {msg.npc_behavior && msg.role === "npc" && (
-                    <div className="text-md text-[#39FF14]/100 italic mb-1">
-                      *{msg.npc_behavior}*
-                    </div>
-                  )}
-                  <p className="text-md text-white leading-relaxed">
-                    {msg.content}
-                  </p>
-                </>
-              )}
-
-              {/* Score feedback */}
-              {msg.score_delta !== undefined && msg.role === "user" && (
-                <div className="mt-2 pt-2 border-t border-[#00F0FF]/20">
-                  <div
-                    className={`text-md font-bold flex items-center gap-1 ${
-                      msg.score_delta > 0
-                        ? "text-[#39FF14]"
-                        : msg.score_delta < 0
-                          ? "text-red-400"
-                          : "text-[#00F0FF]"
-                    }`}
-                  >
-                    {msg.score_delta > 0 ? "📈" : msg.score_delta < 0 ? "📉" : "➡️"}
-                    {msg.score_delta > 0 ? "+" : ""}
-                    {msg.score_delta} điểm
-                  </div>
-                  {msg.reason && (
-                    <p className="text-md text-[#00F0FF]/90 mt-1">
-                      Lý do: {msg.reason}
-                    </p>
-                  )}
-                </div>
-              )}
+          <div key={idx} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+            <div className="mt-1">
+              <Avatar mood={msg.role === "npc" ? moodState : "neutral"} size="sm" isNpc={msg.role === "npc"} />
             </div>
 
-            {msg.role === "user" && (
-              <Avatar mood="neutral" size="sm" isNpc={false} />
-            )}
+            <div className={`relative max-w-[85%] lg:max-w-[70%] group/msg`}>
+              {/* Message Bubble with Cutout corners */}
+              <div
+                className={`relative p-4 backdrop-blur-md ${msg.role === "user"
+                    ? "bg-[#39FF14]/10 border-r-4 border-[#39FF14]"
+                    : "bg-[#00F0FF]/10 border-l-4 border-[#00F0FF]"
+                  } border-y border-x border-white/5`}
+                style={{
+                  clipPath: msg.role === "user"
+                    ? "polygon(0 0, 95% 0, 100% 15%, 100% 100%, 5% 100%, 0 85%)"
+                    : "polygon(5% 0, 100% 0, 100% 85%, 95% 100%, 0 100%, 0 15%)"
+                }}
+              >
+                {/* Start Context */}
+                {msg.type === "start_context" && (
+                  <div className="text-xs font-black text-[#00F0FF] uppercase tracking-[0.2em] mb-3 pb-2 border-b border-[#00F0FF]/20 flex items-center gap-2">
+                    <span className="p-1 bg-[#00F0FF]/20 rounded-sm">DATA_STREAM</span>
+                    <span className="opacity-60">{msg.content}</span>
+                  </div>
+                )}
+
+                {/* Normal message content */}
+                {msg.type === "normal" && (
+                  <>
+                    {msg.npc_behavior && msg.role === "npc" && (
+                      <div className="text-xs text-[#39FF14] font-bold italic mb-2 uppercase tracking-wide opacity-80">
+                        [{msg.npc_behavior}]
+                      </div>
+                    )}
+                    <p className="text-sm md:text-base text-gray-100 leading-relaxed font-medium">
+                      {msg.content}
+                    </p>
+                  </>
+                )}
+
+                {/* Score feedback for user messages */}
+                {msg.score_delta !== undefined && msg.role === "user" && (
+                  <div className="mt-4 pt-3 border-t border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className={`px-2 py-0.5 text-[10px] font-black rounded-sm ${msg.score_delta > 0 ? "bg-[#39FF14] text-black" : "bg-red-500 text-white"
+                        }`}>
+                        AFFINITY_{msg.score_delta > 0 ? "UP" : "DOWN"}
+                      </div>
+                      <span className={`text-sm font-black ${msg.score_delta > 0 ? "text-[#39FF14]" : "text-red-400"}`}>
+                        {msg.score_delta > 0 ? "+" : ""}{msg.score_delta}PTS
+                      </span>
+                    </div>
+                    {msg.reason && (
+                      <p className="text-[11px] text-[#00F0FF]/70 mt-2 font-mono italic">
+                        &gt; ANALYZE: {msg.reason}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Timestamp placeholder */}
+              <div className={`text-[9px] font-bold text-white/20 mt-1 uppercase tracking-widest ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                Transmission_ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}
+              </div>
+            </div>
           </div>
         ))}
 
         {gameLoading && (
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-4 animate-pulse">
             <Avatar mood={moodState} size="sm" isNpc />
-            <div className="bg-[#00F0FF]/10 border border-[#00F0FF]/30 rounded-lg p-3 flex gap-2">
-              <div className="w-2 h-2 bg-[#00F0FF] rounded-full animate-bounce" style={{animationDelay: "0ms"}}></div>
-              <div className="w-2 h-2 bg-[#00F0FF] rounded-full animate-bounce" style={{animationDelay: "150ms"}}></div>
-              <div className="w-2 h-2 bg-[#00F0FF] rounded-full animate-bounce" style={{animationDelay: "300ms"}}></div>
+            <div className="bg-white/5 border border-[#00F0FF]/30 p-4 rounded-lg flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-[#00F0FF] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+              <div className="w-1.5 h-1.5 bg-[#00F0FF] rounded-full animate-bounce" style={{ animationDelay: "200ms" }}></div>
+              <div className="w-1.5 h-1.5 bg-[#00F0FF] rounded-full animate-bounce" style={{ animationDelay: "400ms" }}></div>
             </div>
           </div>
         )}
@@ -188,29 +207,53 @@ export default function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-[#39FF14]/30 pt-4 flex flex-col gap-2">
-        <div className="flex gap-2">
-          <textarea
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value.slice(0, 300))}
-            onKeyPress={handleKeyPress}
-            placeholder="Nhập câu trả lời của bạn..."
-            disabled={gameLoading}
-            rows={2}
-            className="flex-1 bg-black/40 border border-[#39FF14]/30 rounded-lg px-3 py-2 text-sm text-white placeholder-[#39FF14]/50 focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <button
-            onClick={handleSend}
-            disabled={gameLoading || !inputValue.trim()}
-            className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] text-black font-bold px-4 py-2 rounded-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-          >
-            {gameLoading ? "..." : "Gửi"}
-          </button>
-        </div>
-        <div className="text-left text-xs text-[#00F0FF]/70">
-          {charCount}/300
+      {/* Input Terminal */}
+      <div className="relative mt-4">
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#39FF14]/20 to-[#00F0FF]/20 blur opacity-75" />
+
+        <div className="relative flex flex-col bg-black/80 border border-white/10 p-1">
+          {/* Terminal Header */}
+          <div className="flex justify-between items-center px-3 py-1 bg-white/5 text-[9px] font-black text-[#39FF14] tracking-widest uppercase">
+            <span>Social_Interface_v4.0</span>
+            <span className="animate-pulse">_READY</span>
+          </div>
+
+          <div className="flex gap-2 p-2">
+            <textarea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value.slice(0, 300))}
+              onKeyPress={handleKeyPress}
+              placeholder="Gõ lệnh giao tiếp của bạn..."
+              disabled={gameLoading}
+              rows={2}
+              className="flex-1 bg-transparent border-none text-sm text-white placeholder-white/20 focus:outline-none resize-none disabled:opacity-50 font-mono"
+            />
+
+            <button
+              onClick={handleSend}
+              disabled={gameLoading || !inputValue.trim()}
+              className="relative group/send px-6 flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+            >
+              <div className="absolute inset-0 bg-[#39FF14] skew-x-[-20deg] group-hover/send:translate-x-full transition-transform duration-500" />
+              <div className="absolute inset-0 border border-[#39FF14] skew-x-[-20deg]" />
+              <span className="relative z-10 text-xs font-black text-black group-hover/send:text-[#39FF14] uppercase italic tracking-tighter">
+                Execute
+              </span>
+            </button>
+          </div>
+
+          {/* Character Counter */}
+          <div className="flex justify-between items-center px-3 py-1 text-[9px] font-mono text-white/30 border-t border-white/5">
+            <div className="flex gap-4">
+              <span>STATUS: {gameLoading ? "BUSY" : "IDLE"}</span>
+              <span>BUFFER: {charCount}/300</span>
+            </div>
+            <div className="flex gap-1">
+              <div className={`w-1 h-1 ${charCount > 250 ? "bg-red-500" : "bg-[#39FF14]"}`} />
+              <div className="w-1 h-1 bg-[#00F0FF]" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

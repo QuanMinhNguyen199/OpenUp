@@ -23,26 +23,64 @@ export default function ScoreBar({ score }: ScoreBarProps) {
   }, [score, displayScore]);
 
   return (
-    <div className="w-40 bg-white/5 border border-[#39FF14]/30 rounded-lg p-4">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#39FF14]/70 mb-2">
-          Điểm Số
+    <div className="w-48 bg-black/60 border border-[#39FF14]/30 p-6 backdrop-blur-md relative overflow-hidden group animate-in fade-in slide-in-from-right duration-700">
+      {/* Background Glow */}
+      <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#39FF14]/5 blur-3xl group-hover:bg-[#39FF14]/10 transition-all duration-700" />
+      
+      <div className="relative flex flex-col items-center">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#39FF14] mb-6 opacity-60">
+          Target_Affinity
         </p>
-        <div className={`text-4xl font-black text-[#39FF14] transition-all duration-300 ${pulse ? "scale-110" : "scale-100"}`}>
-          {displayScore}
-        </div>
-        {/* <div className="text-xs text-[#00F0FF]/60 mt-2">Khởi đầu: 20</div> */}
 
-        {/* Score Bar Visualization */}
-        <div className="mt-4 bg-black/50 rounded-full h-1 overflow-hidden border border-[#39FF14]/20">
-          <div
-            className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] h-full transition-all duration-500"
-            style={{
-              width: `${Math.min(100, (displayScore / 100) * 100)}%`,
-            }}
-          />
+        {/* Circular/Semi-circular Gauge Look (Simplified) */}
+        <div className="relative flex flex-col items-center gap-6">
+          {/* Main Score Display */}
+          <div className="relative">
+            <div className={`text-6xl font-black italic tracking-tighter text-white transition-all duration-300 ${pulse ? "scale-110 drop-shadow-[0_0_15px_#39FF14]" : "scale-100 drop-shadow-[0_0_8px_#39FF14]/50"}`}>
+              {displayScore}
+            </div>
+            <div className="absolute -top-1 -right-4 text-[10px] font-black text-[#00F0FF]">PTS</div>
+          </div>
+
+          {/* Segmented Progress Bar */}
+          <div className="flex flex-col gap-1.5 w-full">
+            <div className="flex justify-between items-end mb-1">
+              <span className="text-[8px] font-bold text-white/40 uppercase">Progression</span>
+              <span className="text-[8px] font-bold text-[#39FF14]">{displayScore}%</span>
+            </div>
+            
+            <div className="h-6 w-full flex gap-1 p-1 bg-white/5 border border-white/10 overflow-hidden">
+              {[...Array(10)].map((_, i) => (
+                <div 
+                  key={i}
+                  className={`flex-1 h-full transition-all duration-500 ${
+                    (displayScore / 10) > i 
+                      ? "bg-gradient-to-t from-[#39FF14] to-[#00F0FF] shadow-[0_0_8px_#39FF14]/50" 
+                      : "bg-white/5"
+                  }`}
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Data */}
+        <div className="mt-8 w-full space-y-1">
+          <div className="flex justify-between text-[8px] font-bold text-white/20 uppercase tracking-tighter">
+            <span>Sync_Rate</span>
+            <span className="text-[#00F0FF]">Optimal</span>
+          </div>
+          <div className="h-[2px] w-full bg-white/5">
+            <div className="h-full bg-[#00F0FF] w-3/4 shadow-[0_0_5px_#00F0FF]" />
+          </div>
         </div>
       </div>
+
+      {/* Decorative Accents */}
+      <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#39FF14]/40" />
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#00F0FF]/40" />
     </div>
   );
 }
+

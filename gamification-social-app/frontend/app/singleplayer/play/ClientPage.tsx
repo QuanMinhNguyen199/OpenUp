@@ -376,36 +376,108 @@ export default function ClientPage() {
   }
 
   return (
-    <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] font-sans text-white">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_3px,transparent_3px),linear-gradient(to_bottom,#80808012_3px,transparent_3px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
+    <main className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
+      {/* ===== LAYER 1: Futuristic Background ===== */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#1a1a1a,0%,#000_100%)]" />
+      
+      {/* Animated Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#39FF1408_1px,transparent_1px),linear-gradient(to_bottom,#39FF1408_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_70%,transparent_100%)]" />
+      
+      {/* Scanline & Noise */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.2)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[size:100%_2px,3px_100%] opacity-50" />
+      
+      {/* Glowing Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#39FF14]/5 blur-[120px] rounded-full animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00F0FF]/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
 
-      {/* 3-COLUMN LAYOUT */}
-      <div className="relative z-10 flex h-screen gap-6 p-6">
-        {/* --- LEFT PANEL: PROFILE --- */}
-        <ProfilePanel
-          npcName={gameState.npcName}
-          npcJob={gameState.npcJob}
-          relationship={gameState.relationship}
-          location={gameState.location}
-          num={gameState.num}
-        />
+      {/* ===== LAYER 2: Main Interface ===== */}
+      <div className="relative z-10 flex flex-col h-screen p-4 md:p-6">
+        {/* --- Top Dashboard Info --- */}
+        <div className="flex justify-between items-center mb-6 px-2">
+          <div className="flex flex-col">
+            <h2 className="text-[10px] font-black tracking-[0.4em] text-[#39FF14] uppercase opacity-60">
+              Session_Type: Single_Player
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#39FF14] animate-ping rounded-full" />
+              <span className="text-xs font-bold text-white/40 italic">LIVE_FEED: ENCRYPTED_CONNECTION</span>
+            </div>
+          </div>
 
-        {/* --- CENTER PANEL: CHAT WINDOW --- */}
-        <ChatWindow
-          messages={gameState.messages}
-          gameLoading={gameState.loading}
-          npcName={gameState.npcName}
-          onSendMessage={handleSendMessage}
-        />
+          <div className="flex items-center gap-4">
+            {/* Player Quick Stats */}
+            <div className="hidden md:flex flex-col items-end border-r border-white/10 pr-4">
+              <span className="text-[10px] font-black text-[#00F0FF] uppercase tracking-widest">{userData?.username}</span>
+              <span className="text-[9px] text-white/40 font-bold uppercase tracking-tighter">Level {userData?.level} • {userData?.role}</span>
+            </div>
+            <HomeButton />
+          </div>
+        </div>
 
-        {/* --- RIGHT PANEL: HOME + SCORE --- */}
-        <div className="flex flex-col gap-8">
-          <HomeButton />
-          <ScoreBar score={gameState.score} />
+        {/* --- 3-COLUMN CORE LAYOUT --- */}
+        <div className="flex-1 flex gap-6 min-h-0">
+          {/* LEFT: Target Data */}
+          <div className="hidden xl:block h-full">
+            <ProfilePanel
+              npcName={gameState.npcName}
+              npcJob={gameState.npcJob}
+              relationship={gameState.relationship}
+              location={gameState.location}
+              num={gameState.num}
+            />
+          </div>
+
+          {/* CENTER: Communication Hub */}
+          <div className="flex-1 h-full flex flex-col min-w-0">
+            <ChatWindow
+              messages={gameState.messages}
+              gameLoading={gameState.loading}
+              npcName={gameState.npcName}
+              onSendMessage={handleSendMessage}
+            />
+          </div>
+
+          {/* RIGHT: Status Monitor */}
+          <div className="hidden lg:flex flex-col gap-6 h-full">
+            <ScoreBar score={gameState.score} />
+            
+            {/* Mission Objectives Decor */}
+            <div className="bg-black/40 border border-white/10 p-5 rounded-lg flex-1 backdrop-blur-sm">
+              <h3 className="text-[10px] font-black text-[#39FF14] uppercase tracking-widest mb-4">Current_Objectives</h3>
+              <ul className="space-y-4">
+                <li className="flex gap-3 items-start">
+                  <div className={`w-1.5 h-1.5 mt-1 border border-[#39FF14] ${gameState.score >= 50 ? "bg-[#39FF14]" : "bg-transparent"}`} />
+                  <p className={`text-[11px] font-bold ${gameState.score >= 50 ? "text-white" : "text-white/30"} uppercase`}>Reach 50_Points</p>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <div className={`w-1.5 h-1.5 mt-1 border border-[#39FF14] ${gameState.score >= 100 ? "bg-[#39FF14]" : "bg-transparent"}`} />
+                  <p className={`text-[11px] font-bold ${gameState.score >= 100 ? "text-white" : "text-white/30"} uppercase`}>Achieve Completion_100</p>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <div className="w-1.5 h-1.5 mt-1 border border-[#00F0FF] bg-[#00F0FF]" />
+                  <p className="text-[11px] font-bold text-white uppercase italic tracking-tighter">Maintain Social_Cohesion</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* --- Footer Status Line --- */}
+        <div className="mt-4 flex justify-between items-center px-2 text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
+          <div className="flex gap-6">
+            <span>CORE_SYNC: 98.4%</span>
+            <span>LATENCY: 12ms</span>
+            <span>OS_VERSION: v0.8.2-BETA</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1">
+              {[...Array(5)].map((_, i) => <div key={i} className="w-3 h-1 bg-[#39FF14]/40" />)}
+            </div>
+            <span>SOCIAL_RECOGNITION_ACTIVE</span>
+          </div>
         </div>
       </div>
     </main>
   );
 }
+
