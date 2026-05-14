@@ -23,14 +23,12 @@ export default function ScoreBar({ score }: ScoreBarProps) {
   }, [score, displayScore]);
 
   return (
-    <div className="w-48 bg-black/60 border border-[#39FF14]/30 p-6 backdrop-blur-md relative overflow-hidden group animate-in fade-in slide-in-from-right duration-700">
+    <div className="w-48 bg-black/60 border border-[#39FF14]/30 p-6 backdrop-blur-md relative overflow-hidden group">
       {/* Background Glow */}
       <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#39FF14]/5 blur-3xl group-hover:bg-[#39FF14]/10 transition-all duration-700" />
       
       <div className="relative flex flex-col items-center">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#39FF14] mb-6 opacity-60">
-          Target_Affinity
-        </p>
+
 
         {/* Circular/Semi-circular Gauge Look (Simplified) */}
         <div className="relative flex flex-col items-center gap-6">
@@ -45,7 +43,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
           {/* Segmented Progress Bar */}
           <div className="flex flex-col gap-1.5 w-full">
             <div className="flex justify-between items-end mb-1">
-              <span className="text-[8px] font-bold text-white/40 uppercase">Progression</span>
+
               <span className="text-[8px] font-bold text-[#39FF14]">{displayScore}%</span>
             </div>
             
@@ -65,16 +63,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
           </div>
         </div>
 
-        {/* Footer Data */}
-        <div className="mt-8 w-full space-y-1">
-          <div className="flex justify-between text-[8px] font-bold text-white/20 uppercase tracking-tighter">
-            <span>Sync_Rate</span>
-            <span className="text-[#00F0FF]">Optimal</span>
-          </div>
-          <div className="h-[2px] w-full bg-white/5">
-            <div className="h-full bg-[#00F0FF] w-3/4 shadow-[0_0_5px_#00F0FF]" />
-          </div>
-        </div>
+
       </div>
 
       {/* Decorative Accents */}

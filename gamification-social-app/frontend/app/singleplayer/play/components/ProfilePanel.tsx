@@ -26,7 +26,7 @@ export default function ProfilePanel({
       {/* Profile Header Card */}
       <div className="relative group">
         <div className="absolute inset-0 bg-[#00F0FF]/5 blur-xl group-hover:bg-[#00F0FF]/10 transition-all duration-700" />
-        
+
         <div className="relative bg-black/60 border border-[#00F0FF]/30 p-6 backdrop-blur-md rounded-br-3xl overflow-hidden">
           {/* Corner Decors */}
           <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#00F0FF]/40" />
@@ -84,12 +84,9 @@ export default function ProfilePanel({
         </div>
       </div>
 
-      {/* Decorative Path Element */}
-      <div className="flex flex-col gap-1 items-start pl-4 opacity-30">
-        <div className="w-1 h-8 bg-gradient-to-b from-[#39FF14] to-transparent" />
-        <div className="w-12 h-1 bg-gradient-to-r from-[#39FF14] to-transparent" />
-      </div>
+
     </div>
   );
 }
+
 

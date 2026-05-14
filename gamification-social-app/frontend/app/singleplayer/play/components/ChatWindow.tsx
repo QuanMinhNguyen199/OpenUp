@@ -80,9 +80,7 @@ export default function ChatWindow({
 
   return (
     <div className="flex-1 flex flex-col gap-4 bg-black/40 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-xl relative overflow-hidden group">
-      {/* Background Tech Decor */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[#00F0FF]/5 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#39FF14]/5 blur-[100px] pointer-events-none" />
+
 
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
@@ -102,23 +100,16 @@ export default function ChatWindow({
         <div className="flex items-center gap-4">
           <Avatar mood={moodState} size="md" isNpc />
           <div className="space-y-0.5">
-            <h2 className="text-xl font-black italic tracking-tighter text-white uppercase flex items-center gap-2">
-              <span className="text-[#39FF14]">{npcName}</span>
-              <span className="inline-block w-2 h-2 bg-[#00F0FF] animate-pulse rounded-full" />
+            <h2 className="text-xl font-black italic tracking-tighter text-[#39FF14] uppercase">
+              {npcName}
             </h2>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-[#00F0FF]/60 uppercase tracking-widest">Connection: Optimal</span>
-              <span className="text-[10px] text-white/20">|</span>
-              <span className="text-[10px] font-bold text-[#39FF14]/60 uppercase tracking-widest">Neural Link: Active</span>
-            </div>
+            <p className="text-[10px] font-bold text-[#00F0FF]/70 uppercase tracking-widest">
+              Đang trò chuyện...
+            </p>
           </div>
         </div>
 
-        {/* Tech Accents */}
-        <div className="hidden md:flex flex-col items-end gap-1 opacity-20">
-          <div className="w-16 h-[2px] bg-[#00F0FF]" />
-          <div className="w-8 h-[2px] bg-[#39FF14]" />
-        </div>
+
       </div>
 
       {/* Messages Container */}
@@ -133,8 +124,8 @@ export default function ChatWindow({
               {/* Message Bubble with Cutout corners */}
               <div
                 className={`relative p-4 backdrop-blur-md ${msg.role === "user"
-                    ? "bg-[#39FF14]/10 border-r-4 border-[#39FF14]"
-                    : "bg-[#00F0FF]/10 border-l-4 border-[#00F0FF]"
+                  ? "bg-[#39FF14]/10 border-r-4 border-[#39FF14]"
+                  : "bg-[#00F0FF]/10 border-l-4 border-[#00F0FF]"
                   } border-y border-x border-white/5`}
                 style={{
                   clipPath: msg.role === "user"
@@ -144,9 +135,8 @@ export default function ChatWindow({
               >
                 {/* Start Context */}
                 {msg.type === "start_context" && (
-                  <div className="text-xs font-black text-[#00F0FF] uppercase tracking-[0.2em] mb-3 pb-2 border-b border-[#00F0FF]/20 flex items-center gap-2">
-                    <span className="p-1 bg-[#00F0FF]/20 rounded-sm">DATA_STREAM</span>
-                    <span className="opacity-60">{msg.content}</span>
+                  <div className="text-xs font-black text-[#00F0FF] uppercase tracking-[0.2em] mb-3 pb-2 border-b border-[#00F0FF]/20">
+                    📍 {msg.content}
                   </div>
                 )}
 
@@ -185,10 +175,7 @@ export default function ChatWindow({
                 )}
               </div>
 
-              {/* Timestamp placeholder */}
-              <div className={`text-[9px] font-bold text-white/20 mt-1 uppercase tracking-widest ${msg.role === "user" ? "text-right" : "text-left"}`}>
-                Transmission_ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}
-              </div>
+
             </div>
           </div>
         ))}
