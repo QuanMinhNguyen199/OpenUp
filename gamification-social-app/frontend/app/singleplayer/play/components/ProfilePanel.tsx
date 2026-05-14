@@ -46,7 +46,7 @@ export default function ProfilePanel({
               <h2 className="text-2xl font-black italic tracking-tighter text-[#39FF14] uppercase drop-shadow-[0_0_8px_#39FF14]">
                 {npcName}
               </h2>
-              <div className="inline-block px-3 py-0.5 bg-[#00F0FF] text-black text-[10px] font-black skew-x-[-15deg] uppercase">
+              <div className="inline-block px-3 py-0.5 bg-[#00F0FF] text-black text-xs font-black skew-x-[-15deg] uppercase">
                 {npcJob}
               </div>
             </div>
@@ -58,7 +58,7 @@ export default function ProfilePanel({
           {/* Info Items */}
           <div className="space-y-5">
             <div className="group/item">
-              <p className="text-[10px] font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-70">Relationship Status</p>
+              <p className="text-xs font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-90">Mối quan hệ với bạn</p>
               <div className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 bg-[#00F0FF] rotate-45 shadow-[0_0_5px_#00F0FF]" />
                 <span className="text-sm font-medium text-gray-200 italic">{relationship}</span>
@@ -66,7 +66,7 @@ export default function ProfilePanel({
             </div>
 
             <div className="group/item">
-              <p className="text-[10px] font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-70">Current Location</p>
+              <p className="text-xs font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-90">Địa điểm</p>
               <div className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 bg-[#00F0FF] rotate-45 shadow-[0_0_5px_#00F0FF]" />
                 <span className="text-sm font-medium text-gray-200 italic">{location}</span>
@@ -76,9 +76,9 @@ export default function ProfilePanel({
 
           {/* Footer Note */}
           <div className="mt-8 pt-4 border-t border-white/5">
-            <p className="text-[10px] font-medium text-[#00F0FF]/60 italic flex items-center gap-2">
+            <p className="text-xs font-medium text-[#00F0FF]/60 italic flex items-center gap-2">
               <span className="inline-block w-2 h-2 rounded-full bg-[#00F0FF] animate-ping" />
-              NEURAL LINK STABLE: ANALYZING SOCIAL CUES...
+              Đừng gửi thông tin cá nhân của bạn cho NPC!
             </p>
           </div>
         </div>
