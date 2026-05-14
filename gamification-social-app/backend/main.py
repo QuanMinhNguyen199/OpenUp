@@ -250,7 +250,6 @@ def choose_option(
     conv.last_interaction = now
 
     # 4. TÍNH ĐIỂM MỚI CHUẨN XÁC
-    # Luôn lấy điểm hiện tại đang lưu trong DB (sau khi đã được reset an toàn ở API story_mode)
     base_score = float(conv.affinity_score)
     potential_score = base_score + score_change
     
@@ -266,38 +265,38 @@ def choose_option(
 
     # 6. KIỂM TRA ĐIỀU KIỆN THẮNG / THUA
     if npc_id == 7:
-        # --- LUẬT CHƠI ĐẢO NGƯỢC (CHAPTER 7 - CỤ PHAN) ---
+        # --- LUẬT CHƠI CHAPTER 7: 100 LÀ THẮNG, NHƯNG TEXT ĐƯỢC CUSTOM ---
         if potential_score <= 0:
-            conv.affinity_score = 0.0
-            if user.chap == 7:
-                user.chap += 1
-                user.total_xp += 200 
-            else:
-                user.total_xp += 50  
-                
-            user.level = calculate_level(user.total_xp)
-            is_completed = True
-            message = "Cụ Phan mỉm cười: 'Con đã hiểu được giá trị của sự thật và buông bỏ. Bức tranh nhân sinh đã sẵn sàng.' Bạn đã vượt qua bài test cuối cùng!"
-            
-        elif potential_score >= 100:
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
             conv.neutral_streak = 0 
-            message = "Cụ Phan lắc đầu: 'Những lời mật ngọt giả dối không thể cứu rỗi tâm hồn.' Hãy thử lại bằng sự chân thật!"
+            message = "Cụ Phan lắc đầu thất vọng: 'Những lời mật ngọt giả dối không che đậy được sự thật.' Bạn đã đánh mất sự tôn trọng của cụ!"
             
         elif conv.neutral_streak >= 3:
             is_failed = True
             conv.affinity_score = 20.0
             conv.current_turn = 1
             conv.neutral_streak = 0 
-            message = "Cụ Phan nhắm mắt dưỡng thần, không muốn tiếp chuyện kẻ thiếu thành tâm."
+            message = "Cụ Phan nhắm mắt dưỡng thần, không muốn tiếp chuyện một kẻ ba phải, thiếu chính kiến."
             
         else:
-            conv.affinity_score = max(0.0, min(100.0, potential_score))
-            conv.current_turn += 1
-            message = f"Cụ Phan gật gù. Hãy tiếp tục bảo vệ quan điểm của bạn! Tâm ngộ: {100 - int(conv.affinity_score)}/100"
+            conv.affinity_score = min(100.0, max(0.0, potential_score))
             
+            if conv.affinity_score >= 100:
+                if user.chap == 7:
+                    user.chap += 1
+                    user.total_xp += 200 
+                else:
+                    user.total_xp += 50  
+                    
+                user.level = calculate_level(user.total_xp)
+                is_completed = True
+                message = "Cụ Phan mỉm cười: 'Con đã dũng cảm nói ra sự thật. Bức tranh nhân sinh đã sẵn sàng.' Bạn đã vượt qua bài test sự chính trực!"
+            else:
+                conv.current_turn += 1
+                message = f"Cụ Phan gắt gỏng nhưng ánh mắt lóe lên sự nể phục. Điểm tín nhiệm: {int(conv.affinity_score)}/100"
+                
     else:
         # --- LUẬT CHƠI BÌNH THƯỜNG (CHAPTER 1-6) ---
         if potential_score <= 0:
@@ -315,7 +314,7 @@ def choose_option(
             message = "Bạn quá hời hợt và thiếu thiện chí, NPC không muốn tiếp chuyện nữa."
             
         else:
-            conv.affinity_score = min(100.0, potential_score) 
+            conv.affinity_score = min(100.0, max(0.0, potential_score)) 
             
             if conv.affinity_score >= 100:
                 if user.chap == npc_id:

@@ -70,10 +70,23 @@ def run_setup():
             collection.required_affinity = 100.0
 
         # --- BỔ SUNG: SEED MẢNH GHÉP SỐ 8 (MẢNH CỐT LÕI) ---
+        boss_npc = db.query(models.NPC).filter_by(id=8).first()
+        if not boss_npc:
+            boss_npc = models.NPC(
+                id=8, 
+                name="Tiếng Nói Nội Tâm", 
+                role="Boss NPC", 
+                map_location="Tâm Trí"
+            )
+            db.add(boss_npc)
+            db.flush()
+
+        # 2. Add mảnh 8 và liên kết với Boss
         core_piece = db.query(models.Collection).filter_by(id=8).first()
         if not core_piece:
             core_piece = models.Collection(
-                id=8, # Ép cứng ID = 8 để không đụng chạm với 7 mảnh trên
+                id=8, 
+                npc_id=8, # <-- Gắn vào NPC 8 cho an toàn Khóa ngoại
                 name="Mảnh Ghép Cốt Lõi",
                 description="Mảnh ghép của chính bạn. Tự động thức tỉnh khi thu thập đủ 7 phẩm chất.",
                 target_idx=7,
