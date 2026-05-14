@@ -33,7 +33,7 @@ export default function ProfilePanel({
           <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#39FF14]/40" />
 
           {/* Avatar Section */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-6 mt-4">
             <div className="relative">
               <div className="absolute inset-0 bg-[#39FF14]/20 blur-lg animate-pulse" />
               <div className="relative h-24 w-24 flex items-center justify-center">
