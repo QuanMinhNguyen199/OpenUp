@@ -13,7 +13,7 @@ const SingleplayerResultPopup = ({ mode, onReplay }: SingleplayerResultPopupProp
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-[#050505] text-white">
-            <div className={`relative text-center p-12 border ${isWin ? 'border-[#39FF14]/30 bg-[#39FF14]/5' : 'border-red-500/30 bg-red-500/5'} rounded-2xl shadow-[0_0_50px_${isWin ? 'rgba(57,255,20,0.15)' : 'rgba(239,68,68,0.15)'}] max-w-md mx-4`}>
+            <div className={`relative text-center py-12 px-25 border ${isWin ? 'border-[#39FF14]/30 bg-[#39FF14]/5' : 'border-red-500/30 bg-red-500/5'} rounded-2xl shadow-[0_0_50px_${isWin ? 'rgba(57,255,20,0.15)' : 'rgba(239,68,68,0.15)'}] max-w-md mx-4`}>
                 {/* Corner Accents */}
                 <div className={`absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 ${isWin ? 'border-[#39FF14]' : 'border-red-500'}`}></div>
                 <div className={`absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 ${isWin ? 'border-[#39FF14]' : 'border-red-500'}`}></div>
