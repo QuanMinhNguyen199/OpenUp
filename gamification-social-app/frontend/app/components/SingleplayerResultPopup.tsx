@@ -33,7 +33,7 @@ const SingleplayerResultPopup = ({ mode, onReplay }: SingleplayerResultPopupProp
                 <h1 className={`text-4xl font-black mb-4 tracking-tighter italic uppercase ${isWin ? 'text-[#39FF14]' : 'text-red-500'}`}>
                     {isWin ? "Thành công" : "Thất bại"}
                 </h1>
-                <p className="text-gray-400 mb-8 font-mono text-sm leading-relaxed">
+                <p className="text-white-400 mb-8 font-mono text-lg leading-relaxed">
                     {isWin ? "+10 XP" : "Chúc may mắn lần sau"}
                 </p>
                 <div className="flex justify-center items-center gap-4">
