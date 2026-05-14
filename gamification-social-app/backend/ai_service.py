@@ -68,15 +68,15 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
             "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại tình huống, cảm xúc, hay lời thoại đã xuất hiện ở các lượt trước. ÁP DỤNG QUY TẮC LEO THANG đúng với giai đoạn. "
             "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
             "LỆNH CẤM 3 (ĐỘ KHÓ): CẢ 3 LỰA CHỌN PHẢI LÀ CÁC CÂU NÓI CỰC KỲ LỊCH SỰ, HỢP LÝ VÀ ĐỜI THƯỜNG. Phải làm cho người chơi rất khó phân biệt đâu là lựa chọn đúng! "
-            "QUY TẮC CHẤM ĐIỂM BẮT BUỘC: Bắt buộc phải chia làm 3 mốc điểm rõ ràng. 'quantity' PHẢI LÀ SỐ. "
+            "QUY TẮC CHẤM ĐIỂM BẮT BUỘC: Tuân thủ tuyệt đối LUẬT CHẤM ĐIỂM RIÊNG trong hồ sơ nhân vật. 'quantity' PHẢI LÀ SỐ. "
             "TRẢ VỀ JSON HỢP LỆ:\n"
             "{\n"
             '  "npc_behavior": "Mô tả hành động ngôi thứ 3, dùng tên NPC",\n'
             '  "npc_say": "Lời thoại mới, không lặp lại, phù hợp giai đoạn",\n'
             '  "options": [\n'
-            '    {"option": "<Thấu cảm đúng tâm lý>", "quantity": <20 đến 25>},\n'
-            '    {"option": "<Lịch sự nhưng sai bài học>", "quantity": <-15 đến -5>},\n'
-            '    {"option": "<Nhẹ nhàng nhưng đùn đẩy trách nhiệm>", "quantity": <-25 đến -20>}\n'
+            '    {"option": "<Đáp án ĐÚNG với mục tiêu bài học của Chapter này>", "quantity": <20 đến 25>},\n'
+            '    {"option": "<Đáp án SAI với mục tiêu bài học của Chapter này>", "quantity": <-25 đến -15>},\n'
+            '    {"option": "<Đáp án hời hợt, ba phải, nước đôi>", "quantity": <-10 đến -5>}\n'
             "  ]\n"
             "}"
         )

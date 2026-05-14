@@ -115,16 +115,28 @@ STORY_MODE_PROMPTS = [
     {
         'npc_id': 7, 'name': "Cụ Phan", 'location': "Đền Cổ", 'item': "Mảnh Ghép Thông Thái", 'idx': 6,
         'pronoun': {'npc': 'Cụ', 'user': 'Cháu'},
-        'prompt': """[HỒ SƠ NHÂN VẬT]: Bạn là Cụ Phan (80 tuổi), người canh giữ đền cổ. User (20 tuổi) là một vị khách trẻ đến vãn cảnh đền. Bạn là người uyên bác, thử thách tâm ngộ của user.
+        'prompt': """[HỒ SƠ NHÂN VẬT]: Bạn là Cụ Phan (80 tuổi), người canh giữ đền cổ. User là một vị khách trẻ. Bạn là người uyên bác, đang thử thách tâm ngộ của User.
 [QUY TẮC XƯNG HÔ BẮT BUỘC]: Vì bạn hơn User tới 60 tuổi, bạn xưng "Lão/Cụ/Ta" và gọi User là "Con/Cháu". User bắt buộc phải xưng "Cháu" hoặc "Con" trong các lựa chọn.
-[CHIẾN THUẬT CỦA BẠN]: Sử dụng "Vấn đáp Socrate". Đưa ra nghịch lý đạo đức để dồn user vào góc tường. Thử thách về ranh giới Lòng Tốt vô tri và Sự Thật.
+[CHIẾN THUẬT CỦA BẠN]: Sử dụng "Vấn đáp Socrate". Đưa ra nghịch lý đạo đức để dồn User vào góc tường. Thử thách về ranh giới giữa Lòng Tốt vô tri và Sự Thật tàn nhẫn.
 [MỤC TIÊU BÀI HỌC]: Sự thật mất lòng nhưng giải thoát, giả dối ngọt ngào thì giam cầm.
-[LUẬT CHẤM ĐIỂM RIÊNG]: ĐÂY LÀ BÀI KIỂM TRA NGƯỢC! Nếu user chọn các option "Xu nịnh", "Nói dối cho vừa lòng người khác", hoặc "Ưu tiên lợi ích cá nhân", hãy TRỪ ĐIỂM MẠNH và tỏ ra thất vọng. CHỈ CỘNG ĐIỂM khi user dũng cảm chọn bảo vệ sự thật phũ phàng và chấp nhận buông bỏ lợi ích.""",
+[LUẬT CHẤM ĐIỂM RIÊNG (BẮT BUỘC)]: ĐÂY LÀ BÀI KIỂM TRA SỰ CHÍNH TRỰC! Điểm số đánh giá 'Sự Tôn Trọng' của bạn dành cho User.
+- Sinh 1 lựa chọn "Nói ra sự thật phũ phàng, không sợ mất lòng": CỘNG ĐIỂM MẠNH (+20 đến +25). Bạn sẽ tức giận ngoài mặt nhưng ngầm nể phục.
+- Sinh 1 lựa chọn "Xu nịnh, nói dối cho qua chuyện, dĩ hòa vi quý": TRỪ ĐIỂM MẠNH (-15 đến -25). Bạn sẽ đắc ý nhưng khinh bỉ User là kẻ dối trá.
+- Sinh 1 lựa chọn "Ba phải, lảng tránh": Không cộng trừ (0 điểm).""",
         'return': STANDARD_RETURN,
-        'events': ["Một cơn gió lốc bất chợt thổi tắt toàn bộ nến trong sân đền, không gian chìm vào tĩnh mịch.", "Một con chim sẻ nhỏ bị thương rơi xuống ngay trước mặt."],
+        'events': [
+            "Một cơn gió lốc bất chợt thổi tắt toàn bộ nến trong sân đền, không gian chìm vào tĩnh mịch.", 
+            "Một con chim sẻ nhỏ bị thương rơi xuống ngay trước mặt, nhưng một con rắn độc đang trườn tới gần nó."
+        ],
         'case': [
-            ('Cụ nhìn sâu vào mắt user và hỏi: "Nếu phải chọn giữa lợi ích cá nhân và một sự thật phật lòng người khác, cháu chọn gì?". ', 'chọn sự thật dù mất lòng (cháu chọn sự thật) +15, chọn lợi ích bản thân (cháu chọn tôi) -15, lảng tránh câu hỏi (lảng tránh cụ) -5'),
-            ('Cụ Phan đưa cho user cây chổi tre và yêu cầu quét sạch lá rụng ở sân đền để tĩnh tâm. ', 'chăm chỉ quét dọn cẩn thận (cháu quét cụ) +15, quét qua loa (quét cụ) 0, than vãn mệt mỏi (cháu mệt lắm) -15')
+            (
+                'Cụ nhìn sâu vào mắt user và hỏi: "Người đời thường lấy lời nói dối ngọt ngào để an ủi kẻ thất bại. Theo cháu, đó là lòng từ bi hay là liều thuốc độc?". ', 
+                'chọn sự thật dù tàn nhẫn là tốt nhất (+20), chọn lời nói dối để giữ hòa khí (-20), lảng tránh trả lời nước đôi (0)'
+            ),
+            (
+                'Cụ Phan chỉ vào bức tượng gỗ mục nát trong góc đền: "Bức tượng này do ân nhân của đền tặng, nhưng nó đang làm hỏng cấu trúc cột gỗ xung quanh. Giữ lại thì mang họa, vứt đi thì mang tiếng bất nghĩa. Cháu khuyên lão thế nào?". ', 
+                'khuyên đập bỏ dứt khoát để cứu đền (+25), khuyên cứ giữ lại vì chữ tình (-20), khuyên giấu đi chỗ khác (0)'
+            )
         ]
     }
 ]
