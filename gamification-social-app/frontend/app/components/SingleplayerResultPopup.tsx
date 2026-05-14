@@ -1,24 +1,15 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import HomeButton from "./HomeButton";
 
 interface SingleplayerResultPopupProps {
     mode: "win" | "lose";
-    replayLink: string;
+    onReplay: () => void;
 }
 
-const SingleplayerResultPopup = ({ mode, replayLink }: SingleplayerResultPopupProps) => {
-    const router = useRouter();
+const SingleplayerResultPopup = ({ mode, onReplay }: SingleplayerResultPopupProps) => {
     const isWin = mode === "win";
-
-    const handleReplay = () => {
-        const replayUrl = replayLink.includes("?")
-            ? `${replayLink}&replay=${Date.now()}`
-            : `${replayLink}?replay=${Date.now()}`;
-        router.push(replayUrl);
-    };
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-[#050505] text-white">
@@ -47,11 +38,14 @@ const SingleplayerResultPopup = ({ mode, replayLink }: SingleplayerResultPopupPr
                 </p>
                 <div className="flex justify-center items-center gap-4">
                     <button
-                        onClick={handleReplay}
-                        className={`group relative flex items-center justify-center px-8 py-3 border ${isWin ? 'border-[#39FF14]/50 bg-[#39FF14]/5 text-[#39FF14] hover:bg-[#39FF14]/20' : 'border-red-500/50 bg-red-500/5 text-red-500 hover:bg-red-500/20'} transition-all rounded-lg font-bold uppercase text-xs tracking-[0.2em] shadow-[0_0_15px_${isWin ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)'}] hover:shadow-[0_0_20px_${isWin ? 'rgba(57,255,20,0.3)' : 'rgba(239,68,68,0.3)'}]`}
+                        onClick={onReplay}
+                        className={`group relative inline-flex items-center justify-center w-14 h-14 border ${isWin ? 'border-[#39FF14]/50 bg-[#39FF14]/5 text-[#39FF14] hover:bg-[#39FF14]/20' : 'border-red-500/50 bg-red-500/5 text-red-500 hover:bg-red-500/20'} transition-all rounded-xl shadow-[0_0_15px_${isWin ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)'}] hover:shadow-[0_0_20px_${isWin ? 'rgba(57,255,20,0.3)' : 'rgba(239,68,68,0.3)'}]`}
                     >
-                        Replay
-                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                        <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                             Replay
                         </span>
                     </button>
