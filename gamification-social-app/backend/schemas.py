@@ -100,3 +100,19 @@ class CheckSingleplayerRequest(BaseModel):
     name: str
     relationship: str
     score: int
+
+class CustomplayRequest(BaseModel):
+    user_id: int
+    history: List[ChatHistory]
+    name: str
+    relationship: str
+    npcGoal: str
+    userGoal: str
+    turn: int
+    location: str
+    npcGender: str
+    userGender: str
+    # optional
+    additionalInfo: str
+    job: str
+    personality: str
