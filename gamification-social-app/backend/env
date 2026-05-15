@@ -12,3 +12,6 @@ LOG_LEVEL=INFO
 AI_LOG_SERVER=https://ai-logs.note.transformerlabs.ai/api/ingest
 AI_LOG_API_KEY=lMfm8NPzHVHlOtYx2kOQ7c9PTxJOB0E3DJbD_UBlsFw
 AI_LOG_DIR=.ai-log
+LANGFUSE_SECRET_KEY="sk-lf-f8bfb90c-5c4f-436a-a292-077aa3a5601e"
+LANGFUSE_PUBLIC_KEY="pk-lf-d65832eb-91d4-4539-ab51-2dbf14ebd0aa"
+LANGFUSE_BASE_URL="https://cloud.langfuse.com"

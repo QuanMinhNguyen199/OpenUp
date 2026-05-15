@@ -2,16 +2,19 @@ import re
 import os
 import json
 import asyncio
+
+# Load env BEFORE importing Langfuse (critical: Langfuse init reads env vars)
+from dotenv import load_dotenv
+load_dotenv()
+
 from google import genai
 from openai import OpenAI
-from dotenv import load_dotenv
+from langfuse.decorators import observe, langfuse_context
 
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
 from prompts.single_prompts import get_singleplayer_prompt
-
-load_dotenv()
 
 # Khởi tạo Clients
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -23,7 +26,22 @@ openai_client = OpenAI(
 )
 
 # --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
-async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1):
+@observe(as_type="generation")
+async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1, user_id: int = None):
+    #"Đây là session của Chapter mấy"
+    langfuse_context.update_current_trace(
+        name=f"StoryMode_Chapter_{index + 1}",
+        session_id=f"Chap_{index + 1}_Turn_{current_turn}",
+        user_id=str(user_id) if user_id else None,
+        input={
+            "game_mode": "story",
+            "chapter": index + 1,
+            "turn": current_turn,
+            "event": event,
+            "case": case,
+            "user_id": user_id,
+        }
+    )
     system_prompt, request_prompt, pronoun = get_story_mode_prompt(index=index, event=event, case=case)
     
     if system_prompt is None or request_prompt is None:
@@ -76,7 +94,7 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
             '  "options": [\n'
             '    {"option": "<Đáp án ĐÚNG với mục tiêu bài học của Chapter này>", "quantity": <20 đến 25>},\n'
             '    {"option": "<Đáp án SAI với mục tiêu bài học của Chapter này>", "quantity": <-25 đến -15>},\n'
-            '    {"option": "<Đáp án hời hợt, ba phải, nước đôi>", "quantity": <-10 đến -5>}\n'
+            '    {"option": "<Đáp án hời hợt, ba phải, nước đôi>", "quantity": 0}\n'
             "  ]\n"
             "}"
         )
@@ -122,6 +140,14 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                         except (ValueError, TypeError):
                             opt["quantity"] = 0.0
 
+            # Set output on trace: don't include the full options to avoid noise
+            langfuse_context.update_current_span(
+                output={
+                    "npc_behavior": result.get("npc_behavior"),
+                    "npc_say_preview": result.get("npc_say", "")[:100],
+                    "has_options": len(result.get("options", [])),
+                }
+            )
             return result
 
         except json.JSONDecodeError as e:
@@ -142,11 +168,25 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     }
 
 # --- CHẾ ĐỘ 2: CREATIVE MODE (AI SINH TỰ DO THEO TURN) ---
-async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
+@observe(as_type="generation")
+async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, user_id: int = None):
     """
     Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
     Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
     """
+    langfuse_context.update_current_trace(
+        name=f"CreativeMode_{npc_name}",
+        session_id=f"Creative_{npc_name}_Turn_{turn}",
+        user_id=str(user_id) if user_id else None,
+        input={
+            "game_mode": "creative",
+            "npc_name": npc_name,
+            "ingredient": ingredient,
+            "turn": turn,
+            "user_id": user_id,
+        }
+    )
+
     NPC_SYSTEM_PROMPT = ''
     SPECIFIC_NPC_CONTEXT = {'':''}
 
@@ -182,6 +222,15 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
         result = json.loads(response.text)
         result["turn"] = turn
         result["is_final_turn"] = (turn >= 3)
+
+        langfuse_context.update_current_span(
+            output={
+                "npc_name": npc_name,
+                "turn": turn,
+                "is_final_turn": turn >= 3,
+                "has_question": "question" in result,
+            }
+        )
         
         return result
 
@@ -200,7 +249,22 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1):
 
 
 # SINGLEPLAYER MODE
-async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0):
+@observe(as_type="generation")
+async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0, user_id: int = None):
+    langfuse_context.update_current_trace(
+        name=f"Singleplayer_Turn_{turn}",
+        session_id=f"Singleplayer_Run_{name_idx}_{turn}",
+        user_id=str(user_id) if user_id else None,
+        input={
+            "game_mode": "singleplayer",
+            "turn": turn,
+            "location": location,
+            "event": event,
+            "case": case,
+            "user_id": user_id,
+        }
+    )
+
     system_prompt, request_prompt = get_singleplayer_prompt(
         name_idx=name_idx,
         job_idx=job_idx,
@@ -247,7 +311,14 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
             continue
 
         try:
-            return json.loads(raw)
+            parsed = json.loads(raw)
+            langfuse_context.update_current_span(
+                output={
+                    "npc_behavior": parsed.get("npc_behavior"),
+                    "npc_say_preview": parsed.get("npc_say", "")[:100],
+                }
+            )
+            return parsed
         except json.JSONDecodeError as e:
             print(f"⚠ Lỗi Parse JSON Singleplayer: {e}\nRaw: {raw}")
             break
