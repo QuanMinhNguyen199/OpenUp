@@ -65,9 +65,35 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
-Cả bạn và user đều sống ở Việt Nam, chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
+def get_customplay_prompt(
+    name: str,
+    relationship: str,
+    npcGoal: str,
+    userGoal: str,
+    turn: int,
+    location: str,
+    npcGender: str,
+    userGender: str,
+    # optional
+    additionalInfo: str,
+    job: str,
+    personality: str
+):
+    _job = f', nghề: {job}' if job != '' else ''
+    _additionalInfo = f' Thông tin thêm mà user cung cấp: "{additionalInfo}".' if additionalInfo != '' else ''
+    _personality = f', tính cách: {personality}' if personality != '' else ''
+    first_prompt = '' if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria='giao tiếp khéo léo, đạt được mục đích +10 điểm, đạt được mục đích nhưng làm mất lòng -5, không đạt được mục đích -15, không đạt mục đích mà còn làm mất thiện cảm -25')
+    system_prompt = f"""Bạn tên là {name}, giới tính: {npcGender}{_personality}{_job}, mối quan hệ với user: {relationship}. Mục tiêu của bạn là: {npcGoal}. User giới tính {userGender}, mục tiêu là: {userGoal}. 2 người đang ở {location}.{_additionalInfo} """
+    request_prompt = f"""Trả về định dạng JSON sau:
+{{
+{first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
+npc_say: lời thoại của bạn,
+}}
+Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+    return system_prompt, request_prompt
 
 # Keep but not use.
 # EVENT_PROMPT = (
