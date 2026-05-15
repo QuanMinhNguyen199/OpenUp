@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay
-from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
 # Khởi tạo Database
@@ -496,3 +496,13 @@ async def customplay(data: CustomplayRequest, db: Session = Depends(get_db), x_t
             personality=data.personality
         )
         return result
+
+@app.post("/check_customplay")
+def singleplayer(data: CheckCustomplayRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+    if len(data.history) != 6 or data.turn < 4 or data.score != 100:
+        raise HTTPException(status_code=400, detail="Lỗi data") 
+    user.total_xp += 7
+    user.level = calculate_level(user.total_xp)
+    db.commit()
+    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
