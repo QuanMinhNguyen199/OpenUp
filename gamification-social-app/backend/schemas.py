@@ -116,3 +116,9 @@ class CustomplayRequest(BaseModel):
     additionalInfo: str
     job: str
     personality: str
+
+class CheckCustomplayRequest(BaseModel):
+    user_id: int
+    history: List[ChatHistory]
+    turn: int
+    score: int
