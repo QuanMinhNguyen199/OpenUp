@@ -10,6 +10,7 @@ load_dotenv()
 from google import genai
 from openai import OpenAI
 from langfuse import observe, get_client
+from langfuse.openai import OpenAI
 
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
