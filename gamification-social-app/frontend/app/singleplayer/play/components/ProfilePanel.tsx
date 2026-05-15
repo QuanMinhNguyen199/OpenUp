@@ -25,9 +25,9 @@ export default function ProfilePanel({
     <div className="w-80 flex flex-col gap-6 h-fit sticky top-6 animate-in fade-in slide-in-from-left duration-700">
       {/* Profile Header Card */}
       <div className="relative group">
-        <div className="absolute inset-0 bg-[#00F0FF]/5 blur-xl group-hover:bg-[#00F0FF]/10 transition-all duration-700" />
+        <div className="absolute inset-0 bg-white/5 blur-xl group-hover:bg-[#00F0FF]/10 transition-all duration-700" />
 
-        <div className="relative bg-black/60 border border-[#00F0FF]/30 p-6 backdrop-blur-md rounded-br-3xl overflow-hidden">
+        <div className="relative bg-white/5 border border-[#00F0FF]/30 p-6 backdrop-blur-md rounded-br-3xl overflow-hidden shadow-2xl">
           {/* Corner Decors */}
           <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#00F0FF]/40" />
           <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#39FF14]/40" />

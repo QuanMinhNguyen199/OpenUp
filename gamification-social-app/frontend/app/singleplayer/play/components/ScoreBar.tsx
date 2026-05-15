@@ -23,7 +23,7 @@ export default function ScoreBar({ score }: ScoreBarProps) {
   }, [score, displayScore]);
 
   return (
-    <div className="w-48 bg-black/60 border border-[#39FF14]/30 p-6 backdrop-blur-md relative overflow-hidden group">
+    <div className="w-48 bg-white/5 border border-[#39FF14]/30 p-6 backdrop-blur-md relative overflow-hidden group shadow-2xl">
       {/* Background Glow */}
       <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#39FF14]/5 blur-3xl group-hover:bg-[#39FF14]/10 transition-all duration-700" />
       

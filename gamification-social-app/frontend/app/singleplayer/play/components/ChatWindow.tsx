@@ -79,7 +79,7 @@ export default function ChatWindow({
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 bg-black/40 border border-[#00F0FF]/20 rounded-lg p-6 backdrop-blur-xl relative overflow-hidden group">
+    <div className="flex-1 flex flex-col gap-4 bg-white/5 border border-[#00F0FF]/30 rounded-lg p-6 backdrop-blur-md relative overflow-hidden group shadow-2xl">
 
 
       <style>{`
@@ -103,7 +103,7 @@ export default function ChatWindow({
             <h2 className="text-xl font-black italic tracking-tighter text-[#39FF14] uppercase">
               {npcName}
             </h2>
-            <p className="text-[10px] font-bold text-[#00F0FF]/70 uppercase tracking-widest">
+            <p className="text-[10px] font-bold text-[#00F0FF]/80 uppercase tracking-widest">
               Đang trò chuyện...
             </p>
           </div>
@@ -123,19 +123,24 @@ export default function ChatWindow({
             <div className={`relative max-w-[85%] lg:max-w-[70%] group/msg`}>
               {/* Message Bubble with Cutout corners */}
               <div
-                className={`relative p-4 backdrop-blur-md ${msg.role === "user"
-                  ? "bg-[#39FF14]/10 border-r-4 border-[#39FF14]"
-                  : "bg-[#00F0FF]/10 border-l-4 border-[#00F0FF]"
-                  } border-y border-x border-white/5`}
+                className={`relative p-4 backdrop-blur-sm ${msg.role === "user"
+                  ? "bg-[#39FF14]/15 border-r-2 border-[#39FF14]/50"
+                  : "bg-[#00F0FF]/15 border-l-2 border-[#00F0FF]/50"
+                  } border-y border-x border-white/10`}
                 style={{
                   clipPath: msg.role === "user"
-                    ? "polygon(0 0, 95% 0, 100% 15%, 100% 100%, 5% 100%, 0 85%)"
-                    : "polygon(5% 0, 100% 0, 100% 85%, 95% 100%, 0 100%, 0 15%)"
+                    ? "polygon(0 0, 94% 0, 100% 12%, 100% 100%, 6% 100%, 0 88%)"
+                    : "polygon(6% 0, 100% 0, 100% 88%, 94% 100%, 0 100%, 0 12%)",
+                  filter: msg.role === "user" 
+                    ? "drop-shadow(0 4px 8px rgba(57, 255, 20, 0.1))" 
+                    : "drop-shadow(0 4px 8px rgba(0, 240, 255, 0.1))"
                 }}
+
+
               >
                 {/* Start Context */}
                 {msg.type === "start_context" && (
-                  <div className="text-xs font-black text-[#00F0FF] uppercase tracking-[0.2em] mb-3 pb-2 border-b border-[#00F0FF]/20">
+                  <div className="text-base font-bold text-[#00F0FF] mb-3 pb-2 border-b border-[#00F0FF]/20">
                     📍 {msg.content}
                   </div>
                 )}
@@ -144,7 +149,7 @@ export default function ChatWindow({
                 {msg.type === "normal" && (
                   <>
                     {msg.npc_behavior && msg.role === "npc" && (
-                      <div className="text-xs text-[#39FF14] font-bold italic mb-2 uppercase tracking-wide opacity-80">
+                      <div className="text-base text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
                         [{msg.npc_behavior}]
                       </div>
                     )}
@@ -198,7 +203,7 @@ export default function ChatWindow({
       <div className="relative mt-4">
         <div className="absolute -inset-1 bg-gradient-to-r from-[#39FF14]/20 to-[#00F0FF]/20 blur opacity-75" />
 
-        <div className="relative flex flex-col bg-black/80 border border-white/10 p-1">
+        <div className="relative flex flex-col bg-black/40 border border-white/10 p-1">
           {/* Terminal Header */}
           <div className="flex justify-between items-center px-3 py-1 bg-white/5 text-[9px] font-black text-[#39FF14] tracking-widest uppercase">
             <span>Social_Interface_v4.0</span>
