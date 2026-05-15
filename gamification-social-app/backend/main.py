@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
-from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer
+from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay
 from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
@@ -479,4 +479,20 @@ async def customplay(data: CustomplayRequest, db: Session = Depends(get_db), x_t
     user = verify_token(data.user_id, db, x_token)
     if data.turn < 1:
         raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
-    
+    else:
+        result = await gen_dialogue_customplay(
+            name=data.name,
+            relationship=data.relationship,
+            npcGoal=data.npcGoal,
+            userGoal=data.userGoal,
+            turn=data.turn,
+            location=data.location,
+            npcGender=data.npcGender,
+            userGender=data.userGender,
+            user_id=data.user_id,
+            history=data.history,
+            additionalInfo=data.additionalInfo,
+            job=data.job,
+            personality=data.personality
+        )
+        return result
