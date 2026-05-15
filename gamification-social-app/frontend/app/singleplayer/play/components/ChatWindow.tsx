@@ -79,7 +79,7 @@ export default function ChatWindow({
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-4 bg-white/5 border border-[#00F0FF]/30 rounded-lg p-6 backdrop-blur-md relative overflow-hidden group shadow-2xl">
+    <div className="flex-1 flex flex-col gap-3 bg-white/5 border border-[#00F0FF]/30 rounded-lg p-4 backdrop-blur-md relative overflow-hidden group shadow-2xl">
 
 
       <style>{`
@@ -96,7 +96,7 @@ export default function ChatWindow({
       `}</style>
 
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-6 relative">
+      <div className="flex items-center justify-between border-b border-white/10 pb-4 relative">
         <div className="flex items-center gap-4">
           <Avatar mood={moodState} size="md" isNpc />
           <div className="space-y-0.5">
