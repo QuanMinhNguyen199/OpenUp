@@ -120,11 +120,11 @@ export default function ChatWindow({
               <Avatar mood={msg.role === "npc" ? moodState : "neutral"} size="sm" isNpc={msg.role === "npc"} />
             </div>
 
-            <div 
+            <div
               className={`relative max-w-[85%] lg:max-w-[70%] group/msg`}
               style={{
-                filter: msg.role === "user" 
-                  ? "drop-shadow(0 4px 12px rgba(57, 255, 20, 0.15))" 
+                filter: msg.role === "user"
+                  ? "drop-shadow(0 4px 12px rgba(57, 255, 20, 0.15))"
                   : "drop-shadow(0 4px 12px rgba(0, 240, 255, 0.15))"
               }}
             >
@@ -139,11 +139,10 @@ export default function ChatWindow({
               >
                 {/* Inner Glass Content */}
                 <div
-                  className={`p-4 backdrop-blur-md border-white/10 ${
-                    msg.role === "user"
-                      ? "bg-[#39FF14]/20 border-r-2 border-[#39FF14]"
-                      : "bg-[#00F0FF]/20 border-l-2 border-[#00F0FF]"
-                  } border-y border-x`}
+                  className={`p-4 backdrop-blur-md border-white/10 ${msg.role === "user"
+                    ? "bg-[#39FF14]/20 border-r-2 border-[#39FF14]"
+                    : "bg-[#00F0FF]/20 border-l-2 border-[#00F0FF]"
+                    } border-y border-x`}
                 >
                   {/* Start Context */}
                   {msg.type === "start_context" && (
@@ -152,44 +151,44 @@ export default function ChatWindow({
                     </div>
                   )}
 
-                {/* Normal message content */}
-                {msg.type === "normal" && (
-                  <>
-                    {msg.npc_behavior && msg.role === "npc" && (
-                      <div className="text-base text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
-                        [{msg.npc_behavior}]
-                      </div>
-                    )}
-                    <p className="text-sm md:text-base text-gray-100 leading-relaxed font-medium">
-                      {msg.content}
-                    </p>
-                  </>
-                )}
-
-                {/* Score feedback for user messages */}
-                {msg.score_delta !== undefined && msg.role === "user" && (
-                  <div className="mt-4 pt-3 border-t border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className={`px-2 py-0.5 text-[10px] font-black rounded-sm ${msg.score_delta > 0 ? "bg-[#39FF14] text-black" : "bg-red-500 text-white"
-                        }`}>
-                        AFFINITY_{msg.score_delta > 0 ? "UP" : "DOWN"}
-                      </div>
-                      <span className={`text-sm font-black ${msg.score_delta > 0 ? "text-[#39FF14]" : "text-red-400"}`}>
-                        {msg.score_delta > 0 ? "+" : ""}{msg.score_delta}PTS
-                      </span>
-                    </div>
-                    {msg.reason && (
-                      <p className="text-[11px] text-[#00F0FF]/70 mt-2 font-mono italic">
-                        &gt; ANALYZE: {msg.reason}
+                  {/* Normal message content */}
+                  {msg.type === "normal" && (
+                    <>
+                      {msg.npc_behavior && msg.role === "npc" && (
+                        <div className="text-base text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
+                          [{msg.npc_behavior}]
+                        </div>
+                      )}
+                      <p className="text-sm md:text-base text-gray-100 leading-relaxed font-medium">
+                        {msg.content}
                       </p>
-                    )}
-                  </div>
-                )}
+                    </>
+                  )}
+
+                  {/* Score feedback for user messages */}
+                  {msg.score_delta !== undefined && msg.role === "user" && (
+                    <div className="mt-4 pt-3 border-t border-white/50">
+                      <div className="flex items-center gap-3">
+                        <div className={`px-2 py-0.5 text-[10px] font-black rounded-sm ${msg.score_delta > 0 ? "bg-[#39FF14] text-black" : "bg-red-500 text-white"
+                          }`}>
+                          {msg.score_delta > 0 ? "▲" : "▼"}
+                        </div>
+                        <span className={`text-sm font-black ${msg.score_delta > 0 ? "text-[#39FF14]" : "text-red-400"}`}>
+                          {msg.score_delta >= 0 ? "+" : ""}{msg.score_delta}{' ĐIỂM'}
+                        </span>
+                      </div>
+                      {msg.reason && (
+                        <p className="text-md text-[#00F0FF]/100 mt-2 font-mono italic">
+                          &gt; Lý do: {msg.reason}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
 
 
 
@@ -216,7 +215,7 @@ export default function ChatWindow({
         <div className="relative flex flex-col bg-black/40 border border-white/10 p-1">
           {/* Terminal Header */}
           <div className="flex justify-between items-center px-3 py-1 bg-white/5 text-[9px] font-black text-[#39FF14] tracking-widest uppercase">
-            <span>Social_Interface_v4.0</span>
+            <span>Nghĩ kỹ trước khi nói</span>
             <span className="animate-pulse">_READY</span>
           </div>
 
@@ -240,16 +239,16 @@ export default function ChatWindow({
               <div className="absolute inset-0 bg-[#39FF14] skew-x-[-20deg] group-hover/send:translate-x-full transition-transform duration-500" />
               <div className="absolute inset-0 border border-[#39FF14] skew-x-[-20deg]" />
               <span className="relative z-10 text-xs font-black text-black group-hover/send:text-[#39FF14] uppercase italic tracking-tighter">
-                Execute
+                Gửi
               </span>
             </button>
           </div>
 
           {/* Character Counter */}
-          <div className="flex justify-between items-center px-3 py-1 text-[9px] font-mono text-white/30 border-t border-white/5">
+          <div className="flex justify-between items-center px-3 py-1 text-[9px] font-mono text-white/70 border-t border-white/5">
             <div className="flex gap-4">
-              <span>STATUS: {gameLoading ? "BUSY" : "IDLE"}</span>
-              <span>BUFFER: {charCount}/300</span>
+              <span>TRẠNG THÁI: {gameLoading ? "ĐANG TÍNH TOÁN" : "SẴN SÀNG"}</span>
+              <span>KÝ TỰ: {charCount}/300</span>
             </div>
             <div className="flex gap-1">
               <div className={`w-1 h-1 ${charCount > 250 ? "bg-red-500" : "bg-[#39FF14]"}`} />
