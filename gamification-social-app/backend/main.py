@@ -204,7 +204,8 @@ async def story_mode(
         event=data.event,
         case=data.case,
         history=data.history,
-        current_turn=conv.current_turn  
+        current_turn=conv.current_turn,
+        user_id=data.user_id
     )
     
     # Khóa luồng: Buộc user phải chọn đáp án mới được đi tiếp
@@ -432,7 +433,8 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
             case=case,
             turn=data.turn,
             location=data.location,
-            history=data.history
+            history=data.history,
+            user_id=data.user_id
         )
         result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
         result['name'] = NAMES[name_idx]
@@ -456,7 +458,8 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
             turn=data.turn,
             location=data.location,
             history=data.history,
-            old_case=old_case
+            old_case=old_case,
+            user_id=data.user_id
         )
         result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
         return result
