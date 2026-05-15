@@ -26,11 +26,25 @@ openai_client = OpenAI(
     timeout=60
 )
 
+
+def _update_current_generation(**kwargs):
+    get_client().update_current_generation(**kwargs)
+
+
+def _clamp_quantity(value, lower: float = -25.0, upper: float = 25.0) -> float:
+    try:
+        quantity = float(value)
+    except (ValueError, TypeError):
+        return 0.0
+
+    return max(lower, min(upper, quantity))
+
+
 # --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
 @observe(as_type="generation")
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1, user_id: int = None):
     #"Đây là session của Chapter mấy"
-    get_client().update_current_span(
+    _update_current_generation(
         input={
             "game_mode": "story",
             "chapter": index + 1,
@@ -132,14 +146,10 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                         opt["option"] = re.sub(safe_regex, '', opt["option"], flags=re.IGNORECASE).strip()
                     # CLAMP quantity: chặn AI trả giá trị vượt range
                     if "quantity" in opt:
-                        try:
-                            q = float(opt["quantity"])
-                            opt["quantity"] = min(25.0, q) if q > 0 else max(-25.0, q)
-                        except (ValueError, TypeError):
-                            opt["quantity"] = 0.0
+                        opt["quantity"] = _clamp_quantity(opt["quantity"])
 
             # Set output on span: don't include the full options to avoid noise
-            get_client().update_current_span(
+            _update_current_generation(
                 output={
                     "npc_behavior": result.get("npc_behavior"),
                     "npc_say_preview": result.get("npc_say", "")[:100],
@@ -172,7 +182,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
     Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
     Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
     """
-    get_client().update_current_span(
+    _update_current_generation(
         input={
             "game_mode": "creative",
             "npc_name": npc_name,
@@ -218,7 +228,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
         result["turn"] = turn
         result["is_final_turn"] = (turn >= 3)
 
-        get_client().update_current_span(
+        _update_current_generation(
             output={
                 "npc_name": npc_name,
                 "turn": turn,
@@ -246,7 +256,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
 # SINGLEPLAYER MODE
 @observe(as_type="generation")
 async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0, user_id: int = None):
-    get_client().update_current_span(
+    _update_current_generation(
         input={
             "game_mode": "singleplayer",
             "turn": turn,
@@ -304,7 +314,7 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
 
         try:
             parsed = json.loads(raw)
-            get_client().update_current_span(
+            _update_current_generation(
                 output={
                     "npc_behavior": parsed.get("npc_behavior"),
                     "npc_say_preview": parsed.get("npc_say", "")[:100],
