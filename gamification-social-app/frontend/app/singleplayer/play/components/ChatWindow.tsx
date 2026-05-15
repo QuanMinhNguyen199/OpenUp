@@ -120,30 +120,37 @@ export default function ChatWindow({
               <Avatar mood={msg.role === "npc" ? moodState : "neutral"} size="sm" isNpc={msg.role === "npc"} />
             </div>
 
-            <div className={`relative max-w-[85%] lg:max-w-[70%] group/msg`}>
-              {/* Message Bubble with Cutout corners */}
+            <div 
+              className={`relative max-w-[85%] lg:max-w-[70%] group/msg`}
+              style={{
+                filter: msg.role === "user" 
+                  ? "drop-shadow(0 4px 12px rgba(57, 255, 20, 0.15))" 
+                  : "drop-shadow(0 4px 12px rgba(0, 240, 255, 0.15))"
+              }}
+            >
+              {/* Slanted Glass Wrapper */}
               <div
-                className={`relative p-4 backdrop-blur-sm ${msg.role === "user"
-                  ? "bg-[#39FF14]/15 border-r-2 border-[#39FF14]/50"
-                  : "bg-[#00F0FF]/15 border-l-2 border-[#00F0FF]/50"
-                  } border-y border-x border-white/10`}
+                className={`relative overflow-hidden`}
                 style={{
                   clipPath: msg.role === "user"
                     ? "polygon(0 0, 94% 0, 100% 12%, 100% 100%, 6% 100%, 0 88%)"
-                    : "polygon(6% 0, 100% 0, 100% 88%, 94% 100%, 0 100%, 0 12%)",
-                  filter: msg.role === "user" 
-                    ? "drop-shadow(0 4px 8px rgba(57, 255, 20, 0.1))" 
-                    : "drop-shadow(0 4px 8px rgba(0, 240, 255, 0.1))"
+                    : "polygon(6% 0, 100% 0, 100% 88%, 94% 100%, 0 100%, 0 12%)"
                 }}
-
-
               >
-                {/* Start Context */}
-                {msg.type === "start_context" && (
-                  <div className="text-base font-bold text-[#00F0FF] mb-3 pb-2 border-b border-[#00F0FF]/20">
-                    📍 {msg.content}
-                  </div>
-                )}
+                {/* Inner Glass Content */}
+                <div
+                  className={`p-4 backdrop-blur-md border-white/10 ${
+                    msg.role === "user"
+                      ? "bg-[#39FF14]/20 border-r-2 border-[#39FF14]"
+                      : "bg-[#00F0FF]/20 border-l-2 border-[#00F0FF]"
+                  } border-y border-x`}
+                >
+                  {/* Start Context */}
+                  {msg.type === "start_context" && (
+                    <div className="text-base font-bold text-[#00F0FF] mb-3 pb-2 border-b border-[#00F0FF]/20">
+                      📍 {msg.content}
+                    </div>
+                  )}
 
                 {/* Normal message content */}
                 {msg.type === "normal" && (
@@ -179,11 +186,14 @@ export default function ChatWindow({
                   </div>
                 )}
               </div>
-
-
             </div>
           </div>
-        ))}
+        </div>
+      ))}
+
+
+
+
 
         {gameLoading && (
           <div className="flex gap-4 animate-pulse">
