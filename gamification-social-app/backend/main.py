@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer
-from schemas import SingleplayerRequest, StoryModeRequest
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
 # Khởi tạo Database
@@ -464,3 +464,12 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
         return result
         
+@app.post("/check_singleplayer")
+def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+    if len(data.history) != 6 or len(data.num) != 5 or data.turn < 4 or data.score != 100 or NAMES[data.num[0]] != data.name or RELATIONSHIPS[data.num[2]] != data.relationship:
+        raise HTTPException(status_code=400, detail="Lỗi data") 
+    user.total_xp += 10
+    user.level = calculate_level(user.total_xp)
+    db.commit()
+    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}

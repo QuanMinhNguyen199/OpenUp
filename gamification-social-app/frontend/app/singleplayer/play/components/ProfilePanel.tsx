@@ -22,42 +22,71 @@ export default function ProfilePanel({
   const genderEmoji = isMale ? "🧑🏻" : "👩🏻";
 
   return (
-    <div className="w-72 bg-white/5 border border-[#00F0FF]/20 rounded-lg p-6 h-fit sticky top-6">
-      {/* Profile Header */}
-      <div className="flex flex-col gap-4">
-        {/* Avatar Circle */}
-        <div className="flex justify-center">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#39FF14]/30 to-[#00F0FF]/30 border-2 border-[#39FF14] flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.4)]">
-            <span className="text-4xl">{genderEmoji}</span>
+    <div className="w-80 flex flex-col gap-6 h-fit sticky top-6 animate-in fade-in slide-in-from-left duration-700">
+      {/* Profile Header Card */}
+      <div className="relative group">
+        <div className="absolute inset-0 bg-white/5 blur-xl group-hover:bg-[#00F0FF]/10 transition-all duration-700" />
+
+        <div className="relative bg-white/5 border border-[#00F0FF]/30 p-6 backdrop-blur-md rounded-br-3xl overflow-hidden shadow-2xl">
+          {/* Corner Decors */}
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#00F0FF]/40" />
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#39FF14]/40" />
+
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center gap-6 mt-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#39FF14]/20 blur-lg animate-pulse" />
+              <div className="relative h-24 w-24 flex items-center justify-center">
+                <div className="absolute inset-0 rotate-45 border-2 border-[#39FF14] bg-black/40 shadow-[0_0_15px_#39FF14]" />
+                <span className="relative z-10 text-4xl drop-shadow-[0_0_10px_#39FF14]">{genderEmoji}</span>
+              </div>
+            </div>
+
+            <div className="text-center space-y-1">
+              <h2 className="text-2xl font-black italic tracking-tighter text-[#39FF14] uppercase drop-shadow-[0_0_8px_#39FF14]">
+                {npcName}
+              </h2>
+              <div className="inline-block px-3 py-0.5 bg-[#00F0FF] text-black text-xs font-black skew-x-[-15deg] uppercase">
+                {npcJob}
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Name & Title */}
-        <div className="text-center border-b border-[#39FF14]/30 pb-4">
-          <h2 className="text-xl font-bold text-[#39FF14]">{npcName}</h2>
-          <p className="text-sm text-[#00F0FF]">{npcJob}</p>
-        </div>
+          {/* Divider Line */}
+          <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#00F0FF]/40 to-transparent my-6" />
 
-        {/* Info Items */}
-        <div className="space-y-4 text-sm">
-          {/* Relationship */}
-          <div className="flex items-start gap-3 pb-3 border-b border-[#00F0FF]/20">
-            <span className="text-[#39FF14] font-bold min-w-fit">👥 Mối quan hệ:</span>
-            <span className="text-[#00F0FF]/80">{relationship}</span>
+          {/* Info Items */}
+          <div className="space-y-5">
+            <div className="group/item">
+              <p className="text-xs font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-90">Mối quan hệ với bạn</p>
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 bg-[#00F0FF] rotate-45 shadow-[0_0_5px_#00F0FF]" />
+                <span className="text-sm font-medium text-gray-200 italic">{relationship}</span>
+              </div>
+            </div>
+
+            <div className="group/item">
+              <p className="text-xs font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-90">Địa điểm</p>
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 bg-[#00F0FF] rotate-45 shadow-[0_0_5px_#00F0FF]" />
+                <span className="text-sm font-medium text-gray-200 italic">{location}</span>
+              </div>
+            </div>
           </div>
 
-          {/* Location */}
-          <div className="flex items-start gap-3 pb-3 border-b border-[#00F0FF]/20">
-            <span className="text-[#39FF14] font-bold min-w-fit">📍 Địa điểm:</span>
-            <span className="text-[#00F0FF]/80">{location}</span>
-          </div>
-
-          {/* Info Note */}
-          <div className="text-xs italic text-[#00F0FF]/60 pt-2">
-            💡 Tập trung vào những bài học giao tiếp để chinh phục nhân vật này
+          {/* Footer Note */}
+          <div className="mt-8 pt-4 border-t border-white/5">
+            <p className="text-xs font-medium text-[#00F0FF]/60 italic flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-[#00F0FF] animate-ping" />
+              Đừng gửi thông tin cá nhân của bạn cho NPC!
+            </p>
           </div>
         </div>
       </div>
+
+
     </div>
   );
 }
+
+

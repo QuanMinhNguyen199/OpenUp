@@ -6,6 +6,32 @@ Ghi lại hành trình xây dựng sản phẩm mỗi tuần — những gì đ�
 
 ---
 
+## Tuần 6 — 15/5/2026
+**Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
+
+### Đã làm
+- singleplayer mode
+- story mode
+
+### Khó nhất tuần này
+- làm kịp deadline
+
+### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Gemini | vibecode | layout cơ bản |
+
+### Học được
+- k có
+
+### Nếu làm lại, sẽ làm khác
+- k có
+
+### Kế hoạch tuần tới
+- k có
+
+---
+
 ## Tuần 5 — 1/5/2026
 **Thành viên:** Nguyễn Minh Quân, Nguyễn Minh Trí
 

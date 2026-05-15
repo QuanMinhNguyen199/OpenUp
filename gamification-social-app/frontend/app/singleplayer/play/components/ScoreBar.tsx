@@ -23,26 +23,52 @@ export default function ScoreBar({ score }: ScoreBarProps) {
   }, [score, displayScore]);
 
   return (
-    <div className="w-40 bg-white/5 border border-[#39FF14]/30 rounded-lg p-4">
-      <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#39FF14]/70 mb-2">
-          Điểm Số
-        </p>
-        <div className={`text-4xl font-black text-[#39FF14] transition-all duration-300 ${pulse ? "scale-110" : "scale-100"}`}>
-          {displayScore}
-        </div>
-        {/* <div className="text-xs text-[#00F0FF]/60 mt-2">Khởi đầu: 20</div> */}
+    <div className="w-48 bg-white/5 border border-[#39FF14]/30 px-6 py-8 backdrop-blur-md relative overflow-hidden group shadow-2xl">
+      {/* Background Glow */}
+      <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#39FF14]/5 blur-3xl group-hover:bg-[#39FF14]/10 transition-all duration-700" />
 
-        {/* Score Bar Visualization */}
-        <div className="mt-4 bg-black/50 rounded-full h-1 overflow-hidden border border-[#39FF14]/20">
-          <div
-            className="bg-gradient-to-r from-[#39FF14] to-[#00F0FF] h-full transition-all duration-500"
-            style={{
-              width: `${Math.min(100, (displayScore / 100) * 100)}%`,
-            }}
-          />
+      <div className="relative flex flex-col items-center">
+
+
+        {/* Circular/Semi-circular Gauge Look (Simplified) */}
+        <div className="relative flex flex-col items-center gap-3">
+          {/* Main Score Display */}
+          <div className="relative">
+            <div className={`text-6xl font-black italic tracking-tighter text-white transition-all duration-300 ${pulse ? "scale-110 drop-shadow-[0_0_15px_#39FF14]" : "scale-100 drop-shadow-[0_0_8px_#39FF14]/50"}`}>
+              {displayScore}
+            </div>
+            <div className="absolute -top-2 -right-5 text-sm font-black text-[#00F0FF]">ĐIỂM</div>
+          </div>
+
+          {/* Segmented Progress Bar */}
+          <div className="flex flex-col gap-1.5 w-full">
+            {/* <div className="flex justify-between items-end mb-1">
+
+              <span className="text-[8px] font-bold text-[#39FF14]">{displayScore}%</span>
+            </div> */}
+
+            <div className="h-6 w-full flex gap-1 p-1 bg-white/5 border border-white/20 overflow-hidden">
+              {[...Array(10)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`flex-1 h-full transition-all duration-500 ${(displayScore / 10) > i
+                    ? "bg-gradient-to-t from-[#39FF14] to-[#00F0FF] shadow-[0_0_8px_#39FF14]/50"
+                    : "bg-white/15"
+                    }`}
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
+
+
       </div>
+
+      {/* Decorative Accents */}
+      <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#39FF14]/40" />
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#00F0FF]/40" />
     </div>
   );
 }
+

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Loading from "../../components/Loading";
 import HomeButton from "../../components/HomeButton";
 import AdminWarning from "../../components/AdminWarning";
+import SingleplayerResultPopup from "../../components/SingleplayerResultPopup";
 import ChatWindow from "./components/ChatWindow";
 import ProfilePanel from "./components/ProfilePanel";
 import ScoreBar from "./components/ScoreBar";
@@ -46,6 +47,7 @@ export default function ClientPage() {
   });
   const [pageLoading, setPageLoading] = useState(true);
   const initRequestedRef = useRef(false);
+  const [gameResult, setGameResult] = useState<"win" | "lose" | null>(null);
 
   // Auth & Fetch User
   useEffect(() => {
@@ -169,6 +171,70 @@ export default function ClientPage() {
     }
   };
 
+  const checkSingleplayerWin = async (payload: {
+    history: { role: string; content: string }[];
+    num: number[];
+    turn: number;
+    name: string;
+    relationship: string;
+    score: number;
+  }) => {
+    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/check_singleplayer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": token,
+          },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            history: payload.history,
+            num: payload.num,
+            turn: payload.turn,
+            name: payload.name,
+            relationship: payload.relationship,
+            score: payload.score,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Failed to check singleplayer win");
+      }
+    } catch (error) {
+      console.error("Error checking singleplayer win:", error);
+    }
+  };
+
+  const handleReplay = () => {
+    setGameState({
+      turn: 1,
+      npcName: "",
+      npcJob: "",
+      relationship: "",
+      location: "",
+      score: 20,
+      messages: [],
+      num: [],
+      loading: false,
+    });
+    setGameResult(null);
+    initRequestedRef.current = false;
+
+    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+    if (userId && token) {
+      initializeGame(userId, token);
+    }
+  };
+
   const handleSendMessage = async (userMessage: string) => {
     if (!userMessage.trim() || gameState.loading) return;
 
@@ -264,6 +330,32 @@ export default function ClientPage() {
         loading: false,
         num: data.num || prev.num,
       }));
+
+      // Check win/lose conditions
+      if (newScore >= 100) {
+        const historyPayload = updatedMessages
+          .filter((msg) => msg.role === "npc" || msg.role === "user")
+          .slice(-6)
+          .map((msg) => ({
+            role: msg.role === "npc" ? "assistant" : "user",
+            content: msg.content,
+          }));
+
+        await checkSingleplayerWin({
+          history: historyPayload,
+          num: data.num || gameState.num,
+          turn: gameState.turn + 1,
+          name: gameState.npcName,
+          relationship: gameState.relationship,
+          score: 100,
+        });
+        setGameResult("win");
+      } else if (newScore <= 0) {
+        // Lose - delay 0.5s before showing popup
+        setTimeout(() => {
+          setGameResult("lose");
+        }, 1000);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       setGameState((prev) => ({
@@ -277,6 +369,10 @@ export default function ClientPage() {
 
   if (userData?.role === "ADMIN") {
     return <AdminWarning modeName="Singleplayer" />;
+  }
+
+  if (gameResult) {
+    return <SingleplayerResultPopup mode={gameResult} onReplay={handleReplay} />;
   }
 
   return (
@@ -305,7 +401,7 @@ export default function ClientPage() {
         />
 
         {/* --- RIGHT PANEL: HOME + SCORE --- */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4 min-w-fit">
           <HomeButton />
           <ScoreBar score={gameState.score} />
         </div>
@@ -313,3 +409,5 @@ export default function ClientPage() {
     </main>
   );
 }
+
+
