@@ -6,14 +6,45 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 
 ---
 
+### Sprint 5 — 09/05 → 15/05/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| singleplayer mode, UI story mode | Trí | 15/5 | Xong |
+| backend story mode, add tracing | Quân | 15/5 | Xong |
+
+---
+
+### Sprint 4 — 25/04 → 01/05/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| ui lobby, loading, cursor | Trí | 1/5 | Xong |
+| refine ui home, login/register | Trí | 1/5 | Xong |
+| add guardrail | Quân | 1/5 | Xong |
+| update file seed cho supabase | Quân | 1/5 | Xong |
+| refactor lại backend | Quân | 1/5 | Xong |
+
+---
+
+### Sprint 3 — 18/04 → 24/04/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| Hoàn thiện bộ UI đồng nhất cho màn hình Login/Register | Trí | 24/04 | Xong |
+| deploy fe và be | Trí | 24/04 | Xong |
+| Chốt gameplay tổng quan cho story mode | Quân | 24/04 | Xong |
+
+---
+
 ### Sprint 2 — 11/04 → 17/04/2026
 
 | Task | Người làm | Deadline | Trạng thái |
 |---|---|---|---|
-| hoàn thiện flow login/register | Minh Trí | 15/04 | Chờ |
-| code màn bắt đầu cho role user | Minh Trí | 17/04 | Chờ |
-| tạo đc npcs with behaviors và collection| Minh Quân | 17/04 | Chờ |
-| tạo đc database cho admin và users riêng | Minh Quân | 17/04 | Chờ |
+| hoàn thiện flow login/register | Minh Trí | 15/04 | Xong |
+| code màn bắt đầu cho role user | Minh Trí | 17/04 | Xong |
+| tạo đc npcs with behaviors và collection| Minh Quân | 17/04 | Xong |
+| tạo đc database cho admin và users riêng | Minh Quân | 17/04 | Xong |
 
 ---
 
