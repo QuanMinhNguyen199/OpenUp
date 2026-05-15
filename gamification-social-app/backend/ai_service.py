@@ -9,7 +9,8 @@ load_dotenv()
 
 from google import genai
 from openai import OpenAI
-from langfuse.decorators import observe, langfuse_context
+from langfuse import observe, get_client
+from langfuse.openai import OpenAI
 
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
@@ -29,10 +30,7 @@ openai_client = OpenAI(
 @observe(as_type="generation")
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1, user_id: int = None):
     #"Đây là session của Chapter mấy"
-    langfuse_context.update_current_trace(
-        name=f"StoryMode_Chapter_{index + 1}",
-        session_id=f"Chap_{index + 1}_Turn_{current_turn}",
-        user_id=str(user_id) if user_id else None,
+    get_client().update_current_span(
         input={
             "game_mode": "story",
             "chapter": index + 1,
@@ -140,8 +138,8 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                         except (ValueError, TypeError):
                             opt["quantity"] = 0.0
 
-            # Set output on trace: don't include the full options to avoid noise
-            langfuse_context.update_current_span(
+            # Set output on span: don't include the full options to avoid noise
+            get_client().update_current_span(
                 output={
                     "npc_behavior": result.get("npc_behavior"),
                     "npc_say_preview": result.get("npc_say", "")[:100],
@@ -174,10 +172,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
     Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
     Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
     """
-    langfuse_context.update_current_trace(
-        name=f"CreativeMode_{npc_name}",
-        session_id=f"Creative_{npc_name}_Turn_{turn}",
-        user_id=str(user_id) if user_id else None,
+    get_client().update_current_span(
         input={
             "game_mode": "creative",
             "npc_name": npc_name,
@@ -223,7 +218,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
         result["turn"] = turn
         result["is_final_turn"] = (turn >= 3)
 
-        langfuse_context.update_current_span(
+        get_client().update_current_span(
             output={
                 "npc_name": npc_name,
                 "turn": turn,
@@ -251,10 +246,7 @@ async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, use
 # SINGLEPLAYER MODE
 @observe(as_type="generation")
 async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool, case: int, turn: int, location: str, history: list[object], old_case: int = 0, user_id: int = None):
-    langfuse_context.update_current_trace(
-        name=f"Singleplayer_Turn_{turn}",
-        session_id=f"Singleplayer_Run_{name_idx}_{turn}",
-        user_id=str(user_id) if user_id else None,
+    get_client().update_current_span(
         input={
             "game_mode": "singleplayer",
             "turn": turn,
@@ -312,7 +304,7 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
 
         try:
             parsed = json.loads(raw)
-            langfuse_context.update_current_span(
+            get_client().update_current_span(
                 output={
                     "npc_behavior": parsed.get("npc_behavior"),
                     "npc_say_preview": parsed.get("npc_say", "")[:100],
