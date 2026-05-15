@@ -31,13 +31,17 @@ def _update_current_generation(**kwargs):
     get_client().update_current_generation(**kwargs)
 
 
-def _clamp_quantity(value, lower: float = -25.0, upper: float = 25.0) -> float:
+def _clamp_quantity(value) -> float:
     try:
         quantity = float(value)
     except (ValueError, TypeError):
         return 0.0
 
-    return max(lower, min(upper, quantity))
+    if quantity > 0:
+        return min(25.0, quantity)
+    if quantity < 0:
+        return max(-25.0, quantity)
+    return 0.0
 
 
 # --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
