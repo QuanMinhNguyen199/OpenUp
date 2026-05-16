@@ -62,7 +62,14 @@ export default function LoginPage() {
       if (response.ok && data.status === "success") {
         localStorage.setItem("user_id", data.user_id.toString());
         localStorage.setItem("token", data.token);
-        router.push("/lobby");
+        localStorage.setItem("username", username);
+        localStorage.setItem("role", data.role || "PLAYER");
+
+        if (data.role === "ADMIN") {
+          router.push("/admin");
+        } else {
+          router.push("/lobby");
+        }
       } else {
         setErrorMessage("Tên tài khoản hoặc mật khẩu không đúng");
         setErrorVisible(true);
