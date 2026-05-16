@@ -13,6 +13,15 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (token) {
+      if (role === "ADMIN") router.push("/admin");
+      else router.push("/lobby");
+    }
+  }, [router]);
+
   // Validation states
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");

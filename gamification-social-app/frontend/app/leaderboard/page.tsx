@@ -29,11 +29,11 @@ export default function LeaderboardPage() {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/leaderboard`);
                 const data = await res.json();
                 setEntries(data);
-                
+
                 // Find my rank
                 const me = data.find((e: any) => e.username === localStorage.getItem("username"));
                 if (me) setMyRank(me);
-                
+
                 setLoading(false);
             } catch (error) {
                 console.error("Leaderboard fetch error:", error);
@@ -56,7 +56,7 @@ export default function LeaderboardPage() {
                             Leader <span className="text-white">board</span>
                         </h1>
                         <p className="text-xs font-bold text-[#00F0FF] uppercase tracking-[0.3em] opacity-70">
-                            Xếp hạng anh hùng hệ thống
+                            Xếp hạng hệ thống
                         </p>
                     </div>
                     <HomeButton />
@@ -66,7 +66,7 @@ export default function LeaderboardPage() {
                     {/* Leaderboard Table */}
                     <div className="relative border border-white/10 bg-black/40 backdrop-blur-xl p-1 overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#39FF14] to-transparent opacity-50" />
-                        
+
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-white/10 bg-white/5 font-black italic uppercase tracking-widest text-[10px] text-[#00F0FF]">
@@ -79,16 +79,15 @@ export default function LeaderboardPage() {
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {entries.map((entry) => (
-                                    <tr 
+                                    <tr
                                         key={entry.rank}
                                         className={`group hover:bg-white/5 transition-colors ${entry.username === localStorage.getItem("username") ? "bg-[#39FF14]/10" : ""}`}
                                     >
                                         <td className="px-6 py-5">
-                                            <span className={`text-xl font-black italic ${
-                                                entry.rank === 1 ? "text-yellow-400" : 
-                                                entry.rank === 2 ? "text-gray-300" : 
-                                                entry.rank === 3 ? "text-orange-500" : "text-gray-500"
-                                            }`}>
+                                            <span className={`text-xl font-black italic ${entry.rank === 1 ? "text-yellow-400" :
+                                                    entry.rank === 2 ? "text-gray-300" :
+                                                        entry.rank === 3 ? "text-orange-500" : "text-gray-500"
+                                                }`}>
                                                 #{entry.rank.toString().padStart(2, '0')}
                                             </span>
                                         </td>
