@@ -106,7 +106,7 @@ export default function MultiplayerChatWindow({
                         >
                             {/* Username label */}
                             {msg.role === "user" && msg.username && (
-                                <p className={`text-[10px] font-black mb-1 uppercase tracking-tighter ${msg.role === "user" ? "text-right" : "text-left"} ${msg.isLoser ? "text-gray-500" : "text-[#39FF14]"}`}>
+                                <p className={`text-sm font-black mb-1 uppercase tracking-tighter ${msg.role === "user" ? "text-right" : "text-left"} ${msg.isLoser ? "text-gray-500" : "text-[#39FF14]"}`}>
                                     {msg.username}
                                 </p>
                             )}
@@ -121,17 +121,17 @@ export default function MultiplayerChatWindow({
                                 }}
                             >
                                 <div className={`p-4 backdrop-blur-md border-white/10 ${msg.type === "start_context"
-                                        ? "bg-white/5 border border-white/10 text-gray-400 italic text-sm"
-                                        : msg.role === "npc"
-                                            ? "bg-[#FF6B35]/20 border-l-2 border-[#FF6B35] text-gray-100"
-                                            : msg.isLoser
-                                                ? "bg-gray-700/30 border-r-2 border-gray-500 text-gray-500"
-                                                : "bg-[#39FF14]/20 border-r-2 border-[#39FF14] text-gray-100"
+                                    ? "bg-white/5 border border-white/10 text-gray-250 italic text-sm"
+                                    : msg.role === "npc"
+                                        ? "bg-[#FF6B35]/20 border-l-2 border-[#FF6B35] text-gray-100"
+                                        : msg.isLoser
+                                            ? "bg-gray-700/30 border-r-2 border-gray-500 text-gray-500"
+                                            : "bg-[#39FF14]/20 border-r-2 border-[#39FF14] text-gray-100"
                                     } border-y border-x`}>
                                     {msg.npc_behavior && msg.role === "npc" && msg.type === "normal" && (
-                                        <div className="text-xs text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
-                                            {typeof msg.npc_behavior === 'string' ? `[${msg.npc_behavior}]` : 
-                                             `[${msg.npc_behavior.expression || ''} ${msg.npc_behavior.gesture ? '- ' + msg.npc_behavior.gesture : ''}]`}
+                                        <div className="text-sm text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
+                                            {typeof msg.npc_behavior === 'string' ? `[${msg.npc_behavior}]` :
+                                                `[${msg.npc_behavior.expression || ''} ${msg.npc_behavior.gesture ? '- ' + msg.npc_behavior.gesture : ''}]`}
                                         </div>
                                     )}
                                     <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap font-medium">
@@ -147,7 +147,7 @@ export default function MultiplayerChatWindow({
                 {opponentAnswered && !answered && (
                     <div className="flex gap-4 flex-row-reverse animate-in fade-in duration-300 opacity-60">
                         <div className="mt-1 shrink-0"><Avatar mood="neutral" size="sm" isNpc={false} /></div>
-                        <div className="px-5 py-3 bg-white/5 border border-white/10 text-gray-500 italic text-xs backdrop-blur-xl font-mono">
+                        <div className="px-5 py-3 bg-white/5 border border-white/10 text-gray-300 italic text-xs backdrop-blur-xl font-mono">
                             &gt; ĐỐI THỦ ĐANG CHỜ PHẢN HỒI CỦA BẠN...
                         </div>
                     </div>
