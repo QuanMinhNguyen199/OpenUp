@@ -43,9 +43,10 @@ export default function ChatWindow({
     for (let i = messages.length - 1; i >= 0; i--) {
       const msg = messages[i];
       if (msg.role === "user" && msg.score_delta !== undefined) {
-        if (msg.score_delta > 5) {
+        const delta = Number(msg.score_delta);
+        if (delta > 5) {
           return "happy";
-        } else if (msg.score_delta < -5) {
+        } else if (delta < -5) {
           return "sad";
         }
         return "neutral";

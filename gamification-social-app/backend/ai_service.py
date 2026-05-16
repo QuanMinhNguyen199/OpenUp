@@ -15,7 +15,7 @@ from langfuse.openai import OpenAI
 # Import các kịch bản từ các file prompt riêng biệt
 from prompts.story_prompts import get_story_mode_prompt
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
-from prompts.single_prompts import get_singleplayer_prompt
+from prompts.single_prompts import get_singleplayer_prompt, get_customplay_prompt, get_multiplayer_prompt
 
 # Khởi tạo Clients
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -334,6 +334,188 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
         "npc_say": "Xin lỗi nãy tôi đang mải suy nghĩ, bạn có thể nói lại được không?"
     }
 
+# CUSTOM PLAY
+
+@observe(as_type="generation")
+async def gen_dialogue_customplay(
+    name: str,
+    relationship: str,
+    npcGoal: str,
+    userGoal: str,
+    turn: int,
+    location: str,
+    npcGender: str,
+    userGender: str,
+    user_id: int,
+    history: list[object],
+    # optional
+    additionalInfo: str,
+    job: str,
+    personality: str
+):
+    _update_current_generation(
+        input={
+            "game_mode": "customplay",
+            "turn": turn,
+            "location": location,
+            "user_id": user_id,
+        }
+    )
+
+    system_prompt, request_prompt = get_customplay_prompt(
+        name=name,
+        relationship=relationship,
+        npcGoal=npcGoal,
+        userGoal=userGoal,
+        turn=turn,
+        location=location,
+        npcGender=npcGender,
+        userGender=userGender,
+        additionalInfo=additionalInfo,
+        job=job,
+        personality=personality
+    )
+
+    messages = [{"role": "system", "content": system_prompt}]    
+    last_6 = history[-6:]
+    for i in range(0, len(last_6), 2):
+        if i + 1 < len(last_6):
+            asst_msg = last_6[i]
+            user_msg = last_6[i+1]
+            asst_content = getattr(asst_msg, "content", '')
+            user_content = getattr(user_msg, "content", '')
+            combined_content = f"Bạn nói: '{asst_content}'. User nói: '{user_content}'"
+            messages.append({"role": "user", "content": combined_content})
+    messages.append({"role": "user", "content": request_prompt})
+
+    MAX_RETRIES = 2
+    raw = ""
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.5,
+                response_format={"type": "json_object"}
+            )
+            raw = response.choices[0].message.content.strip()
+
+        except Exception as e:
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Customplay: {e}")
+            if attempt == MAX_RETRIES:
+                break
+            await asyncio.sleep(1)
+            continue
+
+        try:
+            parsed = json.loads(raw)
+            _update_current_generation(
+                output={
+                    "npc_behavior": parsed.get("npc_behavior"),
+                    "npc_say_preview": parsed.get("npc_say", "")[:100],
+                }
+            )
+            return parsed
+        except json.JSONDecodeError as e:
+            print(f"⚠ Lỗi Parse JSON Customplay: {e}\nRaw: {raw}")
+            break
+
+    return {
+        "npc_behavior": "chớp mắt",
+        "npc_say": "Xin lỗi nãy tôi đang mải suy nghĩ, bạn có thể nói lại được không?"
+    }
+
+
+# MULTIPLAYER MODE
+# @observe(as_type="generation")
+async def gen_dialogue_multiplayer(
+    name_idx: int, 
+    job_idx: int, 
+    relationship_idx: int, 
+    location_idx: int,
+    lesson_idx: int, 
+    user_say1: str,
+    user_say2: str,
+    case: int, 
+    turn: int, 
+    history: list[object],
+    old_case: int = 0,
+    # user_id: int = None
+):
+    # _update_current_generation(
+    #     input={
+    #         "game_mode": "singleplayer",
+    #         "turn": turn,
+    #         "location": location,
+    #         "event": event,
+    #         "case": case,
+    #         "user_id": user_id,
+    #     }
+    # )
+
+    system_prompt, request_prompt = get_multiplayer_prompt(
+        name_idx=name_idx,
+        job_idx=job_idx,
+        relationship_idx=relationship_idx,
+        location_idx=location_idx,
+        lesson_idx=lesson_idx,
+        user_say1=user_say1,
+        user_say2=user_say2,
+        case=case,
+        turn=turn,
+        old_case=old_case
+    )
+    if system_prompt is None or request_prompt is None:
+        return {"error": "Dữ liệu lỗi"}
+
+    messages = [{"role": "system", "content": system_prompt}]    
+    last_6 = history[-5:]
+    for i in range(0, len(last_6), 2):
+        asst_content = getattr(last_6[i], "content", '')
+        if i + 1 < len(last_6):
+            user_content = getattr(last_6[i + 1], "content", '')
+            combined_content = f"Bạn nói: '{asst_content}'. User nói: '{user_content}'"
+        else:
+            combined_content = f"Bạn nói: '{asst_content}'"
+        messages.append({"role": "user", "content": combined_content})
+    messages.append({"role": "user", "content": request_prompt})
+
+    MAX_RETRIES = 2
+    raw = ""
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.5,
+                response_format={"type": "json_object"}
+            )
+            raw = response.choices[0].message.content.strip()
+
+        except Exception as e:
+            print(f"⚠ [{attempt}/{MAX_RETRIES}] Lỗi Multiplayer: {e}")
+            if attempt == MAX_RETRIES:
+                break
+            await asyncio.sleep(1)
+            continue
+
+        try:
+            parsed = json.loads(raw)
+            # _update_current_generation(
+            #     output={
+            #         "npc_behavior": parsed.get("npc_behavior"),
+            #         "npc_say_preview": parsed.get("npc_say", "")[:100],
+            #     }
+            # )
+            return parsed
+        except json.JSONDecodeError as e:
+            print(f"⚠ Lỗi Parse JSON Multiplayer: {e}\nRaw: {raw}")
+            break
+
+    return {
+        "npc_behavior": "chớp mắt",
+        "npc_say": "Xin lỗi nãy tôi đang mải suy nghĩ, bạn có thể nói lại được không?"
+    }
 
 
 # --- TEST CODE ---

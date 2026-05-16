@@ -25,6 +25,7 @@ interface GameState {
   npcJob: string;
   relationship: string;
   location: string;
+  userGoal?: string;
   score: number;
   messages: Message[];
   num: number[];
@@ -40,6 +41,7 @@ export default function ClientPage() {
     npcJob: "",
     relationship: "",
     location: "",
+    userGoal: "",
     score: 20,
     messages: [],
     num: [],
@@ -96,24 +98,64 @@ export default function ClientPage() {
 
   const initializeGame = async (userId: string, token: string) => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/singleplayer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-token": token,
-          },
-          body: JSON.stringify({
-            user_id: parseInt(userId),
-            turn: 1,
-            history: [],
-            num: [],
-            event: false,
-            location: "Không rõ",
-          }),
+      const mode = new URLSearchParams(window.location.search).get("mode");
+      let res;
+      let isCustom = mode === "custom";
+      let customData: any = null;
+
+      if (isCustom) {
+        const stored = sessionStorage.getItem("customPlayData");
+        if (!stored) {
+          router.push("/singleplayer");
+          return;
         }
-      );
+        customData = JSON.parse(stored);
+
+        res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/customplay`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-token": token,
+            },
+            body: JSON.stringify({
+              user_id: parseInt(userId),
+              turn: 1,
+              history: [],
+              name: customData.name,
+              relationship: customData.relationship,
+              npcGoal: customData.npcGoal,
+              userGoal: customData.userGoal,
+              location: customData.location,
+              npcGender: customData.npcGender,
+              userGender: customData.userGender,
+              additionalInfo: customData.additionalInfo || "",
+              job: customData.job || "",
+              personality: customData.personality || "",
+            }),
+          }
+        );
+      } else {
+        res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/singleplayer`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-token": token,
+            },
+            body: JSON.stringify({
+              user_id: parseInt(userId),
+              turn: 1,
+              history: [],
+              num: [],
+              event: false,
+              location: "Không rõ",
+            }),
+          }
+        );
+      }
 
       if (!res.ok) {
         throw new Error("Failed to initialize game");
@@ -127,14 +169,33 @@ export default function ClientPage() {
       }
 
       // Extract data from backend response (Turn 1)
-      const npcName = data.name || "Unknown";
-      const startContext = data.start_context || "";
-      const location = data.location || "Không rõ";
-      const npcBehavior = data.npc_behavior || "";
-      const npcSay = data.npc_say || "";
-      const num = data.num || [];
-      const job = data.job || "Không rõ";
-      const relationship = data.relationship || "Không rõ";
+      let npcName = "Unknown";
+      let startContext = "";
+      let location = "Không rõ";
+      let npcBehavior = data.npc_behavior || "";
+      let npcSay = data.npc_say || "";
+      let num: number[] = [];
+      let job = "Không rõ";
+      let relationship = "Không rõ";
+      let userGoal = "";
+
+      if (isCustom && customData) {
+        npcName = customData.name;
+        location = customData.location;
+        job = customData.job || "Không rõ";
+        relationship = customData.relationship;
+        userGoal = customData.userGoal;
+        startContext = `Bạn đang trong tình huống tùy chỉnh với ${npcName}.`;
+        // In custom mode, num is empty, gender is based on customData
+        num = customData.npcGender === 'Nam' ? [0] : [1];
+      } else {
+        npcName = data.name || "Unknown";
+        startContext = data.start_context || "";
+        location = data.location || "Không rõ";
+        num = data.num || [];
+        job = data.job || "Không rõ";
+        relationship = data.relationship || "Không rõ";
+      }
 
       // Add messages
       const initialMessages: Message[] = [];
@@ -163,6 +224,7 @@ export default function ClientPage() {
         npcJob: job,
         relationship,
         location,
+        userGoal,
         messages: initialMessages,
         num,
       }));
@@ -185,23 +247,39 @@ export default function ClientPage() {
     if (!userId || !token) return;
 
     try {
+      const mode = new URLSearchParams(window.location.search).get("mode");
+      const isCustom = mode === "custom";
+
+      let endpoint = "/check_singleplayer";
+      let bodyData: any = {
+        user_id: parseInt(userId),
+        history: payload.history,
+        num: payload.num,
+        turn: payload.turn,
+        name: payload.name,
+        relationship: payload.relationship,
+        score: payload.score,
+      };
+
+      if (isCustom) {
+        endpoint = "/check_customplay";
+        bodyData = {
+          user_id: parseInt(userId),
+          history: payload.history,
+          turn: payload.turn,
+          score: payload.score,
+        };
+      }
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/check_singleplayer`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${endpoint}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "x-token": token,
           },
-          body: JSON.stringify({
-            user_id: parseInt(userId),
-            history: payload.history,
-            num: payload.num,
-            turn: payload.turn,
-            name: payload.name,
-            relationship: payload.relationship,
-            score: payload.score,
-          }),
+          body: JSON.stringify(bodyData),
         }
       );
 
@@ -214,17 +292,13 @@ export default function ClientPage() {
   };
 
   const handleReplay = () => {
-    setGameState({
+    setGameState((prev) => ({
+      ...prev,
       turn: 1,
-      npcName: "",
-      npcJob: "",
-      relationship: "",
-      location: "",
       score: 20,
       messages: [],
-      num: [],
       loading: false,
-    });
+    }));
     setGameResult(null);
     initRequestedRef.current = false;
 
@@ -268,24 +342,63 @@ export default function ClientPage() {
           content: m.content,
         }));
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/singleplayer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-token": token,
-          },
-          body: JSON.stringify({
-            user_id: parseInt(userId),
-            turn: gameState.turn + 1,
-            history,
-            num: gameState.num,
-            location: gameState.location,
-            event: false,
-          }),
+      const mode = new URLSearchParams(window.location.search).get("mode");
+      const isCustom = mode === "custom";
+      let res;
+
+      if (isCustom) {
+        const stored = sessionStorage.getItem("customPlayData");
+        if (!stored) {
+          router.push("/singleplayer");
+          return;
         }
-      );
+        const customData = JSON.parse(stored);
+
+        res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/customplay`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-token": token,
+            },
+            body: JSON.stringify({
+              user_id: parseInt(userId),
+              turn: gameState.turn + 1,
+              history,
+              name: customData.name,
+              relationship: customData.relationship,
+              npcGoal: customData.npcGoal,
+              userGoal: customData.userGoal,
+              location: customData.location,
+              npcGender: customData.npcGender,
+              userGender: customData.userGender,
+              additionalInfo: customData.additionalInfo || "",
+              job: customData.job || "",
+              personality: customData.personality || "",
+            }),
+          }
+        );
+      } else {
+        res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/singleplayer`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-token": token,
+            },
+            body: JSON.stringify({
+              user_id: parseInt(userId),
+              turn: gameState.turn + 1,
+              history,
+              num: gameState.num,
+              location: gameState.location,
+              event: false,
+            }),
+          }
+        );
+      }
 
       if (!res.ok) {
         throw new Error("Failed to get NPC response");
@@ -296,7 +409,7 @@ export default function ClientPage() {
       // Parse NPC response
       const npcBehavior = data.npc_behavior || "";
       const npcSay = data.npc_say || "";
-      const score = data.score !== undefined ? data.score : 0;
+      const score = data.score !== undefined ? (Number(data.score) || 0) : 0;
       const reason = data.reason || "";
 
       // Update user message with score feedback (inject into last user message)
@@ -354,7 +467,7 @@ export default function ClientPage() {
         // Lose - delay 0.5s before showing popup
         setTimeout(() => {
           setGameResult("lose");
-        }, 1000);
+        }, 2000);
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -390,6 +503,7 @@ export default function ClientPage() {
           relationship={gameState.relationship}
           location={gameState.location}
           num={gameState.num}
+          userGoal={gameState.userGoal}
         />
 
         {/* --- CENTER PANEL: CHAT WINDOW --- */}

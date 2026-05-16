@@ -2,25 +2,50 @@ import hashlib
 import math
 import re
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 from typing_extensions import TypedDict
 import random
 from redis_client import update_leaderboard
-from fastapi import FastAPI, Depends, HTTPException, status, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Header, WebSocket, WebSocketDisconnect, Query, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import traceback
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
-from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer
-from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest
+from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay, gen_dialogue_multiplayer
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest, MultiplayerRequest, CheckMultiplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
-from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
+from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS, LOCATIONS
+from game_manager import MatchmakingQueue, get_rank
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
+# --- GLOBAL LOGS FOR ADMIN ---
+ERROR_LOGS = []
+
+def log_error(msg: str, detail: str = ""):
+    global ERROR_LOGS
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "message": msg,
+        "detail": str(detail)
+    }
+    ERROR_LOGS.append(log_entry)
+    if len(ERROR_LOGS) > 100: ERROR_LOGS.pop(0)
+    print(f"ERROR: {msg} | {detail}")
+
 app = FastAPI(title="OpenUp! Social RPG API - Final Secure Version")
+matchmaking = MatchmakingQueue()
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    err_msg = str(exc)
+    detail = traceback.format_exc()
+    log_error(f"Lỗi Server chưa bắt: {err_msg}", detail)
+    return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 app.add_middleware(
     CORSMiddleware,
@@ -140,6 +165,7 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
     
     random_token = secrets.token_hex(32)
     user.token = random_token
+    user.last_login = datetime.utcnow()
     db.commit()
     
     return {
@@ -147,17 +173,62 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
         "user_id": user.id, 
         "token": random_token, 
         "username": user.username,
-        "current_chap": user.chap
+        "current_chap": user.chap,
+        "role": user.role
+    }
+
+@app.get("/api/leaderboard")
+def get_leaderboard(db: Session = Depends(get_db)):
+    users = db.query(models.User).filter(models.User.role == "PLAYER").order_by(models.User.total_xp.desc()).limit(100).all()
+    result = []
+    for idx, u in enumerate(users):
+        result.append({
+            "id": u.id,
+            "rank": idx + 1,
+            "username": u.username,
+            "total_xp": u.total_xp,
+            "level": u.level,
+            "rank_title": get_rank(u.level)
+        })
+    return result
+
+@app.get("/api/admin/stats")
+def get_admin_stats(db: Session = Depends(get_db), x_token: str = Header(None)):
+    # Verify admin token
+    admin = db.query(models.User).filter(models.User.token == x_token, models.User.role == "ADMIN").first()
+    if not admin: raise HTTPException(status_code=403, detail="Unauthorized")
+
+    now = datetime.utcnow()
+    dau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=1)).count()
+    mau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=30)).count()
+    total_users = db.query(models.User).count()
+    
+    # Generate mock 7-day trend data for chart
+    chart_data = []
+    base_dau = dau
+    for i in range(7, 0, -1):
+        day_date = (now - timedelta(days=i)).strftime("%d/%m")
+        mock_val = max(0, base_dau - random.randint(-5, 10))
+        chart_data.append({"date": day_date, "dau": mock_val})
+    chart_data.append({"date": "Hôm nay", "dau": dau})
+
+    return {
+        "dau": dau,
+        "mau": mau,
+        "total_users": total_users,
+        "chart_data": chart_data,
+        "error_logs": ERROR_LOGS
     }
 
 
-@app.post("/api/logout/{user_id}")
-async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
-    user = verify_token(user_id, db, x_token)
-    user.token = None
-    db.commit()
 
-    return {"status": "success", "message": "Đăng xuất thành công"}
+# @app.post("/api/logout/{user_id}")
+# async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+#     user = verify_token(user_id, db, x_token)
+#     user.token = None
+#     db.commit()
+
+#     return {"status": "success", "message": "Đăng xuất thành công"}
 
 
 # --- ENDPOINTS GAMEPLAY ---
@@ -465,7 +536,7 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         return result
         
 @app.post("/check_singleplayer")
-def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+def check_singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
     if len(data.history) != 6 or len(data.num) != 5 or data.turn < 4 or data.score != 100 or NAMES[data.num[0]] != data.name or RELATIONSHIPS[data.num[2]] != data.relationship:
         raise HTTPException(status_code=400, detail="Lỗi data") 
@@ -473,3 +544,122 @@ def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), 
     user.level = calculate_level(user.total_xp)
     db.commit()
     return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
+
+@app.post("/customplay")
+async def customplay(data: CustomplayRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+    if data.turn < 1:
+        raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
+    else:
+        result = await gen_dialogue_customplay(
+            name=data.name,
+            relationship=data.relationship,
+            npcGoal=data.npcGoal,
+            userGoal=data.userGoal,
+            turn=data.turn,
+            location=data.location,
+            npcGender=data.npcGender,
+            userGender=data.userGender,
+            user_id=data.user_id,
+            history=data.history,
+            additionalInfo=data.additionalInfo,
+            job=data.job,
+            personality=data.personality
+        )
+        return result
+
+@app.post("/check_customplay")
+def check_customplay(data: CheckCustomplayRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+    user = verify_token(data.user_id, db, x_token)
+    if len(data.history) != 6 or data.turn < 4 or data.score != 100:
+        raise HTTPException(status_code=400, detail="Lỗi data") 
+    user.total_xp += 7
+    user.level = calculate_level(user.total_xp)
+    db.commit()
+    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
+
+@app.post("/logout")
+def logout(x_token: str = Header(None), db: Session = Depends(get_db)):
+    if not x_token:
+        raise HTTPException(status_code=401, detail="Missing token")
+    user = db.query(models.User).filter(models.User.token == x_token).first()
+    if user:
+        db.commit()
+    return {"status": "success", "message": "Logged out"}
+
+
+
+# ─── MULTIPLAYER WEBSOCKET ─────────────────────────────
+import asyncio, json, time as _time
+
+@app.websocket("/ws/multiplayer")
+async def ws_multiplayer(
+    ws: WebSocket,
+    user_id: int = Query(...),
+    token: str = Query(...),
+    room_id: str = Query(default=""),
+):
+    db = database.SessionLocal()
+    try:
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if not user or user.token != token:
+            await ws.close(code=4001, reason="Auth failed")
+            return
+        username = user.username
+        level = user.level
+    finally:
+        db.close()
+
+    await ws.accept()
+
+    # ── MODE 1: Matchmaking (no room_id) ──
+    if not room_id:
+        try:
+            await matchmaking.join(user_id, ws, username, level)
+            # keep alive until client disconnects or match found
+            while True:
+                data = await ws.receive_json()
+                if data.get("type") == "cancel_match":
+                    await matchmaking.leave(user_id)
+                    await ws.send_json({"type": "queue_left"})
+                    break
+        except WebSocketDisconnect:
+            await matchmaking.leave(user_id)
+        return
+
+    # ── MODE 2: Game room (with room_id) ──
+    room = await matchmaking.join_room(room_id, user_id, ws)
+    if not room:
+        await ws.send_json({"type": "error", "message": "Phòng không tồn tại"})
+        await ws.close()
+        return
+
+    game_task = None
+    try:
+        # start game when both connected
+        if room.both_connected():
+            game_task = asyncio.create_task(room.run())
+
+        # listen for answers
+        while room.game_active:
+            data = await ws.receive_json()
+            if data.get("type") == "user_answer":
+                content = data.get("content", "").strip()
+                ts = _time.time()
+                room.submit_answer(user_id, content, ts)
+                # notify this user
+                await ws.send_json({"type": "you_answered"})
+                # notify opponent
+                opp_ws = room.p2_ws if user_id == room.p1["user_id"] else room.p1_ws
+                if opp_ws:
+                    try:
+                        await opp_ws.send_json({"type": "opponent_answered"})
+                    except Exception:
+                        pass
+    except WebSocketDisconnect:
+        await room.handle_disconnect(user_id)
+    finally:
+        if game_task and not game_task.done():
+            game_task.cancel()
+        if not room.game_active:
+            matchmaking.remove_room(room_id)

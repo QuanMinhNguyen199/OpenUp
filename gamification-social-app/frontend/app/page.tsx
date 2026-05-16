@@ -1,7 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Typewriter from "./components/Typewriter";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (token) {
+      if (role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/lobby");
+      }
+    }
+  }, [router]);
+
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden">
       {/* Background Video */}

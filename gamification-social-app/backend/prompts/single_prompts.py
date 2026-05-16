@@ -5,6 +5,8 @@ JOBS = ["Giáo viên", "Bác sĩ", "Y tá", "Dược sĩ", "Kỹ sư xây dựng
 
 RELATIONSHIPS = ["bạn bè", "bạn thân", "người quen", "đồng nghiệp", "bạn cùng lớp", "họ hàng", "hàng xóm", "người lạ"]
 
+LOCATIONS = ["trường học", "bệnh viện", "công ty", "nhà hàng", "quán cafe", "rạp chiếu phim", "công viên", "bãi biển", "khu du lịch", "trung tâm thương mại", "chợ", "ngân hàng", "nghĩa địa", "bảo tàng", "phòng tập gym", "thư viện", "sảnh chung cư", "sân vận động", "công ty"]
+
 LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
@@ -35,11 +37,18 @@ EVENT_PROMPT = {
 }
 
 FIRST_PROMPT = {
-    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
+    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn, địa điểm, KO đc tiết lộ tính cách, mục đích của bạn),\nlocation: địa điểm,\n",
     False: "score: chấm điểm lượt trả lời cuối của user (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n"
 }
 
-CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường (cần tiếp diễn cuộc hội thoại). ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
+FIRST_PROMPT_MULTI = {
+    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn, địa điểm, KO đc tiết lộ tính cách, mục đích của bạn),\n",
+    '2': 'score1: chấm điểm cách trả lời 1 của user: "{user_say1}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason1: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\nscore2: chấm điểm cách trả lời 2 của user: "{user_say2}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason2: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n',
+    '1': 'score: chấm điểm câu trả lời của user: "{user_say}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n',
+    '0': 'score: chấm điểm câu trả lời của user: "..."  (từ 1 đến 3),\n', # để cho npc biết câu trả lời của user chứ FE k dùng score trong case này
+}
+
+CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường. ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
@@ -65,7 +74,82 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
-Cả bạn và user đều sống ở Việt Nam, chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+    return system_prompt, request_prompt
+
+def get_customplay_prompt(
+    name: str,
+    relationship: str,
+    npcGoal: str,
+    userGoal: str,
+    turn: int,
+    location: str,
+    npcGender: str,
+    userGender: str,
+    # optional
+    additionalInfo: str,
+    job: str,
+    personality: str
+):
+    _job = f', nghề: {job}' if job != '' else ''
+    _additionalInfo = f' Thông tin thêm mà user cung cấp: "{additionalInfo}".' if additionalInfo != '' else ''
+    _personality = f', tính cách: {personality}' if personality != '' else ''
+    first_prompt = '' if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria='giao tiếp khéo léo, đạt được mục đích +10 điểm, đạt được mục đích nhưng làm mất lòng -5, không đạt được mục đích -15, không đạt mục đích mà còn làm mất thiện cảm -25')
+    system_prompt = f"""Bạn tên là {name}, giới tính: {npcGender}{_personality}{_job}, mối quan hệ với user: {relationship}. Mục tiêu của bạn là: {npcGoal}. User giới tính {userGender}, mục tiêu là: {userGoal}. 2 người đang ở {location}.{_additionalInfo} """
+    request_prompt = f"""Trả về định dạng JSON sau:
+{{
+{first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
+npc_say: lời thoại của bạn,
+}}
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+    return system_prompt, request_prompt
+
+def get_multiplayer_prompt(
+    name_idx: int, 
+    job_idx: int, 
+    relationship_idx: int, 
+    location_idx: int,
+    lesson_idx: int, 
+    user_say1: str,
+    user_say2: str,
+    case: int = 0, 
+    turn: int = 1, 
+    old_case: int = 0
+):
+    if name_idx < 0 or name_idx >= len(NAMES):
+        return None, None
+    if job_idx < 0 or job_idx >= len(JOBS):
+        return None, None
+    if relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS):
+        return None, None
+    if location_idx < 0 or location_idx >= len(LOCATIONS):
+        return None, None
+    if lesson_idx < 0 or lesson_idx >= len(LESSONS):
+        return None, None
+    if case > 3 or case < 0:
+        return None, None
+    
+    case_desc = LESSONS[lesson_idx]['cases'][case][0] if case < 2 else CASE2[0]
+    case_crit = LESSONS[lesson_idx]['cases'][old_case][1] if old_case < 2 else CASE2[1]
+    job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
+    first_prompt = ''
+    if turn == 1:
+        first_prompt = FIRST_PROMPT_MULTI[True]
+    else:
+        if user_say1 != '' and user_say2 != '':
+            first_prompt = FIRST_PROMPT_MULTI['2'].format(criteria=case_crit, user_say1=user_say1, user_say2=user_say2)
+        elif user_say1 == '' and user_say2 == '':
+            first_prompt = FIRST_PROMPT_MULTI['0']
+        else:
+            first_prompt = FIRST_PROMPT_MULTI['1'].format(criteria=case_crit, user_say=(user_say1 if user_say1 != '' else user_say2))
+
+    system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}, địa điểm: {LOCATIONS[location_idx]}. {LESSONS[lesson_idx]['describe']}"""
+    request_prompt = f"""{case_desc}Trả về định dạng JSON sau:
+{{
+{first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
+npc_say: lời thoại của bạn
+}}
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
 

@@ -51,7 +51,18 @@ export default function LobbyPage() {
 
 
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/logout`, {
+                    method: "POST",
+                    headers: { "x-token": token },
+                });
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        }
         localStorage.removeItem("user_id");
         localStorage.removeItem("token");
         router.push("/");
@@ -155,11 +166,12 @@ export default function LobbyPage() {
                 {/* MIDDLE: Main Menu (Right Aligned) */}
                 <div className="flex flex-col items-end gap-8 pr-10">
                     {menuItems.map((item, idx) => (
-                        <button 
-                            key={idx} 
+                        <button
+                            key={idx}
                             onClick={() => {
                                 if (item.name === "Singleplayer") router.push("/singleplayer");
                                 else if (item.name === "Story Mode") router.push("/story-mode");
+                                else if (item.name === "Multiplayer") router.push("/multiplayer");
                             }}
                             className="group relative text-right transition-transform hover:scale-110 cursor-pointer"
                         >
@@ -187,9 +199,12 @@ export default function LobbyPage() {
                     </div>
 
                     <div className="flex gap-10">
-                        <button className="group flex flex-col items-center gap-1 cursor-pointer">
+                        <button
+                            onClick={() => router.push("/leaderboard")}
+                            className="group flex flex-col items-center gap-1 cursor-pointer"
+                        >
                             <span className="h-1 w-12 bg-gray-700 transition-colors group-hover:bg-[#39FF14]" />
-                            <span className="text-base font-bold italic tracking-tighter text-gray-400 group-hover:text-white">CÀI ĐẶT</span>
+                            <span className="text-base font-bold italic tracking-tighter text-gray-400 group-hover:text-white">LEADERBOARD</span>
                         </button>
                         <button onClick={handleLogout} className="group flex flex-col items-center gap-1 cursor-pointer">
                             <span className="h-1 w-12 bg-gray-700 transition-colors group-hover:bg-red-500" />

@@ -8,6 +8,7 @@ interface ProfilePanelProps {
   relationship: string;
   location: string;
   num: number[];
+  userGoal?: string;
 }
 
 export default function ProfilePanel({
@@ -16,6 +17,7 @@ export default function ProfilePanel({
   relationship,
   location,
   num,
+  userGoal,
 }: ProfilePanelProps) {
   // Determine gender from first num (even = male, odd = female)
   const isMale = num.length > 0 ? num[0] % 2 === 0 : true;
@@ -72,6 +74,16 @@ export default function ProfilePanel({
                 <span className="text-sm font-medium text-gray-200 italic">{location}</span>
               </div>
             </div>
+
+            {userGoal && (
+              <div className="group/item">
+                <p className="text-xs font-bold text-[#39FF14] uppercase tracking-[0.2em] mb-1.5 opacity-90">Mục tiêu của bạn</p>
+                <div className="flex items-start gap-3">
+                  <div className="w-1.5 h-1.5 bg-[#00F0FF] rotate-45 shadow-[0_0_5px_#00F0FF] mt-1.5" />
+                  <span className="text-sm font-medium text-gray-200 italic leading-relaxed">{userGoal}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Footer Note */}
