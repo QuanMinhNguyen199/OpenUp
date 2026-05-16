@@ -24,18 +24,17 @@ export default function RoundResultPopup({ result, myUsername, isPlayer1, onClos
     const [countdown, setCountdown] = useState(10);
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCountdown(prev => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    onClose();
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [onClose]);
+        if (countdown === 0) {
+            onClose();
+        }
+    }, [countdown, onClose]);
+
+    useEffect(() => {
+        if (countdown > 0) {
+            const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [countdown]);
 
     const myMsg = isPlayer1 ? result.p1_msg : result.p2_msg;
     const oppMsg = isPlayer1 ? result.p2_msg : result.p1_msg;

@@ -7,8 +7,10 @@ from typing import List, Optional
 from typing_extensions import TypedDict
 import random
 from redis_client import update_leaderboard
-from fastapi import FastAPI, Depends, HTTPException, status, Header, WebSocket, WebSocketDisconnect, Query
+from fastapi import FastAPI, Depends, HTTPException, status, Header, WebSocket, WebSocketDisconnect, Query, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import traceback
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import models, schemas, database
@@ -37,6 +39,13 @@ def log_error(msg: str, detail: str = ""):
 
 app = FastAPI(title="OpenUp! Social RPG API - Final Secure Version")
 matchmaking = MatchmakingQueue()
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    err_msg = str(exc)
+    detail = traceback.format_exc()
+    log_error(f"Lỗi Server chưa bắt: {err_msg}", detail)
+    return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 app.add_middleware(
     CORSMiddleware,
@@ -170,10 +179,11 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 @app.get("/api/leaderboard")
 def get_leaderboard(db: Session = Depends(get_db)):
-    users = db.query(models.User).order_by(models.User.total_xp.desc()).limit(100).all()
+    users = db.query(models.User).filter(models.User.role == "PLAYER").order_by(models.User.total_xp.desc()).limit(100).all()
     result = []
     for idx, u in enumerate(users):
         result.append({
+            "id": u.id,
             "rank": idx + 1,
             "username": u.username,
             "total_xp": u.total_xp,
@@ -193,12 +203,23 @@ def get_admin_stats(db: Session = Depends(get_db), x_token: str = Header(None)):
     mau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=30)).count()
     total_users = db.query(models.User).count()
     
+    # Generate mock 7-day trend data for chart
+    chart_data = []
+    base_dau = dau
+    for i in range(7, 0, -1):
+        day_date = (now - timedelta(days=i)).strftime("%d/%m")
+        mock_val = max(0, base_dau - random.randint(-5, 10))
+        chart_data.append({"date": day_date, "dau": mock_val})
+    chart_data.append({"date": "Hôm nay", "dau": dau})
+
     return {
         "dau": dau,
         "mau": mau,
         "total_users": total_users,
+        "chart_data": chart_data,
         "error_logs": ERROR_LOGS
     }
+
 
 
 # @app.post("/api/logout/{user_id}")

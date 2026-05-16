@@ -6,6 +6,7 @@ import Loading from "../components/Loading";
 import HomeButton from "../components/HomeButton";
 
 interface LeaderboardEntry {
+    id: number;
     rank: number;
     username: string;
     total_xp: number;
@@ -18,11 +19,15 @@ export default function LeaderboardPage() {
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
+    const [myId, setMyId] = useState<number>(-1);
 
     useEffect(() => {
         const userId = localStorage.getItem("user_id");
         const token = localStorage.getItem("token");
         if (!userId || !token) { router.push("/"); return; }
+        
+        const parsedId = parseInt(userId);
+        setMyId(parsedId);
 
         const fetchLeaderboard = async () => {
             try {
@@ -31,7 +36,7 @@ export default function LeaderboardPage() {
                 setEntries(data);
 
                 // Find my rank
-                const me = data.find((e: any) => e.username === localStorage.getItem("username"));
+                const me = data.find((e: any) => e.id === parsedId);
                 if (me) setMyRank(me);
 
                 setLoading(false);
@@ -81,7 +86,7 @@ export default function LeaderboardPage() {
                                 {entries.map((entry) => (
                                     <tr
                                         key={entry.rank}
-                                        className={`group hover:bg-white/5 transition-colors ${entry.username === localStorage.getItem("username") ? "bg-[#39FF14]/10" : ""}`}
+                                        className={`group hover:bg-white/5 transition-colors ${entry.id === myId ? "bg-[#39FF14]/20 border-l-4 border-l-[#39FF14]" : ""}`}
                                     >
                                         <td className="px-6 py-5">
                                             <span className={`text-xl font-black italic ${entry.rank === 1 ? "text-yellow-400" :

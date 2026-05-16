@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loading from "../components/Loading";
 import HomeButton from "../components/HomeButton";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface AdminStats {
     dau: number;
     mau: number;
     total_users: number;
+    chart_data: { date: string; dau: number }[];
     error_logs: { timestamp: string; message: string; detail: string }[];
 }
 
@@ -93,25 +95,42 @@ export default function AdminPage() {
                         </div>
                     </div>
 
-                    {/* Langfuse Trace Link */}
-                    <div className="border border-white/10 bg-black/40 backdrop-blur-xl p-6 rounded-lg space-y-6 flex flex-col justify-center items-center text-center">
-                        <div className="w-16 h-16 bg-[#00F0FF]/10 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-[#00F0FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
+                    {/* Langfuse Trace & Chart */}
+                    <div className="flex flex-col gap-6">
+                        <div className="border border-white/10 bg-black/40 backdrop-blur-xl p-6 rounded-lg space-y-4 flex-grow">
+                            <h2 className="text-xl font-black italic uppercase tracking-tighter text-[#00F0FF]">DAU Trend (7 Days)</h2>
+                            <div className="h-[250px] w-full">
+                                {stats?.chart_data && (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={stats.chart_data}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                            <XAxis dataKey="date" stroke="#666" tick={{ fill: '#666', fontSize: 12 }} />
+                                            <YAxis stroke="#666" tick={{ fill: '#666', fontSize: 12 }} allowDecimals={false} />
+                                            <Tooltip 
+                                                contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid #00F0FF50', borderRadius: '8px' }}
+                                                itemStyle={{ color: '#00F0FF', fontWeight: 'bold' }}
+                                            />
+                                            <Line type="monotone" dataKey="dau" stroke="#00F0FF" strokeWidth={3} dot={{ r: 4, fill: '#00F0FF' }} activeDot={{ r: 6 }} />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                )}
+                            </div>
                         </div>
-                        <h2 className="text-2xl font-black italic uppercase text-white">Langfuse Tracing</h2>
-                        <p className="text-gray-400 text-sm max-w-sm">
-                            Theo dõi chi tiết các cuộc hội thoại AI, chi phí token và độ trễ phản hồi thời gian thực.
-                        </p>
-                        <a 
-                            href="https://cloud.langfuse.com" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="px-8 py-3 bg-[#00F0FF] text-black font-black italic uppercase tracking-tighter hover:bg-[#00F0FF]/80 transition-all"
-                        >
-                            Mở Langfuse Console
-                        </a>
+
+                        <div className="border border-white/10 bg-black/40 backdrop-blur-xl p-6 rounded-lg flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-black italic uppercase text-white">Langfuse Tracing</h2>
+                                <p className="text-gray-400 text-xs mt-1">Theo dõi hội thoại & chi phí token</p>
+                            </div>
+                            <a 
+                                href="https://cloud.langfuse.com" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="px-6 py-2 bg-[#00F0FF] text-black font-black italic uppercase tracking-tighter hover:bg-[#00F0FF]/80 transition-all text-sm"
+                            >
+                                Mở Console
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
