@@ -45,7 +45,7 @@ FIRST_PROMPT_MULTI = {
     True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn, địa điểm, KO đc tiết lộ tính cách, mục đích của bạn),\n",
     '2': 'score1: chấm điểm cách trả lời 1 của user: "{user_say1}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason1: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\nscore2: chấm điểm cách trả lời 2 của user: "{user_say2}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason2: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n',
     '1': 'score: chấm điểm câu trả lời của user: "{user_say}"  (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n',
-    '0': '',
+    '0': 'score: chấm điểm câu trả lời của user: "..."  (từ 1 đến 3),\n', # để cho npc biết câu trả lời của user chứ FE k dùng score trong case này
 }
 
 CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường. ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
