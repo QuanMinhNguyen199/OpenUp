@@ -2,7 +2,7 @@ import hashlib
 import math
 import re
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 from typing_extensions import TypedDict
 import random
@@ -20,6 +20,20 @@ from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS, LOCATION
 from game_manager import MatchmakingQueue, get_rank
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
+
+# --- GLOBAL LOGS FOR ADMIN ---
+ERROR_LOGS = []
+
+def log_error(msg: str, detail: str = ""):
+    global ERROR_LOGS
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "message": msg,
+        "detail": str(detail)
+    }
+    ERROR_LOGS.append(log_entry)
+    if len(ERROR_LOGS) > 100: ERROR_LOGS.pop(0)
+    print(f"ERROR: {msg} | {detail}")
 
 app = FastAPI(title="OpenUp! Social RPG API - Final Secure Version")
 matchmaking = MatchmakingQueue()
@@ -142,6 +156,7 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
     
     random_token = secrets.token_hex(32)
     user.token = random_token
+    user.last_login = datetime.utcnow()
     db.commit()
     
     return {
@@ -149,7 +164,40 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
         "user_id": user.id, 
         "token": random_token, 
         "username": user.username,
-        "current_chap": user.chap
+        "current_chap": user.chap,
+        "role": user.role
+    }
+
+@app.get("/api/leaderboard")
+def get_leaderboard(db: Session = Depends(get_db)):
+    users = db.query(models.User).order_by(models.User.total_xp.desc()).limit(100).all()
+    result = []
+    for idx, u in enumerate(users):
+        result.append({
+            "rank": idx + 1,
+            "username": u.username,
+            "total_xp": u.total_xp,
+            "level": u.level,
+            "rank_title": get_rank(u.level)
+        })
+    return result
+
+@app.get("/api/admin/stats")
+def get_admin_stats(db: Session = Depends(get_db), x_token: str = Header(None)):
+    # Verify admin token
+    admin = db.query(models.User).filter(models.User.token == x_token, models.User.role == "ADMIN").first()
+    if not admin: raise HTTPException(status_code=403, detail="Unauthorized")
+
+    now = datetime.utcnow()
+    dau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=1)).count()
+    mau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=30)).count()
+    total_users = db.query(models.User).count()
+    
+    return {
+        "dau": dau,
+        "mau": mau,
+        "total_users": total_users,
+        "error_logs": ERROR_LOGS
     }
 
 
