@@ -131,3 +131,15 @@ class MultiplayerRequest(BaseModel):
     turn: int
     user_say1: str
     user_say2: str
+
+class CheckMultiplayerRequest(BaseModel):
+    user_id1: int
+    user_id2: int
+    history: List[ChatHistory]
+    num: List[int]
+    turn: int
+    name: str
+    relationship: str
+    location: str
+    score1: int
+    score2: int
