@@ -409,7 +409,7 @@ export default function ClientPage() {
       // Parse NPC response
       const npcBehavior = data.npc_behavior || "";
       const npcSay = data.npc_say || "";
-      const score = data.score !== undefined ? data.score : 0;
+      const score = data.score !== undefined ? (Number(data.score) || 0) : 0;
       const reason = data.reason || "";
 
       // Update user message with score feedback (inject into last user message)
