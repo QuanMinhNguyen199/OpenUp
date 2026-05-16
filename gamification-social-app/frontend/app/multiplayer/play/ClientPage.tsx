@@ -71,14 +71,19 @@ export default function MultiplayerClientPage() {
     const [gameOver, setGameOver] = useState<GameOver | null>(null);
 
     const wsRef = useRef<WebSocket | null>(null);
+    const connectionStartedRef = useRef(false);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const isPlayer1Ref = useRef(false);
 
     // Auth + connect
     useEffect(() => {
+        if (connectionStartedRef.current) return;
+        
         const userId = localStorage.getItem("user_id");
         const token = localStorage.getItem("token");
         if (!userId || !token || !roomId) { router.push("/multiplayer"); return; }
+
+        connectionStartedRef.current = true;
 
         // get match info from session
         const stored = sessionStorage.getItem("multiplayerRoom");
@@ -115,8 +120,6 @@ export default function MultiplayerClientPage() {
             ws.onclose = () => {
                 stopTimer();
             };
-
-            setPageLoading(false);
         };
         fetchUser();
 
@@ -153,14 +156,6 @@ export default function MultiplayerClientPage() {
                 setLocation(data.npc.location);
                 setCurrentTurn(1);
 
-                // figure out if we're player1 by checking stored info
-                const stored = sessionStorage.getItem("multiplayerRoom");
-                if (stored) {
-                    const info = JSON.parse(stored);
-                    // server sends p1_username in round_result, but for now use the order
-                    isPlayer1Ref.current = true; // will be corrected on first round_result
-                }
-
                 const msgs: Message[] = [];
                 if (data.start_context) {
                     msgs.push({ role: "npc", content: data.start_context, type: "start_context" });
@@ -171,6 +166,7 @@ export default function MultiplayerClientPage() {
                 setMessages(msgs);
                 setAnswered(false);
                 setOpponentAnswered(false);
+                setPageLoading(false); // Tắt loading khi đã có dữ liệu game
                 startTimer();
                 break;
             }
@@ -223,8 +219,9 @@ export default function MultiplayerClientPage() {
                 const oppWon = oppScore > myScore;
 
                 setMessages(prev => {
+                    // Tránh duplicate bằng cách lọc tin nhắn npc cuối cùng nếu cần, 
+                    // nhưng quan trọng là logic thêm user message ở đây chỉ chạy 1 lần khi nhận rr
                     const updated = [...prev];
-                    // add both messages
                     if (myMsg) {
                         updated.push({ role: "user", content: myMsg, type: "normal", username: myName, isLoser: oppWon });
                     }
