@@ -76,12 +76,10 @@ export default function MultiplayerChatWindow({
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    {/* Turn counter */}
-                    <div className="text-sm font-bold text-gray-400">
+                    <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">
                         Lượt <span className="text-white text-lg">{currentTurn}</span>/{maxTurns}
                     </div>
-                    {/* Timer */}
-                    <div className={`text-2xl font-black italic ${timerColor} tabular-nums`}>
+                    <div className={`text-2xl font-black italic ${timerColor} tabular-nums drop-shadow-[0_0_10px_currentColor]`}>
                         {timerSeconds}s
                     </div>
                 </div>
@@ -92,9 +90,9 @@ export default function MultiplayerChatWindow({
                 {messages.map((msg, idx) => (
                     <div
                         key={idx}
-                        className={`flex gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"} ${msg.isLoser ? "opacity-40" : ""}`}
+                        className={`flex gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"} ${msg.isLoser ? "opacity-40 grayscale-[0.5]" : ""}`}
                     >
-                        <div className="mt-1">
+                        <div className="mt-1 shrink-0">
                             <Avatar mood="neutral" size="sm" isNpc={msg.role === "npc"} />
                         </div>
                         <div className="relative max-w-[85%] lg:max-w-[70%]"
@@ -106,26 +104,40 @@ export default function MultiplayerChatWindow({
                                     : "drop-shadow(0 4px 12px rgba(255,107,53, 0.15))"
                             }}
                         >
-                            {/* Username label for user messages */}
+                            {/* Username label */}
                             {msg.role === "user" && msg.username && (
-                                <p className={`text-xs font-bold mb-1 text-right ${msg.isLoser ? "text-gray-500" : "text-[#39FF14]/70"}`}>
+                                <p className={`text-[10px] font-black mb-1 uppercase tracking-tighter ${msg.role === "user" ? "text-right" : "text-left"} ${msg.isLoser ? "text-gray-500" : "text-[#39FF14]"}`}>
                                     {msg.username}
                                 </p>
                             )}
-                            {/* Behavior tag for NPC */}
-                            {msg.role === "npc" && msg.npc_behavior && msg.type === "normal" && (
-                                <p className="text-xs italic text-[#FF6B35]/60 mb-1">*{msg.npc_behavior}*</p>
-                            )}
-                            <div className={`px-5 py-3 ${
-                                msg.type === "start_context"
-                                    ? "bg-white/5 border border-white/10 text-gray-400 italic text-sm"
-                                    : msg.role === "npc"
-                                        ? "bg-[#FF6B35]/10 border border-[#FF6B35]/20 text-gray-100"
-                                        : msg.isLoser
-                                            ? "bg-gray-700/30 border border-gray-600/20 text-gray-500"
-                                            : "bg-[#39FF14]/10 border border-[#39FF14]/20 text-gray-100"
-                            }`}>
-                                <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                            
+                            {/* Slanted Box */}
+                            <div
+                                className="relative overflow-hidden"
+                                style={{
+                                    clipPath: msg.role === "user"
+                                        ? "polygon(0 0, 94% 0, 100% 12%, 100% 100%, 6% 100%, 0 88%)"
+                                        : "polygon(6% 0, 100% 0, 100% 88%, 94% 100%, 0 100%, 0 12%)"
+                                }}
+                            >
+                                <div className={`p-4 backdrop-blur-md border-white/10 ${
+                                    msg.type === "start_context"
+                                        ? "bg-white/5 border border-white/10 text-gray-400 italic text-sm"
+                                        : msg.role === "npc"
+                                            ? "bg-[#FF6B35]/20 border-l-2 border-[#FF6B35] text-gray-100"
+                                            : msg.isLoser
+                                                ? "bg-gray-700/30 border-r-2 border-gray-500 text-gray-500"
+                                                : "bg-[#39FF14]/20 border-r-2 border-[#39FF14] text-gray-100"
+                                } border-y border-x`}>
+                                    {msg.npc_behavior && msg.role === "npc" && msg.type === "normal" && (
+                                        <div className="text-xs text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
+                                            [{msg.npc_behavior}]
+                                        </div>
+                                    )}
+                                    <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap font-medium">
+                                        {msg.content}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -133,59 +145,76 @@ export default function MultiplayerChatWindow({
 
                 {/* Opponent answered indicator */}
                 {opponentAnswered && !answered && (
-                    <div className="flex gap-4 flex-row-reverse animate-in fade-in duration-300">
-                        <div className="mt-1"><Avatar mood="neutral" size="sm" isNpc={false} /></div>
-                        <div className="px-5 py-3 bg-white/5 border border-white/10 text-gray-500 italic text-sm backdrop-blur-xl">
-                            Đối thủ đã trả lời...
+                    <div className="flex gap-4 flex-row-reverse animate-in fade-in duration-300 opacity-60">
+                        <div className="mt-1 shrink-0"><Avatar mood="neutral" size="sm" isNpc={false} /></div>
+                        <div className="px-5 py-3 bg-white/5 border border-white/10 text-gray-500 italic text-xs backdrop-blur-xl font-mono">
+                            &gt; ĐỐI THỦ ĐANG CHỜ PHẢN HỒI CỦA BẠN...
                         </div>
                     </div>
                 )}
 
-                {/* Loading */}
+                {/* Loading NPC dot animation */}
                 {gameLoading && (
-                    <div className="flex gap-4 items-center">
+                    <div className="flex gap-4 items-center animate-pulse">
                         <Avatar mood="neutral" size="sm" isNpc />
-                        <div className="flex gap-1.5">
-                            {[0, 1, 2].map(i => (
-                                <div key={i} className="w-2.5 h-2.5 bg-[#FF6B35] rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-                            ))}
+                        <div className="bg-white/5 border border-[#FF6B35]/30 p-4 rounded-lg flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-[#FF6B35] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                            <div className="w-1.5 h-1.5 bg-[#FF6B35] rounded-full animate-bounce" style={{ animationDelay: "200ms" }}></div>
+                            <div className="w-1.5 h-1.5 bg-[#FF6B35] rounded-full animate-bounce" style={{ animationDelay: "400ms" }}></div>
                         </div>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="relative border-t border-white/10 pt-4">
-                {answered ? (
-                    <div className="text-center text-sm text-[#39FF14] font-bold italic py-3">
-                        ✓ Đã gửi — đang chờ đối thủ...
+            {/* Terminal Input Section */}
+            <div className="relative mt-4">
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#FF6B35]/20 to-[#00F0FF]/20 blur opacity-75" />
+                
+                <div className="relative flex flex-col bg-black/40 border border-white/10 p-1">
+                    <div className="flex justify-between items-center px-3 py-1 bg-white/5 text-[9px] font-black text-[#FF6B35] tracking-widest uppercase">
+                        <span>{answered ? "DỮ LIỆU ĐÃ GỬI - ĐANG ĐỢI" : "NGHĨ KỸ TRƯỚC KHI NÓI"}</span>
+                        <span className="animate-pulse">{answered ? "_WAITING" : "_READY"}</span>
                     </div>
-                ) : (
-                    <div className="flex gap-3 items-end">
-                        <div className="flex-1 relative">
-                            <span className="absolute top-2 left-3 text-[#FF6B35] font-mono text-xs opacity-50">{">"}</span>
-                            <textarea
-                                ref={inputRef}
-                                value={inputValue}
-                                onChange={e => setInputValue(e.target.value)}
-                                onKeyDown={handleKeyPress}
-                                placeholder="Nhập câu trả lời..."
-                                rows={1}
-                                maxLength={500}
-                                disabled={gameLoading}
-                                className="w-full bg-black/50 border border-white/10 py-3 pl-7 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#FF6B35]/50 transition-colors resize-none font-mono text-sm disabled:opacity-50"
-                            />
+
+                    <div className="flex gap-2 p-2 min-h-[60px]">
+                        <textarea
+                            ref={inputRef}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value.slice(0, 500))}
+                            onKeyDown={handleKeyPress}
+                            placeholder={answered ? "Đang chờ đối thủ..." : "Nhập câu trả lời của bạn..."}
+                            disabled={gameLoading || answered}
+                            rows={2}
+                            className="flex-1 bg-transparent border-none text-sm text-white placeholder-white/20 focus:outline-none resize-none disabled:opacity-50 font-mono"
+                        />
+
+                        {!answered && (
+                            <button
+                                onClick={handleSend}
+                                disabled={gameLoading || !inputValue.trim()}
+                                className="relative group/send px-8 flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+                            >
+                                <div className="absolute inset-0 bg-[#FF6B35] skew-x-[-20deg] group-hover/send:translate-x-full transition-transform duration-500" />
+                                <div className="absolute inset-0 border border-[#FF6B35] skew-x-[-20deg]" />
+                                <span className="relative z-10 text-xs font-black text-black group-hover/send:text-[#FF6B35] uppercase italic tracking-tighter">
+                                    GỬI
+                                </span>
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex justify-between items-center px-3 py-1 text-[9px] font-mono text-white/70 border-t border-white/5">
+                        <div className="flex gap-4">
+                            <span>LEN: {inputValue.length}/500</span>
+                            <span>{myUsername.toUpperCase()}@OPENUP:~$</span>
                         </div>
-                        <button
-                            onClick={handleSend}
-                            disabled={!inputValue.trim() || gameLoading}
-                            className="px-6 py-3 bg-[#FF6B35] text-black font-black italic text-sm uppercase tracking-wider hover:bg-[#FF8C5A] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                        >
-                            GỬI
-                        </button>
+                        <div className="flex gap-1 items-center">
+                            <div className={`w-2 h-2 rounded-full ${answered ? "bg-[#39FF14] animate-pulse" : "bg-gray-600"}`} />
+                            <span>SYNC_STATUS</span>
+                        </div>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
