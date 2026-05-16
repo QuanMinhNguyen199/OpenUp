@@ -22,7 +22,7 @@ export default function AdminPage() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
-        
+
         if (!token || role !== "ADMIN") {
             router.push("/lobby");
             return;
@@ -52,7 +52,7 @@ export default function AdminPage() {
     return (
         <main className="relative min-h-screen w-full bg-[#0a0a0a] text-white font-sans p-8 md:p-12">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:20px_20px]" />
-            
+
             <div className="relative z-10 max-w-7xl mx-auto space-y-12">
                 <div className="flex justify-between items-center">
                     <div>
@@ -106,7 +106,7 @@ export default function AdminPage() {
                                             <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                                             <XAxis dataKey="date" stroke="#666" tick={{ fill: '#666', fontSize: 12 }} />
                                             <YAxis stroke="#666" tick={{ fill: '#666', fontSize: 12 }} allowDecimals={false} />
-                                            <Tooltip 
+                                            <Tooltip
                                                 contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid #00F0FF50', borderRadius: '8px' }}
                                                 itemStyle={{ color: '#00F0FF', fontWeight: 'bold' }}
                                             />
@@ -122,9 +122,9 @@ export default function AdminPage() {
                                 <h2 className="text-xl font-black italic uppercase text-white">Langfuse Tracing</h2>
                                 <p className="text-gray-400 text-xs mt-1">Theo dõi hội thoại & chi phí token</p>
                             </div>
-                            <a 
-                                href="https://cloud.langfuse.com" 
-                                target="_blank" 
+                            <a
+                                href="https://cloud.langfuse.com/project/cmp6a5fis073had0710m5vfox"
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="px-6 py-2 bg-[#00F0FF] text-black font-black italic uppercase tracking-tighter hover:bg-[#00F0FF]/80 transition-all text-sm"
                             >
