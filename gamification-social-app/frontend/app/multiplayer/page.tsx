@@ -210,7 +210,7 @@ export default function MultiplayerPage() {
                                     </div>
                                 </div>
 
-                                <div className="text-xs text-gray-500 space-y-1 mt-2">
+                                <div className="text-sm text-gray-300 space-y-1 mt-2">
                                     <p>• Hòa (tổng điểm {'>'} 0): cả 2 được +10 XP</p>
                                     <p>• Cả 2 không trả lời 3 lượt liên tiếp: kết thúc, cả 2 bị -10 XP</p>
                                     <p>• Cùng điểm 1 lượt: ai trả lời nhanh hơn được +5 điểm</p>
