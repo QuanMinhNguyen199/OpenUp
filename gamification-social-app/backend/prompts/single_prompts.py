@@ -118,7 +118,7 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=case_crit)
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về định dạng JSON sau:
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
@@ -145,7 +145,7 @@ def get_customplay_prompt(
     _personality = f', tính cách: {personality}' if personality != '' else ''
     first_prompt = '' if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria='giao tiếp khéo léo, đạt được mục đích +10 điểm, đạt được mục đích nhưng làm mất lòng -5, không đạt được mục đích -15, không đạt mục đích mà còn làm mất thiện cảm -25')
     system_prompt = f"""Bạn tên là {name}, giới tính: {npcGender}{_personality}{_job}, mối quan hệ với user: {relationship}. Mục tiêu của bạn là: {npcGoal}. User giới tính {userGender}, mục tiêu là: {userGoal}. 2 người đang ở {location}.{_additionalInfo} """
-    request_prompt = f"""Trả về định dạng JSON sau:
+    request_prompt = f"""Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn,
@@ -193,7 +193,7 @@ def get_multiplayer_prompt(
             first_prompt = FIRST_PROMPT_MULTI['1'].format(criteria=case_crit, user_say=(user_say1 if user_say1 != '' else user_say2))
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}, địa điểm: {LOCATIONS[location_idx]}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{case_desc}Trả về định dạng JSON sau:
+    request_prompt = f"""{case_desc}Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
