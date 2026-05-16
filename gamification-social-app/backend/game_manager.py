@@ -98,13 +98,17 @@ class GameRoom:
         elif say1:
             s1 = int(result.get("score", 0))
             r1 = result.get("reason", "")
-            r2 = "Không trả lời"
+            s2 = -15
+            r2 = "Không phản hồi"
         elif say2:
             s2 = int(result.get("score", 0))
             r2 = result.get("reason", "")
-            r1 = "Không trả lời"
+            s1 = -15
+            r1 = "Không phản hồi"
         else:
-            r1 = r2 = "Không trả lời"
+            s1 = -15
+            s2 = -15
+            r1 = r2 = "Không phản hồi"
         return s1, s2, r1, r2
 
     # ── answer collection ────────────────────
