@@ -13,10 +13,10 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
-from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay
-from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest
+from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay, gen_dialogue_multiplayer
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest, MultiplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
-from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS
+from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS, LOCATIONS
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -465,7 +465,7 @@ async def singleplayer(data: SingleplayerRequest, db: Session = Depends(get_db),
         return result
         
 @app.post("/check_singleplayer")
-def singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+def check_singleplayer(data: CheckSingleplayerRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
     if len(data.history) != 6 or len(data.num) != 5 or data.turn < 4 or data.score != 100 or NAMES[data.num[0]] != data.name or RELATIONSHIPS[data.num[2]] != data.relationship:
         raise HTTPException(status_code=400, detail="Lỗi data") 
@@ -498,7 +498,7 @@ async def customplay(data: CustomplayRequest, db: Session = Depends(get_db), x_t
         return result
 
 @app.post("/check_customplay")
-def singleplayer(data: CheckCustomplayRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
+def check_customplay(data: CheckCustomplayRequest, db: Session = Depends(get_db), x_token: str = Header(None)):
     user = verify_token(data.user_id, db, x_token)
     if len(data.history) != 6 or data.turn < 4 or data.score != 100:
         raise HTTPException(status_code=400, detail="Lỗi data") 
@@ -506,3 +506,57 @@ def singleplayer(data: CheckCustomplayRequest, db: Session = Depends(get_db), x_
     user.level = calculate_level(user.total_xp)
     db.commit()
     return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
+
+@app.post("/multiplayer")
+async def multiplayer(data: MultiplayerRequest, db: Session = Depends(get_db), x_token1: str = Header(None), x_token2: str = Header(None)):
+    if data.user_id1 == data.user_id2:
+        raise HTTPException(status_code=400, detail="2 người chơi trùng nhau!")
+    user1 = verify_token(data.user_id1, db, x_token1)
+    user2 = verify_token(data.user_id2, db, x_token2)
+    if data.turn < 1:
+        raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
+    elif data.turn == 1:
+        name_idx = random.randint(0, len(NAMES) - 1)
+        job_idx = random.randint(0, len(JOBS) - 1)
+        relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
+        lesson_idx = random.randint(0, len(LESSONS) - 1)
+        case = random.randint(0, 3)
+        result = await gen_dialogue_singleplayer(
+            name_idx=name_idx,
+            job_idx=job_idx,
+            relationship_idx=relationship_idx,
+            lesson_idx=lesson_idx,
+            event=False,
+            case=case,
+            turn=data.turn,
+            location=data.location,
+            history=data.history,
+            user_id=data.user_id
+        )
+        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        result['name'] = NAMES[name_idx]
+        result['job'] = JOBS[job_idx] if relationship_idx != 4 else 'Học sinh'
+        result['relationship'] = RELATIONSHIPS[relationship_idx]
+        return result
+    else:
+        if len(data.num) != 5:
+            raise HTTPException(status_code=400, detail="Data lỗi")
+        name_idx, job_idx, relationship_idx, lesson_idx, old_case = data.num
+        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or lesson_idx < 0 or lesson_idx >= len(LESSONS) or old_case < 0 or old_case > 3:
+            raise HTTPException(status_code=400, detail="Data lỗi")
+        case = random.randint(0, 3)
+        result = await gen_dialogue_singleplayer(
+            name_idx=name_idx,
+            job_idx=job_idx,
+            relationship_idx=relationship_idx,
+            lesson_idx=lesson_idx,
+            event=False,
+            case=case,
+            turn=data.turn,
+            location=data.location,
+            history=data.history,
+            old_case=old_case,
+            user_id=data.user_id
+        )
+        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        return result
