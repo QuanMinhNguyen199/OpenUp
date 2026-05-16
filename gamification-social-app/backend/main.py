@@ -7,7 +7,7 @@ from typing import List, Optional
 from typing_extensions import TypedDict
 import random
 from redis_client import update_leaderboard
-from fastapi import FastAPI, Depends, HTTPException, status, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Header, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -17,10 +17,12 @@ from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_d
 from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest, MultiplayerRequest, CheckMultiplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS, LOCATIONS
+from game_manager import MatchmakingQueue, get_rank
 # Khởi tạo Database
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="OpenUp! Social RPG API - Final Secure Version")
+matchmaking = MatchmakingQueue()
 
 app.add_middleware(
     CORSMiddleware,
@@ -507,86 +509,78 @@ def check_customplay(data: CheckCustomplayRequest, db: Session = Depends(get_db)
     db.commit()
     return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
 
-# k biết nên để là endpoint hay hàm để đỡ lộ user_id và token của user còn lại khi 1 user mở devtool 
-# @app.post("/multiplayer") 
-async def multiplayer(data: MultiplayerRequest, db: Session = Depends(get_db), x_token1: str = Header(None), x_token2: str = Header(None)):
-    if data.user_id1 == data.user_id2:
-        raise HTTPException(status_code=400, detail="2 người chơi trùng nhau!")
-    user1 = verify_token(data.user_id1, db, x_token1)
-    user2 = verify_token(data.user_id2, db, x_token2)
-    if data.turn < 1:
-        raise HTTPException(status_code=400, detail="Game chưa tồn tại!")
-    elif data.turn == 1:
-        name_idx = random.randint(0, len(NAMES) - 1)
-        job_idx = random.randint(0, len(JOBS) - 1)
-        relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
-        location_idx = random.randint(0, len(LOCATIONS) - 1)
-        lesson_idx = random.randint(0, len(LESSONS) - 1)
-        case = random.randint(0, 3)
-        result = await gen_dialogue_multiplayer(
-            name_idx=name_idx,
-            job_idx=job_idx,
-            relationship_idx=relationship_idx,
-            location_idx=location_idx,
-            lesson_idx=lesson_idx,
-            case=case,
-            turn=data.turn,
-            history=data.history,
-            user_say1=data.user_say1,
-            user_say2=data.user_say2,
-            # user_id=data.user_id
-        )
-        result['num'] = [name_idx, job_idx, relationship_idx, location_idx, lesson_idx, case]
-        result['name'] = NAMES[name_idx]
-        result['job'] = JOBS[job_idx] if relationship_idx != 4 else 'Học sinh'
-        result['relationship'] = RELATIONSHIPS[relationship_idx]
-        result['location'] = LOCATIONS[location_idx]
-        return result
-    else:
-        if len(data.num) != 6:
-            raise HTTPException(status_code=400, detail="Data lỗi")
-        name_idx, job_idx, relationship_idx, location_idx, lesson_idx, old_case = data.num
-        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or location_idx < 0 or location_idx >= len(LOCATIONS) or lesson_idx < 0 or lesson_idx >= len(LESSONS) or old_case < 0 or old_case > 3:
-            raise HTTPException(status_code=400, detail="Data lỗi")
-        case = random.randint(0, 3)
-        result = await gen_dialogue_multiplayer(
-            name_idx=name_idx,
-            job_idx=job_idx,
-            relationship_idx=relationship_idx,
-            location_idx=location_idx,
-            lesson_idx=lesson_idx,
-            case=case,
-            turn=data.turn,
-            history=data.history,
-            user_say1=data.user_say1,
-            user_say2=data.user_say2,
-            old_case=old_case,
-            # user_id=data.user_id
-        )
-        result['num'] = [name_idx, job_idx, relationship_idx, location_idx, lesson_idx, case]
-        return result
 
-# cũng đang phân vân
-# @app.post("/check_multiplayer")
-def check_multiplayer(data: CheckMultiplayerRequest, db: Session = Depends(get_db), x_token1: str = Header(None), x_token2: str = Header(None)):
-    user1 = verify_token(data.user_id1, db, x_token1)
-    user2 = verify_token(data.user_id2, db, x_token2)
-    if len(data.history) != 5 or data.turn < 3 or data.score1 == data.score2 or data.user_id1 == data.user_id2 or len(data.num) != 6 or NAMES[data.num[0]] != data.name or RELATIONSHIPS[data.num[2]] != data.relationship or LOCATIONS[data.num[3]] != data.location:
-        raise HTTPException(status_code=400, detail="Lỗi data") 
-    winner = 1 if data.score1 > data.score2 else 2
-    if winner == 1:
-        user1.total_xp += 30
-        if user2.total_xp >= 10:
-            user2.total_xp -= 10
-        else:
-            user2.total_xp = 0
-    elif winner == 2:
-        user2.total_xp += 30
-        if user1.total_xp >= 10:
-            user1.total_xp -= 10
-        else:
-            user1.total_xp = 0
-    user1.level = calculate_level(user1.total_xp)
-    user2.level = calculate_level(user2.total_xp)
-    db.commit()
-    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': [user1.total_xp, user2.total_xp], 'winner': user1.username if winner == 1 else user2.username, 'loser': user2.username if winner == 1 else user1.username}
+# ─── MULTIPLAYER WEBSOCKET ─────────────────────────────
+import asyncio, json, time as _time
+
+@app.websocket("/ws/multiplayer")
+async def ws_multiplayer(
+    ws: WebSocket,
+    user_id: int = Query(...),
+    token: str = Query(...),
+    room_id: str = Query(default=""),
+):
+    db = database.SessionLocal()
+    try:
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if not user or user.token != token:
+            await ws.close(code=4001, reason="Auth failed")
+            return
+        username = user.username
+        level = user.level
+    finally:
+        db.close()
+
+    await ws.accept()
+
+    # ── MODE 1: Matchmaking (no room_id) ──
+    if not room_id:
+        try:
+            await matchmaking.join(user_id, ws, username, level)
+            # keep alive until client disconnects or match found
+            while True:
+                data = await ws.receive_json()
+                if data.get("type") == "cancel_match":
+                    await matchmaking.leave(user_id)
+                    await ws.send_json({"type": "queue_left"})
+                    break
+        except WebSocketDisconnect:
+            await matchmaking.leave(user_id)
+        return
+
+    # ── MODE 2: Game room (with room_id) ──
+    room = await matchmaking.join_room(room_id, user_id, ws)
+    if not room:
+        await ws.send_json({"type": "error", "message": "Phòng không tồn tại"})
+        await ws.close()
+        return
+
+    game_task = None
+    try:
+        # start game when both connected
+        if room.both_connected():
+            game_task = asyncio.create_task(room.run())
+
+        # listen for answers
+        while room.game_active:
+            data = await ws.receive_json()
+            if data.get("type") == "user_answer":
+                content = data.get("content", "").strip()
+                ts = _time.time()
+                room.submit_answer(user_id, content, ts)
+                # notify this user
+                await ws.send_json({"type": "you_answered"})
+                # notify opponent
+                opp_ws = room.p2_ws if user_id == room.p1["user_id"] else room.p1_ws
+                if opp_ws:
+                    try:
+                        await opp_ws.send_json({"type": "opponent_answered"})
+                    except Exception:
+                        pass
+    except WebSocketDisconnect:
+        await room.handle_disconnect(user_id)
+    finally:
+        if game_task and not game_task.done():
+            game_task.cancel()
+        if not room.game_active:
+            matchmaking.remove_room(room_id)
