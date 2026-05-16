@@ -86,13 +86,24 @@ class GameRoom:
         finally:
             db.close()
 
+    def _safe_int(self, val, default=0):
+        try:
+            if isinstance(val, (int, float)):
+                return int(val)
+            # Trích xuất số từ chuỗi (trường hợp AI trả về "10 điểm" hoặc "k")
+            import re
+            match = re.search(r'-?\d+', str(val))
+            return int(match.group()) if match else default
+        except:
+            return default
+
     def _extract_scores(self, result: dict, say1: str, say2: str):
         """Return (s1, s2, r1, r2) depending on who answered."""
         s1 = s2 = 0
         r1 = r2 = ""
         if say1 and say2:
-            s1 = int(result.get("score1", 0))
-            s2 = int(result.get("score2", 0))
+            s1 = self._safe_int(result.get("score1", 0))
+            s2 = self._safe_int(result.get("score2", 0))
             r1 = result.get("reason1", "")
             r2 = result.get("reason2", "")
         elif say1:
