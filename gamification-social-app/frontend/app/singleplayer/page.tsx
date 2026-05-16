@@ -249,7 +249,7 @@ export default function SingleplayerPage() {
                                     </div>
                                 </div>
 
-                                <div className="h-[1px] w-full bg-white/10 mb-8" />
+                                <div className="h-[1px] w-full bg-white/20 mb-8" />
 
                                 {/* Customplay Form */}
                                 <div className="space-y-6">
@@ -335,7 +335,7 @@ export default function SingleplayerPage() {
                                         </div>
 
                                         {/* Optionals */}
-                                        <div className="col-span-1 md:col-span-2 mt-4 pt-4 border-t border-white/5 space-y-6">
+                                        <div className="col-span-1 md:col-span-2 mt-4 pt-4 border-t border-white/20 space-y-6">
                                             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin bổ sung (Không bắt buộc)</p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
