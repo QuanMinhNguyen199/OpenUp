@@ -84,7 +84,7 @@ export default function MultiplayerResultPopup({
                         <div className="absolute inset-0 bg-[#FF6B35] skew-x-[-15deg] translate-x-0 group-hover/btn:translate-x-full transition-transform duration-500 ease-out" />
                         <div className="absolute inset-0 border-2 border-[#FF6B35] skew-x-[-15deg]" />
                         <span className="relative z-10 text-2xl font-black italic tracking-tighter text-black group-hover/btn:text-[#FF6B35] transition-colors duration-300">
-                            VỀ LOBBY
+                            VỀ MULTIPLAYER
                         </span>
                     </button>
                 </div>

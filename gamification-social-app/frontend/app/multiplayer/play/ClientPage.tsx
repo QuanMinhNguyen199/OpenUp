@@ -78,7 +78,7 @@ export default function MultiplayerClientPage() {
     // Auth + connect
     useEffect(() => {
         if (connectionStartedRef.current) return;
-        
+
         const userId = localStorage.getItem("user_id");
         const token = localStorage.getItem("token");
         if (!userId || !token || !roomId) { router.push("/multiplayer"); return; }
