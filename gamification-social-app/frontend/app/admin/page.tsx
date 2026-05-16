@@ -47,6 +47,22 @@ export default function AdminPage() {
         return () => clearInterval(interval);
     }, [router]);
 
+    const handleLogout = async () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/logout`, {
+                    method: "POST",
+                    headers: { "x-token": token },
+                });
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        }
+        localStorage.clear();
+        router.push("/");
+    };
+
     if (loading) return <Loading />;
 
     return (
@@ -59,9 +75,38 @@ export default function AdminPage() {
                         <h1 className="text-4xl font-black italic tracking-tighter uppercase text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                             Admin <span className="text-white">Dashboard</span>
                         </h1>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Hệ thống quản trị tối cao</p>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Hệ thống quản trị</p>
                     </div>
-                    <HomeButton />
+                    <button
+                        onClick={handleLogout}
+                        className="group relative flex items-center justify-center p-3 border border-red-500/30 bg-black/40 hover:bg-red-500/10 transition-all duration-300 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:border-red-500"
+                    >
+                        {/* Corner Accents */}
+                        <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-red-500"></div>
+                        <div className="absolute top-0 right-0 w-1 h-1 border-t border-r border-red-500"></div>
+                        <div className="absolute bottom-0 left-0 w-1 h-1 border-b border-l border-red-500"></div>
+                        <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-red-500"></div>
+
+                        <div className="flex flex-col items-center">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="w-6 h-6 text-red-500 group-hover:scale-110 transition-transform"
+                            >
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            <span className="h-0 overflow-hidden group-hover:h-4 group-hover:mt-2 text-[10px] font-black uppercase tracking-widest text-red-500 transition-all duration-300">
+                                ĐĂNG XUẤT
+                            </span>
+                        </div>
+                    </button>
                 </div>
 
                 {/* Stats Grid */}
