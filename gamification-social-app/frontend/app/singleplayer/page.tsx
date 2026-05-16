@@ -154,8 +154,8 @@ export default function SingleplayerPage() {
                         <button
                             onClick={() => setActiveTab('random')}
                             className={`flex-1 py-4 text-center font-bold uppercase tracking-widest text-sm transition-all ${activeTab === 'random'
-                                    ? 'text-[#39FF14] border-b-2 border-[#39FF14] bg-[#39FF14]/5'
-                                    : 'text-gray-500 hover:text-gray-300'
+                                ? 'text-[#39FF14] border-b-2 border-[#39FF14] bg-[#39FF14]/5'
+                                : 'text-gray-500 hover:text-gray-300'
                                 }`}
                         >
                             Tình huống ngẫu nhiên
@@ -163,8 +163,8 @@ export default function SingleplayerPage() {
                         <button
                             onClick={() => setActiveTab('custom')}
                             className={`flex-1 py-4 text-center font-bold uppercase tracking-widest text-sm transition-all ${activeTab === 'custom'
-                                    ? 'text-[#00F0FF] border-b-2 border-[#00F0FF] bg-[#00F0FF]/5'
-                                    : 'text-gray-500 hover:text-gray-300'
+                                ? 'text-[#00F0FF] border-b-2 border-[#00F0FF] bg-[#00F0FF]/5'
+                                : 'text-gray-500 hover:text-gray-300'
                                 }`}
                         >
                             Tình huống tùy chỉnh
@@ -262,7 +262,7 @@ export default function SingleplayerPage() {
                                                 value={customForm.name}
                                                 onChange={(e) => setCustomForm({ ...customForm, name: e.target.value })}
                                                 className="w-full bg-black/50 border border-white/10 p-3 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
-                                                placeholder="VD: Nguyễn Văn A"
+                                                placeholder="VD: Tùng (chỉ cần tên)"
                                             />
                                         </div>
                                         {/* Gender NPC */}
@@ -285,7 +285,7 @@ export default function SingleplayerPage() {
                                                 value={customForm.relationship}
                                                 onChange={(e) => setCustomForm({ ...customForm, relationship: e.target.value })}
                                                 className="w-full bg-black/50 border border-white/10 p-3 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
-                                                placeholder="VD: Sếp và nhân viên"
+                                                placeholder="VD: chủ nợ"
                                             />
                                         </div>
                                         {/* Location */}
@@ -296,7 +296,7 @@ export default function SingleplayerPage() {
                                                 value={customForm.location}
                                                 onChange={(e) => setCustomForm({ ...customForm, location: e.target.value })}
                                                 className="w-full bg-black/50 border border-white/10 p-3 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
-                                                placeholder="VD: Quán cafe"
+                                                placeholder="VD: nhà của user"
                                             />
                                         </div>
                                         {/* NPC Goal */}
@@ -307,7 +307,7 @@ export default function SingleplayerPage() {
                                                 value={customForm.npcGoal}
                                                 onChange={(e) => setCustomForm({ ...customForm, npcGoal: e.target.value })}
                                                 className="w-full bg-black/50 border border-white/10 p-3 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
-                                                placeholder="VD: Đòi lại số tiền đã cho vay"
+                                                placeholder="VD: đòi lại số tiền đã cho vay"
                                             />
                                         </div>
                                         {/* User Gender */}
@@ -330,16 +330,16 @@ export default function SingleplayerPage() {
                                                 value={customForm.userGoal}
                                                 onChange={(e) => setCustomForm({ ...customForm, userGoal: e.target.value })}
                                                 className="w-full bg-black/50 border border-white/10 p-3 text-white focus:outline-none focus:border-[#00F0FF] transition-colors"
-                                                placeholder="VD: Thuyết phục NPC cho khất nợ"
+                                                placeholder="VD: thuyết phục cho khất nợ"
                                             />
                                         </div>
 
                                         {/* Optionals */}
                                         <div className="col-span-1 md:col-span-2 mt-4 pt-4 border-t border-white/5 space-y-6">
-                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Thông tin bổ sung (Không bắt buộc)</p>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin bổ sung (Không bắt buộc)</p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Nghề nghiệp NPC</label>
+                                                    <label className="text-sm font-bold text-gray-300 uppercase tracking-widest">Nghề nghiệp NPC</label>
                                                     <input
                                                         type="text"
                                                         value={customForm.job}
@@ -348,7 +348,7 @@ export default function SingleplayerPage() {
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Tính cách NPC</label>
+                                                    <label className="text-sm font-bold text-gray-300 uppercase tracking-widest">Tính cách NPC</label>
                                                     <input
                                                         type="text"
                                                         value={customForm.personality}
@@ -357,7 +357,7 @@ export default function SingleplayerPage() {
                                                     />
                                                 </div>
                                                 <div className="space-y-2 md:col-span-2">
-                                                    <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Ghi chú thêm</label>
+                                                    <label className="text-sm font-bold text-gray-300 uppercase tracking-widest">Ghi chú thêm</label>
                                                     <textarea
                                                         value={customForm.additionalInfo}
                                                         onChange={(e) => setCustomForm({ ...customForm, additionalInfo: e.target.value })}
