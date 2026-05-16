@@ -110,7 +110,7 @@ export default function ClientPage() {
           return;
         }
         customData = JSON.parse(stored);
-        
+
         res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/customplay`,
           {
@@ -467,7 +467,7 @@ export default function ClientPage() {
         // Lose - delay 0.5s before showing popup
         setTimeout(() => {
           setGameResult("lose");
-        }, 1000);
+        }, 2000);
       }
     } catch (error) {
       console.error("Error sending message:", error);

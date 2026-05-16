@@ -35,11 +35,11 @@ EVENT_PROMPT = {
 }
 
 FIRST_PROMPT = {
-    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn nếu 2 người k phải người lạ, địa điểm),\nlocation: địa điểm,\n",
+    True: "start_context: mô tả bối cảnh ban đầu (mối quan hệ 2 người, nghề của bạn, địa điểm, KO đc tiết lộ tính cách, mục đích của bạn),\nlocation: địa điểm,\n",
     False: "score: chấm điểm lượt trả lời cuối của user (theo CHÍNH XÁC tiêu chí: {criteria}),\nreason: lí do user được điểm đó theo hướng tiêu cực (theo ngôi 3),\n"
 }
 
-CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường (cần tiếp diễn cuộc hội thoại). ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
+CASE2 = ('Giờ hãy chỉ nói chuyện xã giao bình thường. ', 'tạo thiện cảm và kéo dài cuộc hội thoại +20 điểm, tạo thiện cảm nhưng k kéo dài hội thoại +10, k gây ấn tượng -5, làm mất thiện cảm -15')
 
 def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, lesson_idx: int, event: bool = False, case: int = 0, turn: int = 1, location: str = '', old_case: int = 0):
     if name_idx < 0 or name_idx >= len(NAMES):
@@ -65,7 +65,7 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
-Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
 def get_customplay_prompt(
@@ -92,7 +92,7 @@ def get_customplay_prompt(
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn,
 }}
-Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
 # Keep but not use.
