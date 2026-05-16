@@ -345,6 +345,7 @@ export default function SingleplayerPage() {
                                                         value={customForm.job}
                                                         onChange={(e) => setCustomForm({ ...customForm, job: e.target.value })}
                                                         className="w-full bg-black/20 border border-white/10 p-3 text-white focus:outline-none focus:border-white/30 transition-colors"
+                                                        placeholder="VD: cho vay nặng lãi"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -354,6 +355,7 @@ export default function SingleplayerPage() {
                                                         value={customForm.personality}
                                                         onChange={(e) => setCustomForm({ ...customForm, personality: e.target.value })}
                                                         className="w-full bg-black/20 border border-white/10 p-3 text-white focus:outline-none focus:border-white/30 transition-colors"
+                                                        placeholder="VD: hổ báo cáo chồn"
                                                     />
                                                 </div>
                                                 <div className="space-y-2 md:col-span-2">
@@ -362,6 +364,7 @@ export default function SingleplayerPage() {
                                                         value={customForm.additionalInfo}
                                                         onChange={(e) => setCustomForm({ ...customForm, additionalInfo: e.target.value })}
                                                         className="w-full bg-black/20 border border-white/10 p-3 text-white focus:outline-none focus:border-white/30 transition-colors resize-none h-24"
+                                                        placeholder="VD: user đã trốn được 1 năm và nay bị bạn bắt được (vài thông tin thêm về con người, sự việc hoặc tình huống hiện tại)"
                                                     />
                                                 </div>
                                             </div>
