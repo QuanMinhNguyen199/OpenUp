@@ -5,6 +5,8 @@ JOBS = ["Giáo viên", "Bác sĩ", "Y tá", "Dược sĩ", "Kỹ sư xây dựng
 
 RELATIONSHIPS = ["bạn bè", "bạn thân", "người quen", "đồng nghiệp", "bạn cùng lớp", "họ hàng", "hàng xóm", "người lạ"]
 
+LOCATIONS = ["trường học", "bệnh viện", "công ty", "nhà hàng", "quán cafe", "rạp chiếu phim", "công viên", "bãi biển", "khu du lịch", "trung tâm thương mại", "chợ", "ngân hàng", "nghĩa địa", "bảo tàng", "phòng tập gym", "thư viện", "sảnh chung cư", "sân vận động", "công ty"]
+
 LESSONS = [
     {
         'describe': '''Bạn hay dùng lí do, tình cảm hoặc đạo đức để nhờ vả người khác làm việc hộ, cũng có lúc bạn nhờ việc chính đáng.''',
