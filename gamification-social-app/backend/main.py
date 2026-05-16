@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import models, schemas, database
 from boss_logic import check_boss_sequence
 from ai_service import gen_dialogue_story_mode, gen_dialogue_singleplayer, gen_dialogue_customplay, gen_dialogue_multiplayer
-from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest, MultiplayerRequest
+from schemas import SingleplayerRequest, StoryModeRequest, CheckSingleplayerRequest, CustomplayRequest, CheckCustomplayRequest, MultiplayerRequest, CheckMultiplayerRequest
 from prompts.story_prompts import STORY_MODE_PROMPTS
 from prompts.single_prompts import NAMES, JOBS, RELATIONSHIPS, LESSONS, LOCATIONS
 # Khởi tạo Database
@@ -565,3 +565,28 @@ async def multiplayer(data: MultiplayerRequest, db: Session = Depends(get_db), x
         )
         result['num'] = [name_idx, job_idx, relationship_idx, location_idx, lesson_idx, case]
         return result
+
+# cũng đang phân vân
+# @app.post("/check_multiplayer")
+def check_multiplayer(data: CheckMultiplayerRequest, db: Session = Depends(get_db), x_token1: str = Header(None), x_token2: str = Header(None)):
+    user1 = verify_token(data.user_id1, db, x_token1)
+    user2 = verify_token(data.user_id2, db, x_token2)
+    if len(data.history) != 5 or data.turn < 3 or data.score1 == data.score2 or data.user_id1 == data.user_id2 or len(data.num) != 6 or NAMES[data.num[0]] != data.name or RELATIONSHIPS[data.num[2]] != data.relationship or LOCATIONS[data.num[3]] != data.location:
+        raise HTTPException(status_code=400, detail="Lỗi data") 
+    winner = 1 if data.score1 > data.score2 else 2
+    if winner == 1:
+        user1.total_xp += 30
+        if user2.total_xp >= 10:
+            user2.total_xp -= 10
+        else:
+            user2.total_xp = 0
+    elif winner == 2:
+        user2.total_xp += 30
+        if user1.total_xp >= 10:
+            user1.total_xp -= 10
+        else:
+            user1.total_xp = 0
+    user1.level = calculate_level(user1.total_xp)
+    user2.level = calculate_level(user2.total_xp)
+    db.commit()
+    return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': [user1.total_xp, user2.total_xp], 'winner': user1.username if winner == 1 else user2.username, 'loser': user2.username if winner == 1 else user1.username}
