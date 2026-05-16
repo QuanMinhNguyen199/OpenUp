@@ -50,13 +50,13 @@ LESSONS = [
             ('Giờ hãy đưa ra quan điểm mang tính chủ quan, gu thẩm mỹ cá nhân (ko có đúng sai) với user. ', 'tôn trọng sự khác biệt, tìm điểm chung +10 điểm, bác bỏ ý kiến đối phương -5, ép đối phương theo ý mình -15')
         ]
     },
-    # {
-    #     'describe': '''Bạn hay đi mượn đồ của người khác.''',
-    #     'cases': [
-    #         ('Giờ hãy mượn 1 đồ có giá trị cao hoặc đồ dùng cá nhân nhạy cảm của user. ', 'từ chối khéo, đưa ra lý do an toàn +10 điểm, từ chối thẳng -5, đồng ý cho mượn -15'),
-    #         ('Giờ hãy mượn 1 đồ nhỏ nhặt, không đáng giá của user. ', 'vui vẻ cho mượn +10 điểm, cho mượn kèm lời cằn nhằn, giáo điều -5, từ chối ích kỷ, keo kiệt -15')
-    #     ]
-    # },
+    {
+        'describe': '''Bạn hay đi mượn đồ của người khác.''',
+        'cases': [
+            ('Giờ hãy mượn 1 đồ có giá trị cao hoặc đồ dùng cá nhân nhạy cảm của user. ', 'từ chối khéo, đưa ra lý do an toàn +10 điểm, từ chối thẳng -5, đồng ý cho mượn -15'),
+            ('Giờ hãy mượn 1 đồ nhỏ nhặt, không đáng giá của user. ', 'vui vẻ cho mượn +10 điểm, cho mượn kèm lời cằn nhằn, giáo điều -5, từ chối ích kỷ, keo kiệt -15')
+        ]
+    },
     {
         'describe': '''Bạn là người thích đồn thổi, hay đi nói xấu hoặc kể xấu về một người thứ ba với user.''',
         'cases': [
