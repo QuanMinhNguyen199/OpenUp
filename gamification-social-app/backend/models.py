@@ -14,6 +14,8 @@ class User(Base):
     chap = Column(Integer, default=1)  # Lưu Savepoint cốt truyện (1-8)
     level = Column(Integer, default=1) # Cấp độ RPG (tăng theo XP)
     total_xp = Column(Integer, default=0)
+    last_login = Column(DateTime, default=datetime.datetime.utcnow)
+    last_active = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
     
     conversations = relationship("Conversation", back_populates="user")
     collections = relationship("UserCollection", back_populates="user")
