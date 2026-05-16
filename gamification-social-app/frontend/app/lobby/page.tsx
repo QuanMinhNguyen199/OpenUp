@@ -51,7 +51,18 @@ export default function LobbyPage() {
 
 
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/logout`, {
+                    method: "POST",
+                    headers: { "x-token": token },
+                });
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        }
         localStorage.removeItem("user_id");
         localStorage.removeItem("token");
         router.push("/");
