@@ -122,3 +122,12 @@ class CheckCustomplayRequest(BaseModel):
     history: List[ChatHistory]
     turn: int
     score: int
+
+class MultiplayerRequest(BaseModel):
+    user_id1: int
+    user_id2: int
+    history: List[ChatHistory]
+    num: List[int]
+    turn: int
+    user_say1: str
+    user_say2: str
