@@ -15,13 +15,13 @@ export default function DualScoreBar({ myUsername, opponentUsername, myScore, op
             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#FF6B35]/5 blur-3xl" />
 
             <div className="relative space-y-5">
-                <h3 className="text-[10px] font-bold text-[#FF6B35] uppercase tracking-widest text-center">
+                <h3 className="text-sm font-bold text-[#FF6B35] uppercase tracking-widest text-center">
                     Bảng điểm
                 </h3>
 
                 {/* My Score */}
                 <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-[#39FF14] uppercase tracking-widest truncate">
+                    <p className="text-sm font-bold text-[#39FF14] uppercase tracking-widest truncate">
                         {myUsername || "Bạn"}
                     </p>
                     <div className="flex items-baseline gap-2">
@@ -35,7 +35,7 @@ export default function DualScoreBar({ myUsername, opponentUsername, myScore, op
 
                 {/* Opponent Score */}
                 <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-[#00F0FF] uppercase tracking-widest truncate">
+                    <p className="text-sm font-bold text-[#00F0FF] uppercase tracking-widest truncate">
                         {opponentUsername || "Đối thủ"}
                     </p>
                     <div className="flex items-baseline gap-2">
