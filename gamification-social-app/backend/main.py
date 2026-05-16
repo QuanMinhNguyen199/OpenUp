@@ -153,13 +153,13 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 
-@app.post("/api/logout/{user_id}")
-async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
-    user = verify_token(user_id, db, x_token)
-    user.token = None
-    db.commit()
+# @app.post("/api/logout/{user_id}")
+# async def logout(user_id: int, db: Session = Depends(get_db), x_token: str = Header(None)):
+#     user = verify_token(user_id, db, x_token)
+#     user.token = None
+#     db.commit()
 
-    return {"status": "success", "message": "Đăng xuất thành công"}
+#     return {"status": "success", "message": "Đăng xuất thành công"}
 
 
 # --- ENDPOINTS GAMEPLAY ---
@@ -508,6 +508,16 @@ def check_customplay(data: CheckCustomplayRequest, db: Session = Depends(get_db)
     user.level = calculate_level(user.total_xp)
     db.commit()
     return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
+
+@app.post("/logout")
+def logout(x_token: str = Header(None), db: Session = Depends(get_db)):
+    if not x_token:
+        raise HTTPException(status_code=401, detail="Missing token")
+    user = db.query(models.User).filter(models.User.token == x_token).first()
+    if user:
+        db.commit()
+    return {"status": "success", "message": "Logged out"}
+
 
 
 # ─── MULTIPLAYER WEBSOCKET ─────────────────────────────
