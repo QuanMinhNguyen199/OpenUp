@@ -507,7 +507,8 @@ def check_customplay(data: CheckCustomplayRequest, db: Session = Depends(get_db)
     db.commit()
     return {'status': 'success', 'message': 'Hoàn thành màn chơi', 'xp': user.total_xp}
 
-@app.post("/multiplayer")
+# k biết nên để là endpoint hay hàm để đỡ lộ user_id và token của user còn lại khi 1 user mở devtool 
+# @app.post("/multiplayer") 
 async def multiplayer(data: MultiplayerRequest, db: Session = Depends(get_db), x_token1: str = Header(None), x_token2: str = Header(None)):
     if data.user_id1 == data.user_id2:
         raise HTTPException(status_code=400, detail="2 người chơi trùng nhau!")
@@ -519,44 +520,48 @@ async def multiplayer(data: MultiplayerRequest, db: Session = Depends(get_db), x
         name_idx = random.randint(0, len(NAMES) - 1)
         job_idx = random.randint(0, len(JOBS) - 1)
         relationship_idx = random.randint(0, len(RELATIONSHIPS) - 1)
+        location_idx = random.randint(0, len(LOCATIONS) - 1)
         lesson_idx = random.randint(0, len(LESSONS) - 1)
         case = random.randint(0, 3)
-        result = await gen_dialogue_singleplayer(
+        result = await gen_dialogue_multiplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
+            location_idx=location_idx,
             lesson_idx=lesson_idx,
-            event=False,
             case=case,
             turn=data.turn,
-            location=data.location,
             history=data.history,
-            user_id=data.user_id
+            user_say1=data.user_say1,
+            user_say2=data.user_say2,
+            # user_id=data.user_id
         )
-        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        result['num'] = [name_idx, job_idx, relationship_idx, location_idx, lesson_idx, case]
         result['name'] = NAMES[name_idx]
         result['job'] = JOBS[job_idx] if relationship_idx != 4 else 'Học sinh'
         result['relationship'] = RELATIONSHIPS[relationship_idx]
+        result['location'] = LOCATIONS[location_idx]
         return result
     else:
-        if len(data.num) != 5:
+        if len(data.num) != 6:
             raise HTTPException(status_code=400, detail="Data lỗi")
-        name_idx, job_idx, relationship_idx, lesson_idx, old_case = data.num
-        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or lesson_idx < 0 or lesson_idx >= len(LESSONS) or old_case < 0 or old_case > 3:
+        name_idx, job_idx, relationship_idx, location_idx, lesson_idx, old_case = data.num
+        if name_idx < 0 or name_idx >= len(NAMES) or job_idx < 0 or job_idx >= len(JOBS) or relationship_idx < 0 or relationship_idx >= len(RELATIONSHIPS) or location_idx < 0 or location_idx >= len(LOCATIONS) or lesson_idx < 0 or lesson_idx >= len(LESSONS) or old_case < 0 or old_case > 3:
             raise HTTPException(status_code=400, detail="Data lỗi")
         case = random.randint(0, 3)
-        result = await gen_dialogue_singleplayer(
+        result = await gen_dialogue_multiplayer(
             name_idx=name_idx,
             job_idx=job_idx,
             relationship_idx=relationship_idx,
+            location_idx=location_idx,
             lesson_idx=lesson_idx,
-            event=False,
             case=case,
             turn=data.turn,
-            location=data.location,
             history=data.history,
+            user_say1=data.user_say1,
+            user_say2=data.user_say2,
             old_case=old_case,
-            user_id=data.user_id
+            # user_id=data.user_id
         )
-        result['num'] = [name_idx, job_idx, relationship_idx, lesson_idx, case]
+        result['num'] = [name_idx, job_idx, relationship_idx, location_idx, lesson_idx, case]
         return result

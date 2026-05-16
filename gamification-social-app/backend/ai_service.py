@@ -438,8 +438,8 @@ async def gen_dialogue_multiplayer(
     user_say2: str,
     case: int, 
     turn: int, 
-    old_case: int,
     history: list[object],
+    old_case: int = 0,
     # user_id: int = None
 ):
     # _update_current_generation(
