@@ -1,10 +1,9 @@
 | Hạng mục | Liên kết |
 |---|---|
 | 🚀 Live URL | [https://a20-app-061.onrender.com/](https://a20-app-061.onrender.com/) |
-| 🎬 Video Demo | [Điền link YouTube](#) |
+| 🎬 Video Demo | [Video trên YouTube](https://youtu.be/GiRqe_wharw) |
 | 📊 Pitch Deck | [Xem Pitch Deck (Gamma)](https://gamma.app/docs/OpenUp-Game-hoc-giao-tiep-voi-AI-7cf1njt0g38yjyb?mode=doc) |
 | 🏗️ Sơ đồ Kiến trúc | [Architecture.png](./Architecture.png) |
-| 📁 Thư mục Minh chứng | [Điền link Google Drive chứa worklog, test...](#) |
 
 ## 1. Tên dự án
 
@@ -120,7 +119,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=<your-supabase-anon-key>
 ```bash
 cd gamification-social-app/backend
 source venv/bin/activate
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Backend sẽ chạy tại:
