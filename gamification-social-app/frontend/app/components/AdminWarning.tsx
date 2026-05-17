@@ -2,6 +2,7 @@
 
 import React from "react";
 import HomeButton from "./HomeButton";
+import { useRouter } from "next/navigation";
 
 interface AdminWarningProps {
     modeName: string;
@@ -9,6 +10,7 @@ interface AdminWarningProps {
 }
 
 const AdminWarning = ({ modeName, onLogout }: AdminWarningProps) => {
+    const router = useRouter()
     return (
         <main className="flex min-h-screen items-center justify-center bg-[#050505] text-white">
             <div className="relative text-center p-12 border border-red-500/30 bg-red-500/5 rounded-2xl shadow-[0_0_50px_rgba(239,68,68,0.15)] max-w-md mx-4">
@@ -31,11 +33,11 @@ const AdminWarning = ({ modeName, onLogout }: AdminWarningProps) => {
                 </p>
                 <div className="flex justify-center items-center gap-4">
                     {onLogout ? (
-                        <button 
-                            onClick={onLogout}
+                        <button
+                            onClick={() => router.push('/admin')}
                             className="group relative px-8 py-3 border border-red-500/50 bg-red-500/5 text-red-500 hover:bg-red-500/20 transition-all rounded-lg font-bold uppercase text-xs tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]"
                         >
-                            Đăng xuất
+                            Về Dashboard
                         </button>
                     ) : (
                         <HomeButton />

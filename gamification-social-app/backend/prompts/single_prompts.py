@@ -18,7 +18,7 @@ LESSONS = [
     {
         'describe': '''Bạn hay kể về xui xẻo, mất mát, chuyện k may của bản thân.''',
         'cases': [
-            ('Giờ hãy kể cho user 1 chuyện buồn do hoàn cảnh tác động. ', 'an ủi, đồng cảm +10 điểm, khích lệ cho có -5, xem thường -15'),
+            ('Giờ hãy kể cho user 1 chuyện buồn do hoàn cảnh tác động. ', 'an ủi, đồng cảm +10 điểm, khích lệ cho có, sáo rỗng -5, xem thường -15'),
             ('Giờ hãy kể cho user 1 chuyện buồn do bạn gây ra. ', 'giải thích lý do chủ quan, khuyên nhủ +10 điểm, an ủi, đồng cảm -5, xem thường -15')
         ]
     },
@@ -27,6 +27,55 @@ LESSONS = [
         'cases': [
             ('Giờ hãy hỏi về chuyện đời tư cá nhân của user. ', 'trả lời chung chung, từ chối khéo +10 điểm, từ chối thẳng -5, nói hẳn ra, phản ứng gay gắt -15'),
             ('Giờ hãy hỏi user về kiến thức, trải nghiệm chung chung mà k đi sâu vào đời tư. ', 'chia sẻ thẳng thắn, thật lòng +10 điểm, trả lời chung chung, từ chối khéo -5, từ chối thẳng -15')
+        ]
+    },
+    {
+        'describe': '''Bạn là người thẳng tính, hay chỉ trích, góp ý hoặc đánh giá người khác.''',
+        'cases': [
+            ('Giờ hãy phê bình 1 lỗi sai thực tế, có bằng chứng rõ ràng của user. ', 'lắng nghe tiếp thu, nhận lỗi +10 điểm, im lặng, tỏ thái độ -5, cãi cùn, đổ lỗi hoàn cảnh -15'),
+            ('Giờ hãy phê bình dựa trên tin đồn, suy đoán vô căn cứ về user. ', 'giải thích bình tĩnh, đưa bằng chứng +10 điểm, phản ứng gay gắt, chửi bới -5, nhận bừa cho qua chuyện -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay khen ngợi, tâng bốc hoặc cà khịa, châm biếm người khác.''',
+        'cases': [
+            ('Giờ hãy đưa ra 1 lời khen chân thành về user. ', 'vui vẻ đón nhận, cảm ơn khiêm tốn +10 điểm, phớt lờ, đổi chủ đề -5, nghi ngờ động cơ, mỉa mai lại -15'),
+            ('Giờ hãy đưa ra 1 lời khen sáo rỗng, nịnh bợ hoặc mỉa mai ngầm user. ', 'xã giao, lảng tránh khéo +10 điểm, tự mãn, tin sái cổ -5, nổi khùng, bắt bẻ lời khen -15')
+        ]
+    },
+    {
+        'describe': '''Bạn là người bảo thủ, khi có tranh luận thường cố chấp giữ khư khư quan điểm của mình.''',
+        'cases': [
+            ('Giờ hãy đưa ra quan điểm sai rành rành về 1 kiến thức phổ thông với user. ', 'giải thích nhẹ nhàng, đưa dẫn chứng +10 điểm, tranh cãi nảy lửa để phân thắng thua -5, mắng chửi, công kích cá nhân -15'),
+            ('Giờ hãy đưa ra quan điểm mang tính chủ quan, gu thẩm mỹ cá nhân (ko có đúng sai) với user. ', 'tôn trọng sự khác biệt, tìm điểm chung +10 điểm, bác bỏ ý kiến đối phương -5, ép đối phương theo ý mình -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay đi mượn đồ của người khác.''',
+        'cases': [
+            ('Giờ hãy mượn 1 đồ có giá trị cao hoặc đồ dùng cá nhân nhạy cảm của user. ', 'từ chối khéo, đưa ra lý do an toàn +10 điểm, từ chối thẳng -5, đồng ý cho mượn -15'),
+            ('Giờ hãy mượn 1 đồ nhỏ nhặt, không đáng giá của user. ', 'vui vẻ cho mượn +10 điểm, cho mượn kèm lời cằn nhằn, giáo điều -5, từ chối ích kỷ, keo kiệt -15')
+        ]
+    },
+    {
+        'describe': '''Bạn là người thích đồn thổi, hay đi nói xấu hoặc kể xấu về một người thứ ba với user.''',
+        'cases': [
+            ('Giờ hãy kể 1 tin đồn chưa được xác thực của người khác cho user. ', 'lắng nghe xã giao, không hùa theo +10 điểm, gạt đi, bảo đối phương lắm chuyện -5, hùa vào nói xấu cùng -15'),
+            ('Giờ hãy phàn nàn về 1 thói xấu có thật của người khác, gây ảnh hưởng đến mọi người xung quanh cho user. ', 'đáp lời khách quan, hướng tới giải pháp +10 điểm, chỉ trích, hùa vào nói xấu cùng -5, gạt đi, bảo đối phương lắm chuyện -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay đùa cợt, trêu chọc hoặc thử giới hạn người khác.''',
+        'cases': [
+            ('Giờ hãy trêu nhẹ user 1 câu vô hại. ', 'phản ứng thoải mái +10 điểm, gượng gạo -5, nổi nóng -15'),
+            ('Giờ hãy nói 1 câu đùa quá giới hạn với user. ', 'đặt ranh giới lịch sự +10 điểm, công kích lại, nổi nóng -5, im lặng chịu đựng -15')
+        ]
+    },
+    {
+        'describe': '''Bạn hay hỏi xin lời khuyên hoặc dựa dẫm cảm xúc.''',
+        'cases': [
+            ('Giờ hãy xin lời khuyên về 1 vấn đề nghiêm túc của bạn. ', 'đưa lời khuyên thực tế +10 điểm, trả lời hời hợt -5, chế giễu, khó chịu -15'),
+            ('Giờ hãy xin lời khuyên về 1 chuyện nhỏ nhặt của bạn. ', 'phản hồi ngắn gọn vừa đủ +10 điểm, từ chối, bảo đối phương tự quyết -5, quá đầu tư cảm xúc, khuyên chi tiết -15')
         ]
     },
 ]
@@ -69,7 +118,7 @@ def get_singleplayer_prompt(name_idx: int, job_idx: int, relationship_idx: int, 
     first_prompt = FIRST_PROMPT[turn == 1] if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria=case_crit)
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}{location_prompt}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về định dạng JSON sau:
+    request_prompt = f"""{EVENT_PROMPT[event][0]}{case_desc}Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}{EVENT_PROMPT[event][1]}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
@@ -96,7 +145,7 @@ def get_customplay_prompt(
     _personality = f', tính cách: {personality}' if personality != '' else ''
     first_prompt = '' if turn == 1 else FIRST_PROMPT[turn == 1].format(criteria='giao tiếp khéo léo, đạt được mục đích +10 điểm, đạt được mục đích nhưng làm mất lòng -5, không đạt được mục đích -15, không đạt mục đích mà còn làm mất thiện cảm -25')
     system_prompt = f"""Bạn tên là {name}, giới tính: {npcGender}{_personality}{_job}, mối quan hệ với user: {relationship}. Mục tiêu của bạn là: {npcGoal}. User giới tính {userGender}, mục tiêu là: {userGoal}. 2 người đang ở {location}.{_additionalInfo} """
-    request_prompt = f"""Trả về định dạng JSON sau:
+    request_prompt = f"""Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn,
@@ -133,23 +182,25 @@ def get_multiplayer_prompt(
     case_crit = LESSONS[lesson_idx]['cases'][old_case][1] if old_case < 2 else CASE2[1]
     job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
     first_prompt = ''
+    note = ''
     if turn == 1:
         first_prompt = FIRST_PROMPT_MULTI[True]
     else:
         if user_say1 != '' and user_say2 != '':
             first_prompt = FIRST_PROMPT_MULTI['2'].format(criteria=case_crit, user_say1=user_say1, user_say2=user_say2)
+            note = 'Chỉ dựa vào cách trả lời có điểm cao hơn của user để phản hồi tiếp. '
         elif user_say1 == '' and user_say2 == '':
             first_prompt = FIRST_PROMPT_MULTI['0']
         else:
             first_prompt = FIRST_PROMPT_MULTI['1'].format(criteria=case_crit, user_say=(user_say1 if user_say1 != '' else user_say2))
 
     system_prompt = f"""Bạn là {NAMES[name_idx]}, nghề: {job}, mối quan hệ với user: {RELATIONSHIPS[relationship_idx]}, địa điểm: {LOCATIONS[location_idx]}. {LESSONS[lesson_idx]['describe']}"""
-    request_prompt = f"""{case_desc}Trả về định dạng JSON sau:
+    request_prompt = f"""{case_desc}Trả về CHÍNH XÁC định dạng JSON sau:
 {{
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
-Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. {note}Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
 

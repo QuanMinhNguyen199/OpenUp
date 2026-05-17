@@ -20,6 +20,12 @@ class User(Base):
     conversations = relationship("Conversation", back_populates="user")
     collections = relationship("UserCollection", back_populates="user")
 
+class DailyActivity(Base):
+    __tablename__ = "daily_activities"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    date = Column(String, index=True) # Format YYYY-MM-DD
+
 class NPC(Base):
     __tablename__ = "npcs"
     id = Column(Integer, primary_key=True, index=True)

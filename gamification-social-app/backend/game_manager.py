@@ -107,12 +107,12 @@ class GameRoom:
             r1 = result.get("reason1", "")
             r2 = result.get("reason2", "")
         elif say1:
-            s1 = int(result.get("score", 0))
+            s1 = self._safe_int(result.get("score", 0))
             r1 = result.get("reason", "")
             s2 = -15
             r2 = "Không phản hồi"
         elif say2:
-            s2 = int(result.get("score", 0))
+            s2 = self._safe_int(result.get("score", 0))
             r2 = result.get("reason", "")
             s1 = -15
             r1 = "Không phản hồi"

@@ -75,6 +75,16 @@ def is_strong_password(password: str) -> bool:
         return False
     return bool(re.search(r"[a-zA-Z]", password) and re.search(r"\d", password))
 
+def log_daily_activity(db: Session, user_id: int):
+    today_str = datetime.utcnow().strftime("%Y-%m-%d")
+    act = db.query(models.DailyActivity).filter_by(user_id=user_id, date=today_str).first()
+    if not act:
+        db.add(models.DailyActivity(user_id=user_id, date=today_str))
+        try:
+            db.commit()
+        except:
+            db.rollback()
+
 def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user or user.token != x_token or x_token is None:
@@ -82,6 +92,7 @@ def verify_token(user_id: int, db: Session, x_token: str = Header(None)):
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Phiên đăng nhập không hợp lệ hoặc đã hết hạn!"
         )
+    log_daily_activity(db, user.id)
     return user
 
 def calculate_level(total_xp: int) -> int:
@@ -112,6 +123,8 @@ async def startup_event():
                 )
                 db.add(new_admin)
         db.commit()
+
+
     except Exception as e:
         print(f"Lỗi khởi tạo Admin: {e}")
     finally:
@@ -153,6 +166,8 @@ async def register(data: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
+    log_daily_activity(db, new_user.id)
+    
     return {"status": "success", "user_id": new_user.id, "token": random_token}
 
 @app.post("/api/login")
@@ -167,6 +182,8 @@ async def login(data: LoginRequest, db: Session = Depends(get_db)):
     user.token = random_token
     user.last_login = datetime.utcnow()
     db.commit()
+    
+    log_daily_activity(db, user.id)
     
     return {
         "status": "success", 
@@ -193,30 +210,82 @@ def get_leaderboard(db: Session = Depends(get_db)):
     return result
 
 @app.get("/api/admin/stats")
-def get_admin_stats(db: Session = Depends(get_db), x_token: str = Header(None)):
-    # Verify admin token
+def get_admin_stats(
+    month: int = Query(None),
+    year: int = Query(None),
+    db: Session = Depends(get_db), 
+    x_token: str = Header(None)
+):
     admin = db.query(models.User).filter(models.User.token == x_token, models.User.role == "ADMIN").first()
     if not admin: raise HTTPException(status_code=403, detail="Unauthorized")
 
     now = datetime.utcnow()
-    dau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=1)).count()
-    mau = db.query(models.User).filter(models.User.last_active >= now - timedelta(days=30)).count()
+    q_month = month if month else now.month
+    q_year = year if year else now.year
+
+    today_str = now.strftime("%Y-%m-%d")
+    current_month_prefix = now.strftime("%Y-%m-")
+
+    dau = db.query(models.DailyActivity.user_id).filter(models.DailyActivity.date == today_str).distinct().count()
+    mau = db.query(models.DailyActivity.user_id).filter(models.DailyActivity.date.like(f"{current_month_prefix}%")).distinct().count()
     total_users = db.query(models.User).count()
+
+    import calendar
+    days_in_month = calendar.monthrange(q_year, q_month)[1]
     
-    # Generate mock 7-day trend data for chart
-    chart_data = []
-    base_dau = dau
-    for i in range(7, 0, -1):
-        day_date = (now - timedelta(days=i)).strftime("%d/%m")
-        mock_val = max(0, base_dau - random.randint(-5, 10))
-        chart_data.append({"date": day_date, "dau": mock_val})
-    chart_data.append({"date": "Hôm nay", "dau": dau})
+    dau_chart_data = []
+    prefix = f"{q_year:04d}-{q_month:02d}-"
+    activities_month = db.query(models.DailyActivity).filter(models.DailyActivity.date.like(f"{prefix}%")).all()
+    
+    # Đếm unique users mỗi ngày
+    daily_users = {}
+    for act in activities_month:
+        if act.date not in daily_users:
+            daily_users[act.date] = set()
+        daily_users[act.date].add(act.user_id)
+        
+    for d in range(1, days_in_month + 1):
+        date_str = f"{prefix}{d:02d}"
+        if q_year == now.year and q_month == now.month and date_str > today_str:
+            break
+        elif q_year > now.year or (q_year == now.year and q_month > now.month):
+            break
+            
+        dau_chart_data.append({
+            "date": f"{d:02d}/{q_month:02d}",
+            "dau": len(daily_users.get(date_str, set()))
+        })
+
+    # MAU chart
+    mau_chart_data = []
+    year_prefix = f"{q_year:04d}-"
+    activities_year = db.query(models.DailyActivity).filter(models.DailyActivity.date.like(f"{year_prefix}%")).all()
+    
+    monthly_users = {}
+    for act in activities_year:
+        act_month = act.date[5:7]
+        if act_month not in monthly_users:
+            monthly_users[act_month] = set()
+        monthly_users[act_month].add(act.user_id)
+        
+    for m in range(1, 13):
+        m_str = f"{m:02d}"
+        if q_year == now.year and m > now.month:
+            break
+        elif q_year > now.year:
+            break
+            
+        mau_chart_data.append({
+            "month": f"Th{m}",
+            "mau": len(monthly_users.get(m_str, set()))
+        })
 
     return {
         "dau": dau,
         "mau": mau,
         "total_users": total_users,
-        "chart_data": chart_data,
+        "chart_data": dau_chart_data,
+        "mau_chart_data": mau_chart_data,
         "error_logs": ERROR_LOGS
     }
 

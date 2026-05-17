@@ -65,7 +65,7 @@ export default function RoundResultPopup({ result, myUsername, isPlayer1, onClos
                         <h2 className="text-xl font-black italic text-[#FF6B35] uppercase tracking-tighter">
                             Kết quả lượt {result.round}
                         </h2>
-                        <span className="text-sm font-mono text-gray-500">{countdown}s</span>
+                        <span className="text-sm font-mono text-gray-300">{countdown}s</span>
                     </div>
 
                     {/* Two columns */}
@@ -97,7 +97,7 @@ export default function RoundResultPopup({ result, myUsername, isPlayer1, onClos
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-gray-500 uppercase mb-1">Nhận xét</p>
-                                    <p className="text-xs text-gray-400 italic">{myReason || "—"}</p>
+                                    <p className="text-xs text-gray-200 italic">{myReason || "—"}</p>
                                 </div>
                             </div>
                         </div>
@@ -129,7 +129,7 @@ export default function RoundResultPopup({ result, myUsername, isPlayer1, onClos
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-gray-500 uppercase mb-1">Nhận xét</p>
-                                    <p className="text-xs text-gray-400 italic">{oppReason || "—"}</p>
+                                    <p className="text-xs text-gray-200 italic">{oppReason || "—"}</p>
                                 </div>
                             </div>
                         </div>

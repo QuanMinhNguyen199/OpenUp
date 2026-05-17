@@ -7,7 +7,7 @@ interface Message {
   role: "user" | "npc";
   content: string;
   type?: "start_context" | "normal" | "score";
-  npc_behavior?: string;
+  npc_behavior?: string | any;
   score_delta?: number;
   reason?: string;
 }
@@ -157,7 +157,8 @@ export default function ChatWindow({
                     <>
                       {msg.npc_behavior && msg.role === "npc" && (
                         <div className="text-base text-[#39FF14] font-bold italic mb-2 tracking-wide opacity-90">
-                          [{msg.npc_behavior}]
+                          {typeof msg.npc_behavior === 'string' ? `[${msg.npc_behavior}]` : 
+                           `[${msg.npc_behavior.expression || ''} ${msg.npc_behavior.gesture ? '- ' + msg.npc_behavior.gesture : ''}]`}
                         </div>
                       )}
                       <p className="text-sm md:text-base text-gray-100 leading-relaxed font-medium">
