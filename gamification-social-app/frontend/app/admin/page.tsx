@@ -37,12 +37,16 @@ export default function AdminPage() {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/stats?month=${selectedMonth}&year=${selectedYear}`, {
                     headers: { "x-token": token }
                 });
-                if (!res.ok) throw new Error();
+                if (res.status === 401 || res.status === 403) {
+                    router.push("/lobby");
+                    return;
+                }
+                if (!res.ok) throw new Error("Lỗi fetch stats");
                 setStats(await res.json());
                 setLoading(false);
             } catch (error) {
                 console.error("Admin stats fetch error:", error);
-                router.push("/lobby");
+                // Bỏ router.push("/lobby") để tránh đá văng Admin khi mạng chập chờn
             }
         };
 
