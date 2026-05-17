@@ -2,7 +2,7 @@
 |---|---|
 | 🚀 Live URL | [https://a20-app-061.onrender.com/](#) |
 | 🎬 Video Demo | [Điền link YouTube](#) |
-| 📊 Pitch Deck | [Điền link Google Slide](#) |
+| 📊 Pitch Deck | [Xem Pitch Deck (Gamma)](https://gamma.app/docs/OpenUp-Game-hoc-giao-tiep-voi-AI-7cf1njt0g38yjyb?mode=doc) |
 | 🏗️ Sơ đồ Kiến trúc | [Architecture.png](./Architecture.png) |
 | 📁 Thư mục Minh chứng | [Điền link Google Drive chứa worklog, test...](#) |
 
