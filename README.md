@@ -1,10 +1,9 @@
 | Hạng mục | Liên kết |
 |---|---|
-| 🚀 Live URL | [https://a20-app-061.onrender.com/](#) |
-| 🎬 Video Demo | [Điền link YouTube](#) |
+| 🚀 Live URL | [https://a20-app-061.onrender.com/](https://a20-app-061.onrender.com/) |
+| 🎬 Video Demo | [Video trên YouTube](https://youtu.be/GiRqe_wharw) |
 | 📊 Pitch Deck | [Xem Pitch Deck (Gamma)](https://gamma.app/docs/OpenUp-Game-hoc-giao-tiep-voi-AI-7cf1njt0g38yjyb?mode=doc) |
 | 🏗️ Sơ đồ Kiến trúc | [Architecture.png](./Architecture.png) |
-| 📁 Thư mục Minh chứng | [Điền link Google Drive chứa worklog, test...](#) |
 
 ## 1. Tên dự án
 
@@ -99,17 +98,18 @@ Tạo file `.env` cho backend trong thư mục `gamification-social-app/backend`
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
 DATABASE_URL=<your-supabase-postgresql-url>
-SUPABASE_URL=<your-supabase-url>
-SUPABASE_KEY=<your-supabase-key>
 REDIS_URL=<your-redis-url>
+LANGFUSE_PUBLIC_KEY=<your-langfuse-public-key>
+LANGFUSE_SECRET_KEY=<your-langfuse-secret-key>
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
-Tạo file môi trường cho frontend trong thư mục `gamification-social-app/frontend` nếu cần:
+Tạo file `.env` cho frontend trong thư mục `gamification-social-app/frontend` và bổ sung biến:
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=<your-supabase-anon-key>
 ```
 
 ## 7. Hướng dẫn chạy dự án
@@ -119,7 +119,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 ```bash
 cd gamification-social-app/backend
 source venv/bin/activate
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Backend sẽ chạy tại:

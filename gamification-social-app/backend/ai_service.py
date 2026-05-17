@@ -7,7 +7,6 @@ import asyncio
 from dotenv import load_dotenv
 load_dotenv()
 
-from google import genai
 from openai import OpenAI
 from langfuse import observe, get_client
 from langfuse.openai import OpenAI
@@ -18,8 +17,6 @@ from prompts.story_prompts import get_story_mode_prompt
 from prompts.single_prompts import get_singleplayer_prompt, get_customplay_prompt, get_multiplayer_prompt
 
 # Khởi tạo Clients
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
 openai_client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     base_url=os.getenv("OPENAI_BASE_URL"), # Dùng nếu bạn chạy qua Proxy hoặc bối cảnh cụ thể
@@ -178,84 +175,6 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
             {"option": "Im lặng chờ đợi", "quantity": 0}
         ]
     }
-
-# --- CHẾ ĐỘ 2: CREATIVE MODE (AI SINH TỰ DO THEO TURN) ---
-@observe(as_type="generation")
-async def generate_npc_dialog(npc_name: str, ingredient: str, turn: int = 1, user_id: int = None):
-    """
-    Sinh kịch bản hội thoại tự do bằng Gemini 2.0 Flash.
-    Mỗi NPC có 3 lượt (turn) để người chơi chinh phục và lấy mảnh ghép.
-    """
-    _update_current_generation(
-        input={
-            "game_mode": "creative",
-            "npc_name": npc_name,
-            "ingredient": ingredient,
-            "turn": turn,
-            "user_id": user_id,
-        }
-    )
-
-    NPC_SYSTEM_PROMPT = ''
-    SPECIFIC_NPC_CONTEXT = {'':''}
-
-    extra_context = SPECIFIC_NPC_CONTEXT.get(npc_name, "Một NPC bí ẩn trong thế giới OpenUp.")
-    
-    # Chiến lược dẫn dắt theo lượt
-    turn_goals = {
-        1: "Phá băng: NPC làm quen hoặc đưa ra một vấn đề nhẹ nhàng.",
-        2: "Khai thác: Đi sâu vào mâu thuẫn hoặc cảm xúc. Đòi hỏi EQ cao hơn.",
-        3: "Chốt hạ: Tình huống quyết định. Nếu thắng sẽ nhận được nguyên liệu kỹ năng."
-    }
-    goal = turn_goals.get(turn, turn_goals[1])
-
-    try:
-        # Sử dụng tính năng native JSON mode của Gemini 2.0 Flash
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            config={
-                'system_instruction': NPC_SYSTEM_PROMPT,
-                'response_mime_type': 'application/json',
-                'temperature': 0.9 # Cao hơn để AI sáng tạo lời thoại
-            },
-            contents=(
-                f"NPC: {npc_name}. Mảnh ghép đang giữ: {ingredient}. "
-                f"Lượt hiện tại: {turn}/3. Mục tiêu lượt này: {goal}. "
-                f"Bối cảnh tâm lý nhân vật: {extra_context}"
-            )
-        )
-        
-        if not response.text:
-            raise ValueError("Gemini trả về rỗng")
-
-        result = json.loads(response.text)
-        result["turn"] = turn
-        result["is_final_turn"] = (turn >= 3)
-
-        _update_current_generation(
-            output={
-                "npc_name": npc_name,
-                "turn": turn,
-                "is_final_turn": turn >= 3,
-                "has_question": "question" in result,
-            }
-        )
-        
-        return result
-
-    except Exception as e:
-        print(f"❌ Lỗi Creative Mode ({npc_name} - Turn {turn}): {e}")
-        return {
-            "question": f"Tiếp tục câu chuyện với {npc_name}, bạn sẽ nói gì?",
-            "options": [
-                {"text": "Chia sẻ chân thành", "type": "good", "feedback": "Sự chân thành luôn là chìa khóa tốt nhất."},
-                {"text": "Nói chuyện xã giao", "type": "neutral", "feedback": "NPC vẫn đang quan sát bạn."},
-                {"text": "Phớt lờ cảm xúc của NPC", "type": "bad", "feedback": "NPC cảm thấy không được tôn trọng."}
-            ],
-            "turn": turn,
-            "is_final_turn": (turn >= 3)
-        }
-
 
 # SINGLEPLAYER MODE
 @observe(as_type="generation")
@@ -518,11 +437,4 @@ async def gen_dialogue_multiplayer(
     }
 
 
-# --- TEST CODE ---
-if __name__ == "__main__":
-    async def test():
-        print("--- TEST CREATIVE MODE (TURN 2) ---")
-        res = await generate_npc_dialog("Linh", "Sự Khéo Léo", turn=2)
-        print(json.dumps(res, indent=2, ensure_ascii=False))
-        
-    asyncio.run(test())
+
