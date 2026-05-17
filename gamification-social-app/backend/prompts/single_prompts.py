@@ -182,11 +182,13 @@ def get_multiplayer_prompt(
     case_crit = LESSONS[lesson_idx]['cases'][old_case][1] if old_case < 2 else CASE2[1]
     job = JOBS[job_idx] if relationship_idx != 4 else 'học sinh'
     first_prompt = ''
+    note = ''
     if turn == 1:
         first_prompt = FIRST_PROMPT_MULTI[True]
     else:
         if user_say1 != '' and user_say2 != '':
             first_prompt = FIRST_PROMPT_MULTI['2'].format(criteria=case_crit, user_say1=user_say1, user_say2=user_say2)
+            note = 'Chỉ dựa vào cách trả lời có điểm cao hơn của user để phản hồi tiếp. '
         elif user_say1 == '' and user_say2 == '':
             first_prompt = FIRST_PROMPT_MULTI['0']
         else:
@@ -198,7 +200,7 @@ def get_multiplayer_prompt(
 {first_prompt}npc_behavior: mô tả hành động hoặc biểu cảm bên ngoài của bạn theo ngôi 3,
 npc_say: lời thoại của bạn
 }}
-Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
+Cần tiếp diễn cuộc hội thoại 1 cách mượt mà, tự nhiên, KO đc tiết lộ mục đích của bạn. {note}Chỗ nào trong các câu mô tả nói về user thì dùng từ 'bạn'"""
     return system_prompt, request_prompt
 
 
