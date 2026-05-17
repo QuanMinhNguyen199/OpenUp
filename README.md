@@ -99,9 +99,10 @@ Tạo file `.env` cho backend trong thư mục `gamification-social-app/backend`
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
 DATABASE_URL=<your-supabase-postgresql-url>
-SUPABASE_URL=<your-supabase-url>
-SUPABASE_KEY=<your-supabase-key>
 REDIS_URL=<your-redis-url>
+LANGFUSE_PUBLIC_KEY=<your-langfuse-public-key>
+LANGFUSE_SECRET_KEY=<your-langfuse-secret-key>
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
 Tạo file môi trường cho frontend trong thư mục `gamification-social-app/frontend` nếu cần:
