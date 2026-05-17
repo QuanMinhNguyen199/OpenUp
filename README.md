@@ -105,12 +105,12 @@ LANGFUSE_SECRET_KEY=<your-langfuse-secret-key>
 LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
-Tạo file môi trường cho frontend trong thư mục `gamification-social-app/frontend` nếu cần:
+Tạo file `.env` cho frontend trong thư mục `gamification-social-app/frontend` và bổ sung biến:
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=<your-supabase-anon-key>
 ```
 
 ## 7. Hướng dẫn chạy dự án
