@@ -13,7 +13,7 @@
 
 **[OpenUp]** là một game nhập vai giao tiếp xã hội ứng dụng AI, nơi người chơi tương tác với các NPC có cảm xúc, tính cách và ngữ cảnh riêng. Trò chơi kết hợp cơ chế hội thoại, lựa chọn tình huống, điểm thân thiện, chương truyện và thử thách để biến việc luyện giao tiếp thành một trải nghiệm có tính nhập vai, có tiến trình và có phản hồi tức thì.
 
-Hệ thống sử dụng **OpenAI gpt-4o-mini** ở chế độ **JSON mode** để tạo phản hồi có cấu trúc, giúp NPC phản ứng nhất quán theo luật xưng hô, trạng thái cảm xúc và logic tình huống trong từng lượt chơi.
+Hệ thống sử dụng **OpenAI GPT-5.6 Terra** ở chế độ **JSON mode** để tạo phản hồi có cấu trúc, giúp NPC phản ứng nhất quán theo luật xưng hô, trạng thái cảm xúc và logic tình huống trong từng lượt chơi.
 
 ## 3. Mục tiêu / Vấn đề giải quyết
 
@@ -47,7 +47,7 @@ Dự án giải quyết vấn đề này bằng cách:
 | Frontend | Next.js, TypeScript, TailwindCSS |
 | Backend | Python, FastAPI, WebSockets |
 | Database | Supabase, PostgreSQL |
-| AI Model | OpenAI gpt-4o-mini |
+| AI Model | OpenAI GPT-5.6 Terra |
 | AI Output Control | JSON mode, system prompt xử lý luật xưng hô và cảm xúc NPC |
 | ORM / Database Layer | SQLAlchemy |
 | Realtime / Cache / Leaderboard | Redis |
@@ -97,6 +97,9 @@ Tạo file `.env` cho backend trong thư mục `gamification-social-app/backend`
 
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
+OPENAI_MODEL=gpt-5.6-terra
+OPENAI_REASONING_EFFORT=none
+OPENAI_BASE_URL=
 DATABASE_URL=<your-supabase-postgresql-url>
 REDIS_URL=<your-redis-url>
 LANGFUSE_PUBLIC_KEY=<your-langfuse-public-key>

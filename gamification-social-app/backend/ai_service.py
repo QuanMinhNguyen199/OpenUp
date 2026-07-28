@@ -19,9 +19,16 @@ from prompts.story_prompts import get_story_mode_prompt, get_story_progression
 from prompts.single_prompts import get_singleplayer_prompt, get_customplay_prompt, get_multiplayer_prompt
 
 # Khởi tạo Clients
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-terra").strip() or "gpt-5.6-terra"
+OPENAI_REASONING_EFFORT = (
+    os.getenv("OPENAI_REASONING_EFFORT", "none").strip().lower() or "none"
+)
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "").strip() or None
+OPENAI_API_BASE = OPENAI_BASE_URL or "https://api.openai.com/v1"
+
 openai_client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=os.getenv("OPENAI_BASE_URL"), # Dùng nếu bạn chạy qua Proxy hoặc bối cảnh cụ thể
+    base_url=OPENAI_API_BASE, # Dùng nếu bạn chạy qua Proxy hoặc bối cảnh cụ thể
     timeout=60
 )
 
@@ -221,10 +228,11 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=OPENAI_MODEL,
                 messages=messages,
+                reasoning_effort=OPENAI_REASONING_EFFORT,
                 temperature=0.6,
-                max_tokens=450,
+                max_completion_tokens=650,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
@@ -346,9 +354,11 @@ async def gen_dialogue_singleplayer(name_idx: int, job_idx: int, relationship_id
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=OPENAI_MODEL,
                 messages=messages,
+                reasoning_effort=OPENAI_REASONING_EFFORT,
                 temperature=0.5,
+                max_completion_tokens=650,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
@@ -437,9 +447,11 @@ async def gen_dialogue_customplay(
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=OPENAI_MODEL,
                 messages=messages,
+                reasoning_effort=OPENAI_REASONING_EFFORT,
                 temperature=0.5,
+                max_completion_tokens=650,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
@@ -529,9 +541,11 @@ async def gen_dialogue_multiplayer(
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=OPENAI_MODEL,
                 messages=messages,
+                reasoning_effort=OPENAI_REASONING_EFFORT,
                 temperature=0.5,
+                max_completion_tokens=650,
                 response_format={"type": "json_object"}
             )
             raw = response.choices[0].message.content.strip()
