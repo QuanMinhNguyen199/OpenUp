@@ -2,6 +2,8 @@ import re
 import os
 import json
 import asyncio
+import unicodedata
+from difflib import SequenceMatcher
 
 # Load env BEFORE importing Langfuse (critical: Langfuse init reads env vars)
 from dotenv import load_dotenv
@@ -41,6 +43,88 @@ def _clamp_quantity(value) -> float:
     return 0.0
 
 
+def _normalize_dialogue(value: str) -> str:
+    normalized = unicodedata.normalize("NFD", value or "")
+    normalized = "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+    return re.sub(r"[^a-z0-9]+", " ", normalized.lower()).strip()
+
+
+def _dialogue_similarity(left: str, right: str) -> float:
+    left_normalized = _normalize_dialogue(left)
+    right_normalized = _normalize_dialogue(right)
+    if not left_normalized or not right_normalized:
+        return 0.0
+    return SequenceMatcher(None, left_normalized, right_normalized).ratio()
+
+
+def _starts_with_pronoun(value: str, pronoun: str) -> bool:
+    value_normalized = _normalize_dialogue(value)
+    pronoun_normalized = _normalize_dialogue(pronoun)
+    return value_normalized == pronoun_normalized or value_normalized.startswith(f"{pronoun_normalized} ")
+
+
+def _validate_story_dialogue(
+    result: dict,
+    history: list[dict],
+    npc_self: str,
+    user_self: str,
+) -> list[str]:
+    errors: list[str] = []
+    npc_say = str(result.get("npc_say", "")).strip()
+    options = result.get("options", [])
+
+    if not npc_say:
+        errors.append("Thiếu npc_say.")
+    elif not _starts_with_pronoun(npc_say, npc_self):
+        errors.append(f"npc_say phải bắt đầu bằng đại từ tự xưng '{npc_self}' của NPC.")
+
+    if not isinstance(options, list) or len(options) != 3:
+        errors.append("Phải có đúng 3 options.")
+        return errors
+
+    option_texts: list[str] = []
+    for position, option in enumerate(options, start=1):
+        option_text = str(option.get("option", "")).strip() if isinstance(option, dict) else ""
+        option_texts.append(option_text)
+        if not option_text:
+            errors.append(f"Option {position} bị trống.")
+        elif not _starts_with_pronoun(option_text, user_self):
+            errors.append(
+                f"Option {position} là lời của người chơi và phải bắt đầu bằng "
+                f"đại từ tự xưng '{user_self}'."
+            )
+
+    previous_npc_lines: list[str] = []
+    previous_user_lines: list[str] = []
+    for message in history:
+        role = getattr(message, "role", None) or (
+            message.get("role") if isinstance(message, dict) else None
+        )
+        content = getattr(message, "content", None) or (
+            message.get("content") if isinstance(message, dict) else None
+        )
+        if role == "assistant" and content:
+            previous_npc_lines.append(str(content))
+        elif role == "user" and content:
+            previous_user_lines.append(str(content))
+
+    if any(_dialogue_similarity(npc_say, old_line) >= 0.68 for old_line in previous_npc_lines):
+        errors.append("npc_say quá giống một câu NPC đã nói ở lượt trước.")
+
+    for position, option_text in enumerate(option_texts, start=1):
+        if any(_dialogue_similarity(option_text, old_line) >= 0.78 for old_line in previous_user_lines):
+            errors.append(f"Option {position} quá giống lựa chọn người chơi đã dùng.")
+
+    for left_index in range(len(option_texts)):
+        for right_index in range(left_index + 1, len(option_texts)):
+            if _dialogue_similarity(option_texts[left_index], option_texts[right_index]) >= 0.78:
+                errors.append(
+                    f"Option {left_index + 1} và option {right_index + 1} quá giống nhau."
+                )
+
+    return errors
+
+
 # --- CHẾ ĐỘ 1: STORY MODE (HARDCODED CỐT TRUYỆN) ---
 @observe(as_type="generation")
 async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: list[dict], current_turn: int = 1, user_id: int = None):
@@ -61,13 +145,18 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         return {"error": "Không tìm thấy kịch bản cho Chapter này"}
 
     # Tạo rule xưng hô cứng từ pronoun data
-    npc_calls = pronoun.get('npc', 'Tôi')
-    user_calls = pronoun.get('user', 'Bạn')
+    npc_self = pronoun.get('npc', 'Tôi')
+    user_self = pronoun.get('user', 'Bạn')
     pronoun_rule = (
-        f"QUY TẮC XƯNG HÔ TUYỆT ĐỐI (KHÔNG ĐƯỢC VI PHẠM): "
-        f"NPC xưng '{npc_calls}', gọi user là '{user_calls}'. "
-        f"User trong các options PHẢI xưng '{user_calls}', gọi NPC là '{npc_calls}'. "
-        f"ĐỒNG NHẤT 100% trong cả npc_say lẫn 3 options. Vi phạm = kết quả bị loại.\n\n"
+        "QUY TẮC PHÂN VAI VÀ XƯNG HÔ TUYỆT ĐỐI:\n"
+        f"- npc_say là lời NPC nói: NPC tự xưng '{npc_self}' và gọi người chơi là '{user_self}'. "
+        f"npc_say PHẢI bắt đầu bằng từ '{npc_self}'.\n"
+        f"- options là lời NGƯỜI CHƠI nói, KHÔNG PHẢI lời NPC: người chơi tự xưng "
+        f"'{user_self}' và gọi NPC là '{npc_self}'. Mỗi option PHẢI bắt đầu bằng từ "
+        f"'{user_self}'.\n"
+        f"- Ví dụ cấu trúc đúng: NPC: '{npc_self} ... {user_self} ...'; "
+        f"người chơi: '{user_self} ... {npc_self} ...'.\n"
+        "- Không được đổi người nói giữa câu và không được sao chép câu cũ.\n\n"
     )
 
     messages = [{"role": "system", "content": pronoun_rule + system_prompt}]  # Inject vào system
@@ -93,9 +182,10 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
 
         request_prompt = (
             f"GIAI ĐOẠN HIỆN TẠI (Lượt {current_turn}): {stage}\n"
-            f"KỊCH BẢN GỐC CẦN BÁM SÁT: {request_prompt}\n\n"
-            f"NHẮC LẠI XƯNG HÔ: NPC='{npc_calls}', User trong options='{user_calls}'. ĐỒNG NHẤT 100%.\n"
-            "Hãy đọc kỹ lịch sử chat ở trên. Dựa vào câu nói vừa rồi của user và giai đoạn hiện tại, hãy phản ứng lại. "
+            f"BỐI CẢNH GỐC CHỈ ĐỂ THAM KHẢO, KHÔNG ĐƯỢC MỞ LẠI HOẶC KỂ LẠI: {request_prompt}\n\n"
+            f"NHẮC LẠI PHÂN VAI: npc_say bắt đầu bằng '{npc_self}'; "
+            f"cả 3 options là lời người chơi và bắt đầu bằng '{user_self}'.\n"
+            "Hãy đọc kỹ lịch sử chat ở trên và phản ứng trực tiếp với câu user vừa chọn. "
             "LỆNH CẤM 1: TUYỆT ĐỐI KHÔNG lặp lại tình huống, cảm xúc, hay lời thoại đã xuất hiện ở các lượt trước. ÁP DỤNG QUY TẮC LEO THANG đúng với giai đoạn. "
             "LỆNH CẤM 2: KHÔNG để lộ số điểm (quantity) vào trong lời thoại. "
             "LỆNH CẤM 3 (ĐỘ KHÓ): CẢ 3 LỰA CHỌN PHẢI LÀ CÁC CÂU NÓI CỰC KỲ LỊCH SỰ, HỢP LÝ VÀ ĐỜI THƯỜNG. Phải làm cho người chơi rất khó phân biệt đâu là lựa chọn đúng! "
@@ -114,7 +204,7 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
 
     messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về JSON hợp lệ."})
 
-    MAX_RETRIES = 2
+    MAX_RETRIES = 3
     raw = ""
 
     for attempt in range(1, MAX_RETRIES + 1):
@@ -149,6 +239,30 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
                     if "quantity" in opt:
                         opt["quantity"] = _clamp_quantity(opt["quantity"])
 
+            validation_errors = _validate_story_dialogue(
+                result=result,
+                history=history,
+                npc_self=npc_self,
+                user_self=user_self,
+            )
+            if validation_errors:
+                print(
+                    f"⚠ [{attempt}/{MAX_RETRIES}] Kết quả Story Mode sai quy tắc: "
+                    + " ".join(validation_errors)
+                )
+                if attempt < MAX_RETRIES:
+                    messages.append({"role": "assistant", "content": raw})
+                    messages.append({
+                        "role": "user",
+                        "content": (
+                            "Kết quả trên bị loại. Hãy tạo nội dung MỚI và sửa toàn bộ lỗi sau: "
+                            + " ".join(validation_errors)
+                            + " Không giải thích; chỉ trả về JSON hợp lệ."
+                        ),
+                    })
+                    continue
+                break
+
             # Set output on span: don't include the full options to avoid noise
             _update_current_generation(
                 output={
@@ -168,11 +282,11 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
 
     return {
         "npc_behavior": "cau mày bối rối",
-        "npc_say": "Tôi hơi bối rối một chút, bạn có thể nói lại được không?",
+        "npc_say": f"{npc_self} cần suy nghĩ thêm một chút trước khi trả lời {user_self}.",
         "options": [
-            {"option": "Nhắc lại ý vừa rồi", "quantity": 0},
-            {"option": "Để tôi nói lại cho rõ", "quantity": 0},
-            {"option": "Im lặng chờ đợi", "quantity": 0}
+            {"option": f"{user_self} sẽ nói rõ hơn để {npc_self} hiểu.", "quantity": 15},
+            {"option": f"{user_self} muốn nghe {npc_self} trình bày trước.", "quantity": 0},
+            {"option": f"{user_self} không muốn tiếp tục cuộc trò chuyện này.", "quantity": -15}
         ]
     }
 
