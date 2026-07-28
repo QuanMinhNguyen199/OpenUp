@@ -141,6 +141,133 @@ STORY_MODE_PROMPTS = [
     }
 ]
 
+
+# Mỗi chapter có hai nhánh tương ứng với hai `case`. Các beat này giữ cho
+# câu chuyện tiến về phía trước thay vì để model mở lại tình huống ban đầu.
+STORY_PROGRESSIONS = {
+    0: {
+        0: [
+            "Linh nhờ người chơi làm hộ báo cáo để cô đi làm móng và thử dò xem người chơi có dễ nhượng bộ không.",
+            "Sau phản hồi đầu tiên, Linh viện cớ từng hỗ trợ cả phòng và ám chỉ người chơi đang thiếu tinh thần đồng đội.",
+            "Linh tiết lộ báo cáo sắp đến hạn, đã nói với sếp rằng người chơi đồng ý giúp và bắt đầu gây áp lực.",
+            "Sếp đi ngang hỏi tiến độ; Linh tìm cách đẩy trách nhiệm sang người chơi ngay trước mặt sếp.",
+            "Linh buộc phải tự nhận trách nhiệm hoặc công khai tiếp tục lợi dụng người chơi; cuộc đối thoại phải đi đến kết luận rõ ràng.",
+        ],
+        1: [
+            "Máy in bị kẹt đúng lúc Linh cần in tài liệu gấp; cô thật sự chưa biết xử lý và nhờ người chơi hướng dẫn.",
+            "Linh làm theo nhưng kéo giấy sai chiều, khiến giấy rách và mắc sâu hơn; cô bắt đầu hoảng.",
+            "Linh muốn người chơi làm thay hoàn toàn, trong khi người chơi cần vừa hỗ trợ vừa giúp cô tự học.",
+            "Sếp yêu cầu bản in ngay; Linh phải tự thực hiện lại các bước dưới áp lực thời gian.",
+            "Linh tự xử lý được lần cuối và thừa nhận ranh giới giữa giúp đỡ chính đáng với ỷ lại.",
+        ],
+    },
+    1: {
+        0: [
+            "Bác Bảo phát hiện người chơi định đưa tiền để được bỏ qua lỗi đi muộn.",
+            "Bác từ chối tiền, hỏi thẳng vì sao người chơi nghĩ quy định có thể mua được và yêu cầu nhận lỗi.",
+            "Một học sinh khác chứng kiến và định làm theo, khiến lựa chọn của người chơi có thể tạo tiền lệ xấu.",
+            "Ban giám hiệu đi tới; bác Bảo phải quyết định có lập biên bản cả hành vi hối lộ hay cho cơ hội sửa sai.",
+            "Người chơi phải chịu trách nhiệm minh bạch; bác Bảo kết luận về sự tôn trọng và tính liêm chính.",
+        ],
+        1: [
+            "Người chơi quên thẻ đúng ngày thi và xin bác Bảo cho vào gấp.",
+            "Bác yêu cầu cung cấp thông tin để đối chiếu nhưng danh sách trực ban chưa được cập nhật.",
+            "Mưa lớn và giờ thi sắp bắt đầu; người chơi phải giữ bình tĩnh thay vì vượt cổng.",
+            "Giám thị gọi điện xác minh nhưng thông tin chưa khớp hoàn toàn, buộc hai bên phối hợp kiểm tra thêm.",
+            "Danh tính được làm rõ; bác Bảo quyết định cho vào hay xử lý vi phạm dựa trên thái độ xuyên suốt.",
+        ],
+    },
+    2: {
+        0: [
+            "Chị Mai kể việc bị khách mắng vô lý và nhận ra người chơi đang thiếu tập trung.",
+            "Chị ngừng kể, hỏi liệu cảm xúc của chị có đang làm phiền và chờ một phản hồi thật sự lắng nghe.",
+            "Chị thú nhận lời mắng khiến chị nghi ngờ năng lực và sợ quán mất khách.",
+            "Một đánh giá xấu mới xuất hiện trên mạng; chị muốn phản ứng nóng vội và cần người chơi giúp nhìn lại.",
+            "Chị Mai tự chọn cách xử lý bình tĩnh sau khi cảm thấy được thấu hiểu, không phải được ra lệnh.",
+        ],
+        1: [
+            "Chị Mai hỏi có nên đuổi một nhân viên vừa phạm lỗi hay không.",
+            "Chị kể nhân viên đó đã sai nhiều lần nhưng đang gặp khó khăn gia đình, khiến quyết định không còn đơn giản.",
+            "Nhân viên xin lỗi và đề nghị cơ hội sửa sai; chị Mai giằng co giữa cảm xúc và trách nhiệm chủ quán.",
+            "Một khách khác phàn nàn, buộc chị phải đặt ra ranh giới và phương án khắc phục cụ thể.",
+            "Chị Mai đưa ra quyết định có điều kiện, dựa trên việc người chơi đã lắng nghe và gợi mở thay vì áp đặt.",
+        ],
+    },
+    3: {
+        0: [
+            "Nam đổ lỗi cho người chơi sau một pha bóng hỏng trước mặt cả đội.",
+            "Đội tiếp tục mất phối hợp; Nam càng công kích để che giấu sai lầm của chính mình.",
+            "Đồng đội bắt đầu chia phe, buộc người chơi phải hạ nhiệt tình hình thay vì thắng cuộc cãi vã.",
+            "Nam thú nhận đang chịu áp lực phải thể hiện và dọa bỏ trận nếu không được tôn trọng.",
+            "Cả hai phải thống nhất cách phối hợp cho pha bóng quyết định và cùng chịu trách nhiệm về kết quả.",
+        ],
+        1: [
+            "Nam đau chân nhưng khăng khăng muốn tiếp tục thi đấu.",
+            "Cơn đau tăng lên; Nam sợ rời sân sẽ bị xem là yếu đuối và mất vị trí.",
+            "Đội thiếu người thay, khiến quyết định nghỉ hay đá tiếp ảnh hưởng trực tiếp đến mọi người.",
+            "Nam suýt ngã trong một pha tranh bóng và buộc phải đối diện nguy cơ chấn thương nặng.",
+            "Nam chấp nhận một phương án đặt an toàn và lợi ích đội bóng lên trên cái tôi.",
+        ],
+    },
+    4: {
+        0: [
+            "Cô Hoa vừa bị khách ép giá và mắng, còn người chơi chứng kiến toàn bộ sự việc.",
+            "Cô cố tỏ ra ổn nhưng tiết lộ cả ngày chưa bán đủ tiền vốn.",
+            "Người khách quay lại tiếp tục gây sức ép, đặt người chơi trước lựa chọn can thiệp có tôn trọng.",
+            "Trật tự đô thị xuất hiện khiến sạp rau có nguy cơ bị thu dọn trong lúc cô Hoa rối trí.",
+            "Cô Hoa nhận được sự hỗ trợ giữ phẩm giá, rồi tự quyết định cách bảo vệ việc làm ăn của mình.",
+        ],
+        1: [
+            "Cô Hoa thối thừa tiền và chưa nhận ra sai sót.",
+            "Cô phát hiện sổ tiền bị lệch, lo không đủ tiền nhập hàng nhưng vẫn chưa nghi ngờ người chơi.",
+            "Một người bán bên cạnh đổ lỗi cho khách khác, khiến sự im lặng có thể làm người vô tội bị trách.",
+            "Cô Hoa nhớ ra giao dịch với người chơi và hỏi thẳng trong tâm trạng hoang mang.",
+            "Sự thật được làm rõ; cô Hoa phản ứng dựa trên mức độ trung thực và tôn trọng của người chơi.",
+        ],
+    },
+    5: {
+        0: [
+            "Người chơi làm rơi chồng sách gây tiếng động lớn, khiến Hoàng bực bội nhắc nhở.",
+            "Hoàng vẫn khó chịu vì đang ôn thi và cho rằng lời xin lỗi của người chơi chưa đủ chân thành.",
+            "Điện thoại của một người khác reo nhưng Hoàng lại nghi người chơi, tạo ra hiểu lầm mới.",
+            "Hoàng thú nhận mình mất ngủ vì kỳ thi và đã trút áp lực sai người.",
+            "Hai bên thống nhất cách tôn trọng không gian chung và kết thúc mâu thuẫn mà không làm ồn thêm.",
+        ],
+        1: [
+            "Hoàng mắc kẹt ở một bài khó nhưng ngại nhận sự giúp đỡ từ người lạ.",
+            "Người chơi đề nghị hỗ trợ; Hoàng thử kiểm tra năng lực và giữ thái độ phòng thủ.",
+            "Cả hai phát hiện đề bài có dữ kiện mâu thuẫn, cần hợp tác thay vì tranh hơn thua.",
+            "Thủ thư nhắc giữ yên lặng, buộc họ tìm cách trao đổi tinh tế và tập trung.",
+            "Hoàng giải được nút thắt, thừa nhận giá trị của sự giúp đỡ đúng lúc và tôn trọng.",
+        ],
+    },
+    6: {
+        0: [
+            "Cụ Phan hỏi liệu lời nói dối ngọt ngào là lòng từ bi hay liều thuốc độc.",
+            "Cụ đưa ví dụ một người bệnh chỉ còn ít thời gian nhưng gia đình muốn giấu sự thật.",
+            "Cụ phản biện lựa chọn của người chơi bằng hậu quả thực tế, không cho phép trả lời sáo rỗng.",
+            "Cụ tiết lộ mình từng giấu một sự thật và khiến người thân mất cơ hội lựa chọn.",
+            "Người chơi phải nêu nguyên tắc cuối cùng về sự thật và lòng trắc ẩn; cụ đánh giá tính nhất quán.",
+        ],
+        1: [
+            "Cụ Phan chỉ bức tượng mục đang làm hỏng cột đền và hỏi nên giữ hay bỏ.",
+            "Cụ tiết lộ bức tượng là di vật của ân nhân từng cứu ngôi đền, làm xung đột tình và lý sâu hơn.",
+            "Một mảng gỗ rơi xuống cho thấy nguy hiểm đã cận kề, không thể tiếp tục trì hoãn.",
+            "Hậu duệ ân nhân xuất hiện và phản đối việc di dời, buộc người chơi nói sự thật khó nghe.",
+            "Người chơi đề xuất quyết định cuối cùng vừa bảo vệ ngôi đền vừa minh bạch với hậu duệ ân nhân.",
+        ],
+    },
+}
+
+
+def get_story_progression(index: int, case: int, current_turn: int) -> str:
+    case_progression = STORY_PROGRESSIONS.get(index, {}).get(case, [])
+    if not case_progression:
+        return "Tiếp nối trực tiếp lựa chọn gần nhất và đưa mâu thuẫn tới một hệ quả mới."
+    turn_index = max(0, min(current_turn - 1, len(case_progression) - 1))
+    return case_progression[turn_index]
+
+
 def get_story_mode_prompt(index: int, event: bool = False, case: int = 0):
     if index < 0 or index >= len(STORY_MODE_PROMPTS):
         return None, None, None

@@ -14,7 +14,7 @@ from langfuse import observe, get_client
 from langfuse.openai import OpenAI
 
 # Import các kịch bản từ các file prompt riêng biệt
-from prompts.story_prompts import get_story_mode_prompt
+from prompts.story_prompts import get_story_mode_prompt, get_story_progression
 # Lưu ý: Đảm bảo các biến NPC_SYSTEM_PROMPT và SPECIFIC_NPC_CONTEXT được định nghĩa trong single_prompts
 from prompts.single_prompts import get_singleplayer_prompt, get_customplay_prompt, get_multiplayer_prompt
 
@@ -140,6 +140,11 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
         }
     )
     system_prompt, request_prompt, pronoun = get_story_mode_prompt(index=index, event=event, case=case)
+    story_progression = get_story_progression(
+        index=index,
+        case=case,
+        current_turn=current_turn,
+    )
     
     if system_prompt is None or request_prompt is None:
         return {"error": "Không tìm thấy kịch bản cho Chapter này"}
@@ -202,6 +207,12 @@ async def gen_dialogue_story_mode(index: int, event: bool, case: int, history: l
             "}"
         )
 
+    request_prompt = (
+        f"BEAT CỐT TRUYỆN BẮT BUỘC CỦA LƯỢT {current_turn}: {story_progression}\n"
+        "Hãy thể hiện beat này bằng hành động và lời thoại cụ thể. Phải nối tiếp lịch sử, "
+        "không được tóm tắt beat, không được nhảy sang beat khác và không được quay lại beat cũ.\n\n"
+        + request_prompt
+    )
     messages.append({"role": "user", "content": request_prompt + " Bắt buộc trả về JSON hợp lệ."})
 
     MAX_RETRIES = 3

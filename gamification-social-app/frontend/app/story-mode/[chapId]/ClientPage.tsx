@@ -54,6 +54,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
     const [loading, setLoading] = useState(true);
     const authRequestedRef = useRef(false);
     const dialogRequestedRef = useRef(false);
+    const storyCaseRef = useRef<number | null>(null);
 
     // Game state
     const [npcData, setNpcData] = useState<NpcDialogData | null>(null);
@@ -119,7 +120,9 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
 
         try {
             const shouldEvent = Math.random() < 0.3;
-            const randomCase = Math.floor(Math.random() * 2);
+            if (storyCaseRef.current === null) {
+                storyCaseRef.current = Math.floor(Math.random() * 2);
+            }
 
             const res = await fetch(`${API_URL}/story_mode`, {
                 method: "POST",
@@ -131,7 +134,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
                     user_id: parseInt(userId),
                     index: chapId - 1, // Backend uses 0-based index
                     event: shouldEvent,
-                    case: randomCase,
+                    case: storyCaseRef.current,
                     history: currentHistory,
                 }),
             });
@@ -244,6 +247,7 @@ export default function ClientChapterPage({ chapIdStr }: { chapIdStr: string }) 
         setNpcEmotion("normal");
         setAffinity(20);
         setNpcData(null);
+        storyCaseRef.current = null;
         fetchDialog([]);
     };
 
